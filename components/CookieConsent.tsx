@@ -93,7 +93,8 @@ export default function CookieConsent({ onAccept, onReject }: CookieConsentProps
               </div>
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 Help us understand how visitors interact with our website by collecting and
-                reporting information anonymously. Powered by Vercel Analytics.
+                reporting information anonymously. Includes Google Tag Manager, Vercel Analytics,
+                and Speed Insights.
               </p>
             </div>
           </div>

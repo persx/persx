@@ -121,6 +121,9 @@ export default function Privacy() {
               <p className="mb-2">We use the following third-party services:</p>
               <ul className="list-disc list-inside ml-4 space-y-1">
                 <li>
+                  <strong>Google Tag Manager:</strong> For managing marketing and analytics tags
+                </li>
+                <li>
                   <strong>Vercel Analytics:</strong> For website analytics and performance monitoring
                 </li>
                 <li>
@@ -132,7 +135,8 @@ export default function Privacy() {
               </ul>
               <p className="mt-2">
                 These services have their own privacy policies governing their use of your
-                information.
+                information. Google Tag Manager and associated services are only loaded after you
+                consent to analytics cookies.
               </p>
             </div>
           </section>
