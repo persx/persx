@@ -1,6 +1,133 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 export default function Home() {
+  const [userIndustry, setUserIndustry] = useState<string>("");
+
+  useEffect(() => {
+    // Get stored industry from sessionStorage
+    if (typeof window !== 'undefined') {
+      const storedIndustry = sessionStorage.getItem('userIndustry') || "";
+      setUserIndustry(storedIndustry);
+    }
+  }, []);
+
+  // Industry-specific callouts
+  const getCallouts = () => {
+    const calloutsByIndustry: Record<string, Array<{ icon: string; title: string; description: string }>> = {
+      "eCommerce": [
+        {
+          icon: "💡",
+          title: "Instant Insight from Experts",
+          description: "Get rapid access to eCommerce growth strategies—cart recovery, AOV boosters, and product recommendation tactics—distilled by subject‑matter specialists, without wading through endless data."
+        },
+        {
+          icon: "⚡",
+          title: "Actionable Ideas in Minutes",
+          description: "PersX.ai turns your shopping behavior signals into ready‑to‑test experiments targeting cart abandoners, repeat buyers, and high-value segments so you can act immediately."
+        },
+        {
+          icon: "🎯",
+          title: "Effortless Opportunity Discovery",
+          description: "With automated persona modeling and journey design, uncover new revenue opportunities—cross-sell moments, checkout friction points, and browse-to-buy gaps—faster than ever."
+        }
+      ],
+      "Healthcare": [
+        {
+          icon: "💡",
+          title: "Instant Insight from Experts",
+          description: "Get rapid access to patient engagement strategies—appointment booking flows, telehealth adoption, and trust-building tactics—distilled by healthcare marketing specialists."
+        },
+        {
+          icon: "⚡",
+          title: "Actionable Ideas in Minutes",
+          description: "PersX.ai turns your patient journey signals into ready‑to‑test experiments targeting appointment seekers, service researchers, and follow-up completers so you can act immediately."
+        },
+        {
+          icon: "🎯",
+          title: "Effortless Opportunity Discovery",
+          description: "With automated persona modeling and journey design, uncover new conversion opportunities—form abandonment points, service discovery gaps, and consultation barriers—faster than ever."
+        }
+      ],
+      "Financial Services": [
+        {
+          icon: "💡",
+          title: "Instant Insight from Experts",
+          description: "Get rapid access to financial services growth strategies—lead qualification paths, account sign-up optimization, and trust-building tactics—distilled by FinTech specialists."
+        },
+        {
+          icon: "⚡",
+          title: "Actionable Ideas in Minutes",
+          description: "PersX.ai turns your prospect behavior signals into ready‑to‑test experiments targeting qualified leads, comparison shoppers, and high-intent visitors so you can act immediately."
+        },
+        {
+          icon: "🎯",
+          title: "Effortless Opportunity Discovery",
+          description: "With automated persona modeling and journey design, uncover new conversion opportunities—application drop-off points, education gaps, and credibility barriers—faster than ever."
+        }
+      ],
+      "Education": [
+        {
+          icon: "💡",
+          title: "Instant Insight from Experts",
+          description: "Get rapid access to enrollment strategies—application completion flows, campus visit optimization, and program discovery tactics—distilled by higher education marketing specialists."
+        },
+        {
+          icon: "⚡",
+          title: "Actionable Ideas in Minutes",
+          description: "PersX.ai turns your prospective student signals into ready‑to‑test experiments targeting program researchers, application starters, and campus visit prospects so you can act immediately."
+        },
+        {
+          icon: "🎯",
+          title: "Effortless Opportunity Discovery",
+          description: "With automated persona modeling and journey design, uncover new enrollment opportunities—application friction points, financial aid questions, and decision-stage barriers—faster than ever."
+        }
+      ],
+      "B2B/SaaS": [
+        {
+          icon: "💡",
+          title: "Instant Insight from Experts",
+          description: "Get rapid access to SaaS growth strategies—trial conversion paths, demo request optimization, and product adoption tactics—distilled by B2B marketing specialists."
+        },
+        {
+          icon: "⚡",
+          title: "Actionable Ideas in Minutes",
+          description: "PersX.ai turns your buyer behavior signals into ready‑to‑test experiments targeting MQLs, trial users, and demo prospects so you can act immediately."
+        },
+        {
+          icon: "🎯",
+          title: "Effortless Opportunity Discovery",
+          description: "With automated persona modeling and journey design, uncover new pipeline opportunities—signup friction, feature discovery gaps, and time-to-value barriers—faster than ever."
+        }
+      ]
+    };
+
+    // Default callouts if no industry or "Other"
+    const defaultCallouts = [
+      {
+        icon: "💡",
+        title: "Instant Insight from Experts",
+        description: "Get rapid access to growth strategies distilled by subject‑matter specialists, without wading through endless data."
+      },
+      {
+        icon: "⚡",
+        title: "Actionable Ideas in Minutes",
+        description: "PersX.ai turns your raw behavior signals into ready‑to‑test experiments so you can act immediately."
+      },
+      {
+        icon: "🎯",
+        title: "Effortless Opportunity Discovery",
+        description: "With automated persona modeling and journey design, uncover new revenue opportunities and friction points faster than ever."
+      }
+    ];
+
+    return calloutsByIndustry[userIndustry] || defaultCallouts;
+  };
+
+  const callouts = getCallouts();
+
   return (
     <div className="container mx-auto px-4 md:px-6">
       {/* Hero Section */}
@@ -27,27 +154,15 @@ export default function Home() {
           Why Choose PersX.ai?
         </h2>
         <div className="grid md:grid-cols-3 gap-8">
-          <div className="p-6 rounded-lg border border-gray-200 dark:border-gray-800 hover:shadow-lg transition-shadow">
-            <div className="text-4xl mb-4">🚀</div>
-            <h3 className="text-xl font-semibold mb-2">Lightning Fast</h3>
-            <p className="text-gray-600 dark:text-gray-400">
-              Experience unparalleled speed and performance with our optimized AI algorithms
-            </p>
-          </div>
-          <div className="p-6 rounded-lg border border-gray-200 dark:border-gray-800 hover:shadow-lg transition-shadow">
-            <div className="text-4xl mb-4">🎯</div>
-            <h3 className="text-xl font-semibold mb-2">Precision Accuracy</h3>
-            <p className="text-gray-600 dark:text-gray-400">
-              Achieve exceptional results with our state-of-the-art machine learning models
-            </p>
-          </div>
-          <div className="p-6 rounded-lg border border-gray-200 dark:border-gray-800 hover:shadow-lg transition-shadow">
-            <div className="text-4xl mb-4">🔒</div>
-            <h3 className="text-xl font-semibold mb-2">Secure & Private</h3>
-            <p className="text-gray-600 dark:text-gray-400">
-              Your data is protected with enterprise-grade security and privacy measures
-            </p>
-          </div>
+          {callouts.map((callout, index) => (
+            <div key={index} className="p-6 rounded-lg border border-gray-200 dark:border-gray-800 hover:shadow-lg transition-shadow">
+              <div className="text-4xl mb-4">{callout.icon}</div>
+              <h3 className="text-xl font-semibold mb-2">{callout.title}</h3>
+              <p className="text-gray-600 dark:text-gray-400">
+                {callout.description}
+              </p>
+            </div>
+          ))}
         </div>
       </section>
 
