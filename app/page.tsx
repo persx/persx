@@ -254,7 +254,7 @@ export default function Home() {
           Works with Any Marketing Technology
         </h2>
         <p className="text-center text-gray-600 dark:text-gray-400 mb-12 max-w-2xl mx-auto">
-          Seamlessly integrate with your existing martech stack
+          Maximize the ROI from your marketing technology and uncover hidden insights
         </p>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-8 items-center max-w-5xl mx-auto">
           <div className="flex items-center justify-center p-6 rounded-lg border border-gray-200 dark:border-gray-800 hover:shadow-lg transition-shadow">
