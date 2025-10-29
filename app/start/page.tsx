@@ -330,9 +330,14 @@ export default function StartPage() {
   return (
     <div className="container mx-auto px-4 md:px-6 py-12">
       <div className="max-w-3xl mx-auto">
-        <h1 className="text-4xl font-bold mb-4 text-center bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-          Build Your Custom Roadmap
-        </h1>
+        <div className="flex items-center justify-center gap-3 mb-4">
+          <h1 className="text-4xl font-bold text-center bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            Build Your Custom Roadmap
+          </h1>
+          <span className="px-3 py-1 text-sm font-bold bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full">
+            BETA
+          </span>
+        </div>
         <p className="text-center text-gray-600 dark:text-gray-400 mb-8">
           Answer a few questions to get your personalized 90-day experience optimization roadmap
         </p>
