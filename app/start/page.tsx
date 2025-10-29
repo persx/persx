@@ -182,6 +182,116 @@ export default function StartPage() {
     }
   };
 
+  // Industry-specific personas
+  const industryPersonas: Record<string, Array<{ name: string; description: string; color: string }>> = {
+    "eCommerce": [
+      {
+        name: "Deal-Seeker Dad",
+        description: "A budget-conscious shopper who scours the site for sales and coupon codes. He compares prices across retailers, looks for free shipping, and responds well to personalized discounts or loyalty offers that make him feel he's getting the best value.",
+        color: "blue"
+      },
+      {
+        name: "Brand-Loyal Fashionista",
+        description: "A repeat customer who regularly buys from specific labels. She follows brands on social media, engages with new-arrival emails and expects a seamless mobile experience. Personalized product recommendations and early access to launches help her stay loyal.",
+        color: "purple"
+      },
+      {
+        name: "Impulse Mobile Buyer",
+        description: "An on-the-go shopper who makes quick purchases from her phone. She values speed and convenience over deep research, often buying based on social proof, user reviews or 'trending now' sections. Optimized checkout and one-click payment options reduce friction.",
+        color: "pink"
+      }
+    ],
+    "Healthcare": [
+      {
+        name: "New Patient Researcher",
+        description: "A prospective patient comparing providers. He reads educational content, checks clinician bios and reviews, and wants easy access to appointment booking. Transparency and trust-building content influence his decision.",
+        color: "blue"
+      },
+      {
+        name: "Chronic-Care Manager",
+        description: "A returning patient managing a long-term condition. She tracks appointments, lab results and follow-up care through the portal. Helpful reminders and personalized health content improve her adherence and satisfaction.",
+        color: "purple"
+      },
+      {
+        name: "Caregiver Coordinator",
+        description: "A family member booking appointments or requesting information for an elderly relative. He values clear navigation, phone and chat support, and wants to minimize time spent on forms. Clear instructions and flexible scheduling options are key.",
+        color: "pink"
+      }
+    ],
+    "Financial Services": [
+      {
+        name: "First-Time Investor",
+        description: "A young professional exploring investment products. He seeks educational resources, calculators and comparative tools to understand risk and return. Personalized guidance and easy account setup increase his confidence.",
+        color: "blue"
+      },
+      {
+        name: "Credit Optimizer",
+        description: "An individual looking to consolidate debt or improve her credit score. She compares loan products and rates, reads blogs on financial health and wants a quick pre-qualification process. Secure handling of personal data and transparency about fees are critical.",
+        color: "purple"
+      },
+      {
+        name: "Wealth Manager",
+        description: "A high net-worth client seeking tailored investment and estate planning advice. He values one-on-one consultations, detailed performance reporting and seamless integration with existing financial tools. Personalized outreach and a white-glove experience build loyalty.",
+        color: "pink"
+      }
+    ],
+    "Education": [
+      {
+        name: "Prospective Undergraduate",
+        description: "A high-school senior researching programs and campus life. She attends virtual tours, downloads brochures and follows university social media. Timely follow-up on inquiries and clear financial aid information influence her application decision.",
+        color: "blue"
+      },
+      {
+        name: "Career-Changer Adult Learner",
+        description: "A working professional considering a return to school for upskilling. He values flexible scheduling, online course options and clear ROI. Targeted content about career outcomes and simplified application processes resonate.",
+        color: "purple"
+      },
+      {
+        name: "International Applicant",
+        description: "A student from abroad navigating admissions requirements and visa processes. She needs localized information, multilingual support and reassurance about housing and student services. Responsive communication helps build trust.",
+        color: "pink"
+      }
+    ],
+    "B2B/SaaS": [
+      {
+        name: "Technical Evaluator",
+        description: "An IT or developer lead assessing product fit and integration complexity. He reviews documentation, trials APIs and attends webinars. Access to technical resources and responsive support accelerate his buy-in.",
+        color: "blue"
+      },
+      {
+        name: "Business Champion",
+        description: "A mid-level manager who identifies the need and champions adoption internally. She seeks case studies and ROI calculators to build a business case. Tailored demos and proof-of-concept offers help her secure stakeholder approval.",
+        color: "purple"
+      },
+      {
+        name: "Executive Sponsor",
+        description: "A C-suite or VP-level decision maker focused on strategic outcomes. He is less concerned with features and more with cost savings, scalability and vendor reliability. High-level dashboards and clear value propositions influence his signing authority.",
+        color: "pink"
+      }
+    ]
+  };
+
+  // Default personas for "Other" industry
+  const defaultPersonas = [
+    {
+      name: "The Decision Maker",
+      description: "Senior executive focused on ROI and strategic outcomes",
+      color: "blue"
+    },
+    {
+      name: "The Practitioner",
+      description: "Hands-on user seeking efficiency and ease of use",
+      color: "purple"
+    },
+    {
+      name: "The Researcher",
+      description: "Information gatherer comparing multiple solutions",
+      color: "pink"
+    }
+  ];
+
+  const personas = industryPersonas[formData.industry] || defaultPersonas;
+
   if (showPreview) {
     return (
       <div className="container mx-auto px-4 md:px-6 py-12">
@@ -195,27 +305,24 @@ export default function StartPage() {
             {/* Personas */}
             <section className="p-6 rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
               <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">
-                Ideal Customer Personas
+                Ideal Customer Personas for {formData.industry}
               </h2>
               <div className="grid md:grid-cols-3 gap-4">
-                <div className="p-4 rounded-lg bg-blue-50 dark:bg-blue-900/20">
-                  <h3 className="font-semibold mb-2">Persona 1: The Decision Maker</h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Senior executive focused on ROI and strategic outcomes
-                  </p>
-                </div>
-                <div className="p-4 rounded-lg bg-purple-50 dark:bg-purple-900/20">
-                  <h3 className="font-semibold mb-2">Persona 2: The Practitioner</h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Hands-on user seeking efficiency and ease of use
-                  </p>
-                </div>
-                <div className="p-4 rounded-lg bg-pink-50 dark:bg-pink-900/20">
-                  <h3 className="font-semibold mb-2">Persona 3: The Researcher</h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Information gatherer comparing multiple solutions
-                  </p>
-                </div>
+                {personas.map((persona, idx) => {
+                  const colorClasses = {
+                    blue: "bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800",
+                    purple: "bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800",
+                    pink: "bg-pink-50 dark:bg-pink-900/20 border border-pink-200 dark:border-pink-800"
+                  };
+                  return (
+                    <div key={idx} className={`p-4 rounded-lg ${colorClasses[persona.color as keyof typeof colorClasses]}`}>
+                      <h3 className="font-semibold mb-2 text-gray-900 dark:text-gray-100">{persona.name}</h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        {persona.description}
+                      </p>
+                    </div>
+                  );
+                })}
               </div>
             </section>
 
