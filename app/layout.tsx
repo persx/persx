@@ -7,7 +7,7 @@ export const metadata: Metadata = {
     default: "PersX.ai - AI Strategist for Personalization & Experimentation",
     template: "%s | PersX.ai",
   },
-  description: "Discovery your ideal personas, journeys, and build an actionable roadmap in minutes. AI-powered personalization and experimentation strategy.",
+  description: "Discover your ideal personas, journeys, and build an actionable roadmap in minutes. AI-powered personalization and experimentation strategy.",
   keywords: ["AI", "personalization", "experimentation", "A/B testing", "customer personas", "conversion optimization", "martech"],
   authors: [{ name: "PersX.ai" }],
   creator: "PersX.ai",
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     url: "https://persx.ai",
     siteName: "PersX.ai",
     title: "PersX.ai - AI Strategist for Personalization & Experimentation",
-    description: "Discovery your ideal personas, journeys, and build an actionable roadmap in minutes.",
+    description: "Discover your ideal personas, journeys, and build an actionable roadmap in minutes.",
     images: [
       {
         url: "/icon.svg",
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary",
     title: "PersX.ai - AI Strategist for Personalization & Experimentation",
-    description: "Discovery your ideal personas, journeys, and build an actionable roadmap in minutes.",
+    description: "Discover your ideal personas, journeys, and build an actionable roadmap in minutes.",
     images: ["/icon.svg"],
   },
   icons: {

@@ -9,7 +9,7 @@ export default function Home() {
           AI Strategist for Personalization & Experimentation
         </h1>
         <h2 className="text-xl md:text-2xl text-gray-600 dark:text-gray-400 mb-8 max-w-3xl mx-auto">
-          Discovery your ideal personas, journeys, and build an actionable roadmap in minutes.
+          Discover your ideal personas, journeys, and build an actionable roadmap in minutes.
         </h2>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link href="/start" className="px-8 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors">
