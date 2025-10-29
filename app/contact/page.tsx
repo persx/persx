@@ -153,6 +153,22 @@ export default function Contact() {
 
           {/* Contact Form */}
           <div>
+            {submitStatus === "success" && (
+              <div className="mb-6 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+                <p className="text-green-800 dark:text-green-200 text-sm">
+                  Thank you! Your message has been sent successfully.
+                </p>
+              </div>
+            )}
+
+            {submitStatus === "error" && (
+              <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                <p className="text-red-800 dark:text-red-200 text-sm">
+                  There was an error sending your message. Please try again.
+                </p>
+              </div>
+            )}
+
             <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-gray-100">
               Send Us a Message
             </h2>
@@ -217,22 +233,6 @@ export default function Contact() {
               <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
                 Your privacy is important to us and we do not spam
               </p>
-
-              {submitStatus === "success" && (
-                <div className="p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
-                  <p className="text-green-800 dark:text-green-200 text-sm">
-                    Thank you! Your message has been sent successfully.
-                  </p>
-                </div>
-              )}
-
-              {submitStatus === "error" && (
-                <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-                  <p className="text-red-800 dark:text-red-200 text-sm">
-                    There was an error sending your message. Please try again.
-                  </p>
-                </div>
-              )}
             </form>
           </div>
         </div>
