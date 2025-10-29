@@ -2,21 +2,21 @@ export default function News() {
   const newsItems = [
     {
       id: 1,
-      title: "persx.ai Raises $50M in Series B Funding",
+      title: "PersX.ai Raises $50M in Series B Funding",
       date: "October 29, 2025",
       content: "We're excited to announce our Series B funding round led by top venture capital firms, enabling us to expand our AI capabilities and reach more customers worldwide.",
     },
     {
       id: 2,
-      title: "New AI Model Release: persx-GPT v2.0",
+      title: "New AI Model Release: PersX-GPT v2.0",
       date: "October 26, 2025",
-      content: "Today we're launching persx-GPT v2.0, our most powerful language model yet, featuring improved accuracy, faster response times, and enhanced multilingual support.",
+      content: "Today we're launching PersX-GPT v2.0, our most powerful language model yet, featuring improved accuracy, faster response times, and enhanced multilingual support.",
     },
     {
       id: 3,
       title: "Partnership with Leading Tech Companies",
       date: "October 23, 2025",
-      content: "persx.ai announces strategic partnerships with Fortune 500 companies to integrate AI solutions into their enterprise workflows.",
+      content: "PersX.ai announces strategic partnerships with Fortune 500 companies to integrate AI solutions into their enterprise workflows.",
     },
     {
       id: 4,
@@ -26,7 +26,7 @@ export default function News() {
     },
     {
       id: 5,
-      title: "persx.ai Wins 'Best AI Platform' Award",
+      title: "PersX.ai Wins 'Best AI Platform' Award",
       date: "October 15, 2025",
       content: "We're honored to receive the 'Best AI Platform' award at the Global Tech Innovation Summit 2025, recognizing our commitment to excellence.",
     },
@@ -38,9 +38,9 @@ export default function News() {
         <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
           News
         </h1>
-        <p className="text-xl text-gray-600 dark:text-gray-400 mb-12">
-          Latest announcements and updates from persx.ai
-        </p>
+        <h2 className="text-xl text-gray-600 dark:text-gray-400 mb-12">
+          Latest announcements and updates from PersX.ai
+        </h2>
 
         <div className="space-y-6">
           {newsItems.map((item, index) => (

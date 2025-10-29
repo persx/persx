@@ -36,9 +36,9 @@ export default function Blog() {
         <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
           Blog
         </h1>
-        <p className="text-xl text-gray-600 dark:text-gray-400 mb-12">
-          Insights, tutorials, and updates from the persx.ai team
-        </p>
+        <h2 className="text-xl text-gray-600 dark:text-gray-400 mb-12">
+          Insights, tutorials, and updates from the PersX.ai team
+        </h2>
 
         <div className="space-y-8">
           {blogPosts.map((post) => (

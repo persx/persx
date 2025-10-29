@@ -6,7 +6,8 @@ import Link from "next/link";
 interface FormData {
   industry: string;
   industryOther: string;
-  goal: string;
+  goals: string[];
+  goalOther: string;
   martechStack: string[];
   martechOther: string;
   additionalDetails: string;
@@ -20,7 +21,8 @@ export default function StartPage() {
   const [formData, setFormData] = useState<FormData>({
     industry: "",
     industryOther: "",
-    goal: "",
+    goals: [],
+    goalOther: "",
     martechStack: [],
     martechOther: "",
     additionalDetails: "",
@@ -35,12 +37,54 @@ export default function StartPage() {
     "Other",
   ];
 
-  const goals = [
-    "Increase demos",
-    "Improve AOV",
-    "Boost applications",
-    "Raise appointment rate",
-  ];
+  // Industry-specific goals mapping
+  const industryGoals: Record<string, string[]> = {
+    "eCommerce": [
+      "Purchase conversion rate",
+      "Average order value (AOV)",
+      "Revenue per visitor (RPV)",
+      "Cart‑abandonment rate",
+      "Time to Order",
+    ],
+    "Healthcare": [
+      "Appointment bookings",
+      "Form submissions / consultation requests",
+      "Phone call conversions",
+      "Find a doctor engagement",
+      "Rate / Review a doctor",
+    ],
+    "Financial Services": [
+      "Lead form conversion rate",
+      "Qualified lead rate",
+      "Member / Account sign up rate",
+      "Customer churn rate",
+      "Improve credibility and key differentiators",
+    ],
+    "Education": [
+      "Learn more about degree / career program types",
+      "Information‑request form completions",
+      "Campus visit registrations",
+      "Application completions",
+      "Financial aid submissions",
+    ],
+    "B2B/SaaS": [
+      "Qualified leads (MQLs) generated",
+      "Demo or trial requests",
+      "Demo/trial‑to‑customer conversion",
+      "Commerce or membership new purchases",
+      "Revenue retention / churn",
+      "Customer lifetime value",
+    ],
+    "Other": [
+      "Increase Website Conversion Rate",
+      "Decrease Bounce Rate",
+      "Improve customer lifetime values",
+      "Drive Leads and Enhance Customer Experience",
+    ],
+  };
+
+  // Get goals for current industry
+  const currentGoals = formData.industry ? industryGoals[formData.industry] || [] : [];
 
   const martechOptions = [
     "Optimizely",
@@ -52,11 +96,18 @@ export default function StartPage() {
   ];
 
   const handleIndustryChange = (value: string) => {
-    setFormData({ ...formData, industry: value });
+    setFormData({ ...formData, industry: value, goals: [], goalOther: "" });
+    // Store industry in sessionStorage for use on contact page
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem('userIndustry', value);
+    }
   };
 
-  const handleGoalChange = (value: string) => {
-    setFormData({ ...formData, goal: value });
+  const handleGoalToggle = (value: string) => {
+    const updatedGoals = formData.goals.includes(value)
+      ? formData.goals.filter((item) => item !== value)
+      : [...formData.goals, value];
+    setFormData({ ...formData, goals: updatedGoals });
   };
 
   const handleMartechToggle = (value: string) => {
@@ -71,7 +122,7 @@ export default function StartPage() {
       case 1:
         return formData.industry && (formData.industry !== "Other" || formData.industryOther);
       case 2:
-        return formData.goal;
+        return formData.goals.length > 0 && (!formData.goals.includes("Other") || formData.goalOther);
       case 3:
         return formData.martechStack.length > 0;
       case 4:
@@ -338,27 +389,52 @@ export default function StartPage() {
             </div>
           )}
 
-          {/* Step 2: Goal */}
+          {/* Step 2: Goals */}
           {currentStep === 2 && (
             <div>
-              <h2 className="text-2xl font-bold mb-6">What's your primary goal?</h2>
+              <h2 className="text-2xl font-bold mb-6">
+                {formData.industry === "Other"
+                  ? "What are your primary goals?"
+                  : `What are your primary goals for ${formData.industry}?`}
+              </h2>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">Select all that apply</p>
               <div className="space-y-3">
-                {goals.map((goal) => (
+                {currentGoals.map((goal) => (
                   <label
                     key={goal}
                     className="flex items-center p-4 rounded-lg border border-gray-200 dark:border-gray-700 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                   >
                     <input
-                      type="radio"
-                      name="goal"
-                      value={goal}
-                      checked={formData.goal === goal}
-                      onChange={(e) => handleGoalChange(e.target.value)}
+                      type="checkbox"
+                      checked={formData.goals.includes(goal)}
+                      onChange={() => handleGoalToggle(goal)}
                       className="w-4 h-4 text-blue-600"
                     />
                     <span className="ml-3 font-medium">{goal}</span>
                   </label>
                 ))}
+
+                {/* Other option */}
+                <div>
+                  <label className="flex items-center p-4 rounded-lg border border-gray-200 dark:border-gray-700 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                    <input
+                      type="checkbox"
+                      checked={formData.goals.includes("Other")}
+                      onChange={() => handleGoalToggle("Other")}
+                      className="w-4 h-4 text-blue-600"
+                    />
+                    <span className="ml-3 font-medium">Other</span>
+                  </label>
+                  {formData.goals.includes("Other") && (
+                    <input
+                      type="text"
+                      placeholder="Please specify your goal"
+                      value={formData.goalOther}
+                      onChange={(e) => setFormData({ ...formData, goalOther: e.target.value })}
+                      className="mt-2 w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  )}
+                </div>
               </div>
             </div>
           )}

@@ -21,7 +21,8 @@ export interface RoadmapSubmission {
   id?: string;
   industry: string;
   industry_other?: string | null;
-  goal: string;
+  goals: string[];
+  goal_other?: string | null;
   martech_stack: string[];
   martech_other?: string | null;
   additional_details?: string | null;

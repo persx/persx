@@ -33,11 +33,11 @@ export default function About() {
     <div className="container mx-auto px-4 md:px-6 py-12 md:py-20">
       <div className="max-w-4xl mx-auto">
         <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-          About persx.ai
+          About PersX.ai
         </h1>
-        <p className="text-xl text-gray-600 dark:text-gray-400 mb-12">
+        <h2 className="text-xl text-gray-600 dark:text-gray-400 mb-12">
           Building the future of artificial intelligence
-        </p>
+        </h2>
 
         {/* Mission Section */}
         <section className="mb-16">
@@ -45,7 +45,7 @@ export default function About() {
             Our Mission
           </h2>
           <p className="text-lg text-gray-600 dark:text-gray-400 leading-relaxed mb-4">
-            At persx.ai, we're on a mission to democratize artificial intelligence and make
+            At PersX.ai, we're on a mission to democratize artificial intelligence and make
             cutting-edge AI technology accessible to organizations of all sizes. We believe
             that AI should empower people, not replace them, and our tools are designed to
             augment human capabilities and drive innovation.

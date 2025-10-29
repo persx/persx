@@ -8,9 +8,9 @@ export default function Home() {
         <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
           AI Strategist for Personalization & Experimentation
         </h1>
-        <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-400 mb-8 max-w-3xl mx-auto">
+        <h2 className="text-xl md:text-2xl text-gray-600 dark:text-gray-400 mb-8 max-w-3xl mx-auto">
           Discovery your ideal personas, journeys, and build an actionable roadmap in minutes.
-        </p>
+        </h2>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link href="/start" className="px-8 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors">
             Get Started
@@ -24,7 +24,7 @@ export default function Home() {
       {/* Features Section */}
       <section className="py-20">
         <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
-          Why Choose persx.ai?
+          Why Choose PersX.ai?
         </h2>
         <div className="grid md:grid-cols-3 gap-8">
           <div className="p-6 rounded-lg border border-gray-200 dark:border-gray-800 hover:shadow-lg transition-shadow">
@@ -95,7 +95,7 @@ export default function Home() {
             Ready to Transform Your Business?
           </h2>
           <p className="text-lg mb-6 opacity-90">
-            Join thousands of companies already using persx.ai to power their personalization initiatives
+            Join thousands of companies already using PersX.ai to power their personalization initiatives
           </p>
           <Link href="/start" className="inline-block px-8 py-3 bg-white text-blue-600 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
             Get Your Free Roadmap

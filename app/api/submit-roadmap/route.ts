@@ -13,7 +13,10 @@ export async function POST(request: NextRequest) {
     if (data.industryOther) {
       console.log("Industry (Other):", data.industryOther);
     }
-    console.log("Goal:", data.goal);
+    console.log("Goals:", data.goals.join(", "));
+    if (data.goalOther) {
+      console.log("Goal (Other):", data.goalOther);
+    }
     console.log("Martech Stack:", data.martechStack.join(", "));
     if (data.martechOther) {
       console.log("Martech Stack (Other):", data.martechOther);
@@ -32,7 +35,8 @@ export async function POST(request: NextRequest) {
       const submissionData: RoadmapSubmission = {
         industry: data.industry,
         industry_other: data.industryOther || null,
-        goal: data.goal,
+        goals: data.goals,
+        goal_other: data.goalOther || null,
         martech_stack: data.martechStack,
         martech_other: data.martechOther || null,
         additional_details: data.additionalDetails || null,

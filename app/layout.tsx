@@ -4,33 +4,33 @@ import Header from "@/components/Header";
 
 export const metadata: Metadata = {
   title: {
-    default: "persx.ai - AI Strategist for Personalization & Experimentation",
-    template: "%s | persx.ai",
+    default: "PersX.ai - AI Strategist for Personalization & Experimentation",
+    template: "%s | PersX.ai",
   },
   description: "Discovery your ideal personas, journeys, and build an actionable roadmap in minutes. AI-powered personalization and experimentation strategy.",
   keywords: ["AI", "personalization", "experimentation", "A/B testing", "customer personas", "conversion optimization", "martech"],
-  authors: [{ name: "persx.ai" }],
-  creator: "persx.ai",
-  publisher: "persx.ai",
+  authors: [{ name: "PersX.ai" }],
+  creator: "PersX.ai",
+  publisher: "PersX.ai",
   openGraph: {
     type: "website",
     locale: "en_US",
     url: "https://persx.ai",
-    siteName: "persx.ai",
-    title: "persx.ai - AI Strategist for Personalization & Experimentation",
+    siteName: "PersX.ai",
+    title: "PersX.ai - AI Strategist for Personalization & Experimentation",
     description: "Discovery your ideal personas, journeys, and build an actionable roadmap in minutes.",
     images: [
       {
         url: "/icon.svg",
         width: 32,
         height: 32,
-        alt: "persx.ai logo",
+        alt: "PersX.ai logo",
       },
     ],
   },
   twitter: {
     card: "summary",
-    title: "persx.ai - AI Strategist for Personalization & Experimentation",
+    title: "PersX.ai - AI Strategist for Personalization & Experimentation",
     description: "Discovery your ideal personas, journeys, and build an actionable roadmap in minutes.",
     images: ["/icon.svg"],
   },
@@ -56,7 +56,7 @@ export default function RootLayout({
         <main className="flex-1">{children}</main>
         <footer className="border-t py-6 md:py-8">
           <div className="container mx-auto px-4 md:px-6 text-center text-sm text-gray-600 dark:text-gray-400">
-            <p>&copy; {new Date().getFullYear()} persx.ai. All rights reserved.</p>
+            <p>&copy; {new Date().getFullYear()} PersX.ai. All rights reserved.</p>
           </div>
         </footer>
       </body>
