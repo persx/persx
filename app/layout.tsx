@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Header from "@/components/Header";
-import { Analytics } from '@vercel/analytics/next';
-import { SpeedInsights } from '@vercel/speed-insights/next';
+import ConditionalAnalytics from "@/components/ConditionalAnalytics";
 
 export const metadata: Metadata = {
   title: {
@@ -91,8 +90,7 @@ export default function RootLayout({
             <p>&copy; {new Date().getFullYear()} PersX.ai. All rights reserved.</p>
           </div>
         </footer>
-        <Analytics />
-        <SpeedInsights />
+        <ConditionalAnalytics />
       </body>
     </html>
   );
