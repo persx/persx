@@ -1,7 +1,79 @@
 import Link from "next/link";
+import StructuredData from "@/components/StructuredData";
 
 export default function About() {
+  // Structured data for About page
+  const aboutPageSchema = {
+    "@context": "https://schema.org",
+    "@type": "AboutPage",
+    "name": "About PersX.ai",
+    "description": "PersX.ai is your strategy engine for experience optimization. Learn about our 5-step optimization loop and 20+ years of expertise.",
+    "mainEntity": {
+      "@type": "Organization",
+      "name": "PersX.ai",
+      "description": "Strategy engine for experience optimization backed by 20+ years of marketing and martech expertise",
+      "foundingDate": "2023",
+      "founders": [
+        {
+          "@type": "Person",
+          "jobTitle": "Experience Optimization Expert"
+        }
+      ],
+      "knowsAbout": [
+        "Personalization",
+        "A/B Testing",
+        "Conversion Rate Optimization",
+        "Marketing Technology",
+        "Behavioral Segmentation",
+        "Cross-channel Marketing"
+      ]
+    }
+  };
+
+  const howToSchema = {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": "Five-Step Optimization Loop",
+    "description": "PersX.ai's proven methodology for turning insights into growth",
+    "step": [
+      {
+        "@type": "HowToStep",
+        "name": "Discovery",
+        "text": "Aggregate evidence and audit the entire journey. Quantify where visitors stall and capture why using voice-of-customer feedback.",
+        "position": 1
+      },
+      {
+        "@type": "HowToStep",
+        "name": "Hypothesis",
+        "text": "Craft test hypotheses with success criteria, guardrails, and sample-size requirements to ensure valid results.",
+        "position": 2
+      },
+      {
+        "@type": "HowToStep",
+        "name": "Execution",
+        "text": "Generate copy, layout and offer variants. Implement and launch targeted A/B/n tests with clean analysis tracking.",
+        "position": 3
+      },
+      {
+        "@type": "HowToStep",
+        "name": "Review",
+        "text": "Evaluate metrics beyond primary goals including AOV, retention and fairness across segments to avoid regressions.",
+        "position": 4
+      },
+      {
+        "@type": "HowToStep",
+        "name": "Scale",
+        "text": "Turn wins into reusable patterns and roll them out to adjacent journeys and channels while monitoring for drift.",
+        "position": 5
+      }
+    ]
+  };
+
   return (
+    <>
+      <StructuredData data={aboutPageSchema} />
+      <StructuredData data={howToSchema} />
+
     <div className="container mx-auto px-4 md:px-6 py-12 md:py-20">
       <div className="max-w-4xl mx-auto">
         {/* Hero Section */}
@@ -216,5 +288,6 @@ export default function About() {
         </section>
       </div>
     </div>
+    </>
   );
 }

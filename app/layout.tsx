@@ -7,11 +7,38 @@ export const metadata: Metadata = {
     default: "PersX.ai - AI Strategist for Personalization & Experimentation",
     template: "%s | PersX.ai",
   },
-  description: "Discover your ideal personas, journeys, and build an actionable roadmap in minutes. AI-powered personalization and experimentation strategy.",
-  keywords: ["AI", "personalization", "experimentation", "A/B testing", "customer personas", "conversion optimization", "martech"],
-  authors: [{ name: "PersX.ai" }],
+  description: "Discover your ideal personas, journeys, and build an actionable roadmap in minutes. AI-powered personalization and experimentation strategy backed by 20+ years of expertise.",
+  keywords: [
+    "AI personalization",
+    "experimentation platform",
+    "A/B testing",
+    "customer personas",
+    "conversion optimization",
+    "martech integration",
+    "behavioral segmentation",
+    "cross-channel marketing",
+    "experience optimization",
+    "GEO optimization",
+    "CRO strategy",
+    "marketing automation"
+  ],
+  authors: [{ name: "PersX.ai", url: "https://persx.ai" }],
   creator: "PersX.ai",
   publisher: "PersX.ai",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  alternates: {
+    canonical: "https://persx.ai",
+  },
   openGraph: {
     type: "website",
     locale: "en_US",
@@ -29,11 +56,14 @@ export const metadata: Metadata = {
     ],
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "PersX.ai - AI Strategist for Personalization & Experimentation",
-    description: "Discover your ideal personas, journeys, and build an actionable roadmap in minutes.",
+    description: "Discover your ideal personas, journeys, and build an actionable roadmap in minutes. Backed by 20+ years of expertise.",
     images: ["/icon.svg"],
+    creator: "@PersXai",
   },
+  category: "technology",
+  classification: "Business Software, Marketing Technology, Personalization Platform",
   icons: {
     icon: [
       { url: "/icon.svg", type: "image/svg+xml" },

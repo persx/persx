@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import StructuredData from "@/components/StructuredData";
 
 export default function Home() {
   const [userIndustry, setUserIndustry] = useState<string>("");
@@ -128,8 +129,89 @@ export default function Home() {
 
   const callouts = getCallouts();
 
+  // Structured data for SEO and AI engines
+  const organizationSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "PersX.ai",
+    "description": "AI Strategist for Personalization & Experimentation. Strategy engine for experience optimization.",
+    "url": "https://persx.ai",
+    "logo": "https://persx.ai/icon.svg",
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "email": "persx@alexdesigns.com",
+      "contactType": "Customer Service"
+    },
+    "sameAs": []
+  };
+
+  const softwareSchema = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "PersX.ai",
+    "applicationCategory": "BusinessApplication",
+    "description": "Intelligence layer that uncovers hidden opportunities, aligns them to audience personas, proposes measurable tests, and maps integration paths across web, mobile and email.",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD",
+      "description": "Free personalized roadmap"
+    },
+    "featureList": [
+      "Behavioral persona inference",
+      "Cross-channel journey design",
+      "Experiment roadmap creation",
+      "Martech stack integration",
+      "Industry-specific optimization"
+    ]
+  };
+
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is PersX.ai?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "PersX.ai is a strategy engine for experience optimization that helps businesses discover hidden opportunities, align them to audience personas, and propose measurable tests. It's backed by 20+ years of marketing and martech expertise."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How does PersX.ai help with personalization?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "PersX.ai turns raw behavior signals into ready-to-test experiments by inferring personas from behavioral data, creating cross-channel journeys, and providing industry-specific guidance for your vertical's unique challenges."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Which industries does PersX.ai support?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "PersX.ai provides tailored strategies for eCommerce, Healthcare, Financial Services, Education, and B2B/SaaS, with specific personas, journeys, and experiments built for each vertical's KPIs."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What martech tools does PersX.ai integrate with?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "PersX.ai integrates seamlessly with Optimizely, Segment, Salesforce, Marketo, Microsoft Dynamics, and other major martech tools."
+        }
+      }
+    ]
+  };
+
   return (
-    <div className="container mx-auto px-4 md:px-6">
+    <>
+      <StructuredData data={organizationSchema} />
+      <StructuredData data={softwareSchema} />
+      <StructuredData data={faqSchema} />
+
+      <div className="container mx-auto px-4 md:px-6">
       {/* Hero Section */}
       <section className="py-20 md:py-32 text-center">
         <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
@@ -218,5 +300,6 @@ export default function Home() {
         </div>
       </section>
     </div>
+    </>
   );
 }

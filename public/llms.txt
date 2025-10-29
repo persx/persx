@@ -1,0 +1,68 @@
+# PersX.ai - AI-Powered Experience Optimization Platform
+
+> Strategy engine for personalization and experimentation
+
+## About PersX.ai
+
+PersX.ai is an intelligence layer that helps businesses discover hidden opportunities, align them to audience personas, and propose measurable tests. Backed by 20+ years of marketing and martech expertise.
+
+## Key Pages to Index
+
+### Homepage
+URL: https://persx.ai
+Summary: AI Strategist for Personalization & Experimentation. Discover your ideal personas, journeys, and build an actionable roadmap in minutes.
+Topics: personalization, experimentation, A/B testing, customer personas, conversion optimization
+
+### About
+URL: https://persx.ai/about
+Summary: PersX.ai is your strategy engine for experience optimization. Learn about our 5-step optimization loop: Discovery, Hypothesis, Execution, Review, and Scale.
+Topics: experience optimization, marketing strategy, martech integration, conversion optimization methodology
+
+### Get Free Roadmap
+URL: https://persx.ai/start
+Summary: Build your custom 90-day experience optimization roadmap. Industry-specific guidance for eCommerce, Healthcare, Financial Services, Education, and B2B/SaaS.
+Topics: roadmap generation, industry-specific optimization, personalization strategy, experimentation planning
+
+### Blog
+URL: https://persx.ai/blog
+Summary: Insights on behavioral segmentation, cross-channel journeys, experimentation at scale, tech stack integration, and continuous learning loops.
+Topics: behavioral segmentation, cross-channel marketing, A/B testing, martech integration, growth optimization
+
+### Contact
+URL: https://persx.ai/contact
+Summary: Connect with experience optimization experts. Get personalized strategies for your industry to boost conversion rates and drive growth.
+Topics: consultation, expert guidance, personalization strategy, conversion optimization
+
+## Core Capabilities
+
+- Behavioral persona inference from clickstream data
+- Cross-channel journey design (web, mobile, email)
+- Experiment roadmap creation and prioritization
+- Martech stack integration (Optimizely, Segment, Salesforce, Marketo, Microsoft Dynamics)
+- Industry-specific optimization strategies
+
+## Target Industries
+
+- eCommerce: Cart abandonment, AOV optimization, revenue per visitor
+- Healthcare: Appointment bookings, patient engagement, consultation requests
+- Financial Services: Lead generation, account sign-ups, retention
+- Education: Enrollment optimization, application completion, campus visits
+- B2B/SaaS: Trial conversion, demo requests, MQL generation
+
+## Use Cases
+
+1. Accelerate personalization without adding new tools
+2. Improve conversion rates with data-driven experiments
+3. Optimize onboarding and user journeys
+4. Reduce cart abandonment and friction points
+5. Increase customer lifetime value
+
+## Integration Partners
+
+Optimizely, Segment, Salesforce, Marketo, Microsoft Dynamics
+
+## Contact
+
+Email: persx@alexdesigns.com
+Support: support@persx.ai
+Website: https://persx.ai
