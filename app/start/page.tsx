@@ -94,13 +94,24 @@ export default function StartPage() {
   const handleSubmitForm = async () => {
     try {
       // Send form data to API
-      await fetch("/api/submit-roadmap", {
+      const response = await fetch("/api/submit-roadmap", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        console.error("Form submission failed:", result);
+        alert(`Submission failed: ${result.message || "Unknown error"}`);
+        return;
+      }
+
+      console.log("Form submitted successfully:", result);
     } catch (error) {
       console.error("Error submitting form:", error);
+      alert("Network error: Could not submit form. Please try again.");
     }
   };
 
