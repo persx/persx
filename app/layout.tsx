@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Header from "@/components/Header";
 import ConditionalAnalytics from "@/components/ConditionalAnalytics";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: {
@@ -87,7 +88,12 @@ export default function RootLayout({
         <main className="flex-1">{children}</main>
         <footer className="border-t py-6 md:py-8">
           <div className="container mx-auto px-4 md:px-6 text-center text-sm text-gray-600 dark:text-gray-400">
-            <p>&copy; {new Date().getFullYear()} PersX.ai. All rights reserved.</p>
+            <p className="mb-2">&copy; {new Date().getFullYear()} PersX.ai. All rights reserved.</p>
+            <div className="flex items-center justify-center gap-4">
+              <Link href="/privacy" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                Privacy Policy
+              </Link>
+            </div>
           </div>
         </footer>
         <ConditionalAnalytics />
