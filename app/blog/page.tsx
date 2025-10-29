@@ -2,31 +2,38 @@ export default function Blog() {
   const blogPosts = [
     {
       id: 1,
-      title: "Understanding AI in Modern Applications",
-      date: "October 28, 2025",
-      excerpt: "Explore how artificial intelligence is transforming the way we build and interact with modern applications.",
-      category: "AI",
+      title: "From Data to Personas: How PersX.ai Turns Clickstreams into Actionable Segments",
+      date: "Coming Soon",
+      excerpt: "Explain the process of inferring personas from behavioral data and why behavior‑led segmentation drives more effective personalization than demographics alone.",
+      category: "Personalization",
     },
     {
       id: 2,
-      title: "The Future of Machine Learning",
-      date: "October 25, 2025",
-      excerpt: "Dive deep into the emerging trends and technologies shaping the future of machine learning and data science.",
-      category: "Machine Learning",
+      title: "Designing Cross‑Channel Journeys: Best Practices for Web, Mobile, and Email",
+      date: "Coming Soon",
+      excerpt: "Outline how PersX.ai creates cohesive journeys across multiple channels and the KPIs marketers should use to measure each stage of the funnel.",
+      category: "Strategy",
     },
     {
       id: 3,
-      title: "Building Scalable AI Systems",
-      date: "October 22, 2025",
-      excerpt: "Learn best practices for designing and implementing scalable AI systems that can handle enterprise workloads.",
-      category: "Engineering",
+      title: "Experimentation at Scale: Building an 8‑Week Roadmap with PersX.ai",
+      date: "Coming Soon",
+      excerpt: "Walk readers through structuring a test plan, including hypothesis development, prioritization (P1 vs. P3), and how PersX.ai recommends experiments tailored to their business.",
+      category: "Experimentation",
     },
     {
       id: 4,
-      title: "Ethics in Artificial Intelligence",
-      date: "October 20, 2025",
-      excerpt: "An important discussion on ethical considerations and responsible AI development practices.",
-      category: "Ethics",
+      title: "Integrating PersX.ai with Your Tech Stack: When to Use an ODP vs. Direct CRM Connections",
+      date: "Coming Soon",
+      excerpt: "Compare integration options with case‑based recommendations, highlighting ease of implementation, data centralization, and scalability.",
+      category: "Integration",
+    },
+    {
+      id: 5,
+      title: "Learning Loops: How to Turn Insights into Continuous Growth with PersX.ai",
+      date: "Coming Soon",
+      excerpt: "Describe the LEARN phase, focusing on measuring outcomes, iterating on findings, and ensuring long‑term improvements in conversion, AOV, or other key metrics.",
+      category: "Growth",
     },
   ];
 
@@ -60,9 +67,9 @@ export default function Blog() {
               <p className="text-gray-600 dark:text-gray-400 mb-4">
                 {post.excerpt}
               </p>
-              <button className="text-blue-600 dark:text-blue-400 font-semibold hover:underline">
-                Read More →
-              </button>
+              <span className="text-gray-500 dark:text-gray-500 font-semibold">
+                Coming Soon
+              </span>
             </article>
           ))}
         </div>
