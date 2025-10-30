@@ -139,7 +139,7 @@ export default async function ContentListPage({
                       <div className="flex items-start">
                         <div>
                           <Link
-                            href={`/cm/content/${item.id}`}
+                            href={`/go/cm/content/${item.id}`}
                             className="font-medium text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400"
                           >
                             {item.title}
@@ -171,7 +171,7 @@ export default async function ContentListPage({
                     </td>
                     <td className="px-6 py-4">
                       <Link
-                        href={`/cm/content/${item.id}`}
+                        href={`/go/cm/content/${item.id}`}
                         className="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 font-medium"
                       >
                         Edit →
