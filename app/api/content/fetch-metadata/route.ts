@@ -138,5 +138,5 @@ function extractTags($: cheerio.CheerioAPI): string[] {
   });
 
   // Remove duplicates and empty strings
-  return [...new Set(tags.filter(Boolean))].slice(0, 10); // Limit to 10 tags
+  return Array.from(new Set(tags.filter(Boolean))).slice(0, 10); // Limit to 10 tags
 }
