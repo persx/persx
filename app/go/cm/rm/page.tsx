@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase-server";
 import Link from "next/link";
+import SubmissionAccordion from "./SubmissionAccordion";
 
 export default async function RoadmapSubmissionsPage() {
   const supabase = createClient();
@@ -12,23 +13,6 @@ export default async function RoadmapSubmissionsPage() {
   if (error) {
     console.error("Error fetching submissions:", error);
   }
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
-
-  const getEnvironmentBadge = (env: string | null) => {
-    if (env === "production") {
-      return "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400";
-    }
-    return "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400";
-  };
 
   return (
     <div className="space-y-6">
@@ -90,80 +74,10 @@ export default async function RoadmapSubmissionsPage() {
             </p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50 dark:bg-gray-700/50 border-b border-gray-200 dark:border-gray-700">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    Date
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    Industry
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    Goals
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    Environment
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    Location
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    IP Address
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    Email
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                {submissions.map((submission) => (
-                  <tr
-                    key={submission.id}
-                    className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
-                  >
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                      {formatDate(submission.created_at)}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">
-                      {submission.industry}
-                      {submission.industry_other && (
-                        <span className="text-gray-500 dark:text-gray-400">
-                          {" "}
-                          ({submission.industry_other})
-                        </span>
-                      )}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">
-                      <div className="max-w-xs">
-                        {submission.goals?.join(", ") || "—"}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span
-                        className={`inline-block px-2 py-1 text-xs rounded-full ${getEnvironmentBadge(
-                          submission.environment
-                        )}`}
-                      >
-                        {submission.environment || "unknown"}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">
-                      {[submission.city, submission.region, submission.country]
-                        .filter(Boolean)
-                        .join(", ") || "—"}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-600 dark:text-gray-400">
-                      {submission.ip_address || "—"}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">
-                      {submission.email || "—"}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="divide-y divide-gray-200 dark:divide-gray-700">
+            {submissions.map((submission) => (
+              <SubmissionAccordion key={submission.id} submission={submission} />
+            ))}
           </div>
         )}
       </div>
