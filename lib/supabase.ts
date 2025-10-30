@@ -99,6 +99,15 @@ export interface SubscriberActivity {
   created_at?: string;
 }
 
+// External source for multi-source content
+export interface ExternalSource {
+  url: string;
+  name?: string | null;
+  author?: string | null;
+  published_date?: string | null;
+  summary?: string | null;
+}
+
 // Knowledge base content with external source fields
 export interface KnowledgeBaseContent {
   id?: string;
@@ -109,7 +118,7 @@ export interface KnowledgeBaseContent {
   content_type: 'blog' | 'case_study' | 'implementation_guide' | 'test_result' | 'best_practice' | 'tool_guide' | 'news';
   status: 'draft' | 'published' | 'archived';
 
-  // External content fields
+  // External content fields (single source - backward compatibility)
   source_type: 'internal' | 'external_curated' | 'external_referenced';
   source_name?: string | null;
   source_url?: string | null;
@@ -117,6 +126,11 @@ export interface KnowledgeBaseContent {
   source_published_date?: string | null;
   curator_notes?: string | null;
   summary?: string | null;
+
+  // Multi-source support (for news roundups)
+  external_sources?: ExternalSource[];
+  persx_perspective?: string | null;
+  overall_summary?: string | null;
 
   // Categorization
   industry?: string | null;

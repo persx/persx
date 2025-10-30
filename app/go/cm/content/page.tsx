@@ -68,12 +68,20 @@ export default async function ContentListPage({
             Manage all your content in one place
           </p>
         </div>
-        <Link
-          href="/go/cm/content/new"
-          className="px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-semibold hover:shadow-lg transition-shadow"
-        >
-          + New Content
-        </Link>
+        <div className="flex gap-3">
+          <Link
+            href="/go/cm/content/quick-add"
+            className="px-4 py-2 bg-orange-600 text-white rounded-lg font-semibold hover:bg-orange-700 transition-colors"
+          >
+            ⚡ Quick Add News
+          </Link>
+          <Link
+            href="/go/cm/content/new"
+            className="px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-semibold hover:shadow-lg transition-shadow"
+          >
+            + New Content
+          </Link>
+        </div>
       </div>
 
       {/* Filters */}

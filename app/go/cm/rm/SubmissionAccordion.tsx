@@ -20,7 +20,7 @@ export default function SubmissionAccordion({ submission }: SubmissionAccordionP
     });
   };
 
-  const getEnvironmentBadge = (env: string | null) => {
+  const getEnvironmentBadge = (env: string | null | undefined) => {
     if (env === "production") {
       return "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400";
     }

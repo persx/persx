@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
         industries: data.industries || [],
         tool_categories: data.tool_categories || [],
         tags: data.tags || [],
-        // External content fields
+        // External content fields (single source)
         source_type: data.source_type || "internal",
         source_name: data.source_name || null,
         source_url: data.source_url || null,
@@ -51,6 +51,10 @@ export async function POST(request: NextRequest) {
         source_published_date: data.source_published_date || null,
         curator_notes: data.curator_notes || null,
         summary: data.summary || null,
+        // Multi-source support
+        external_sources: data.external_sources || [],
+        persx_perspective: data.persx_perspective || null,
+        overall_summary: data.overall_summary || null,
       })
       .select()
       .single();
