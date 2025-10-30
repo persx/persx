@@ -8,7 +8,8 @@ CREATE TYPE content_type AS ENUM (
   'implementation_guide',
   'test_result',
   'best_practice',
-  'tool_guide'
+  'tool_guide',
+  'news'
 );
 
 -- Content status enum

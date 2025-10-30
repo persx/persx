@@ -6,7 +6,8 @@ export type ContentType =
   | 'implementation_guide'
   | 'test_result'
   | 'best_practice'
-  | 'tool_guide';
+  | 'tool_guide'
+  | 'news';
 
 export type ContentStatus = 'draft' | 'published' | 'archived';
 

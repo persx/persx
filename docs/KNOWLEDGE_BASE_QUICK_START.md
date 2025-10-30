@@ -96,6 +96,7 @@ const { data } = await supabase.rpc('match_content_embeddings', {
 | `test_result` | Documented experiments | "Product page layout test results" |
 | `best_practice` | Proven tactics | "Email subject line formulas" |
 | `tool_guide` | Tool-specific docs | "Marketo automation workflows" |
+| `news` | Industry news & updates | "Google announces new GA4 features" |
 
 ## Industry Categories
 

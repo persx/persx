@@ -29,7 +29,7 @@ The PersX.ai knowledge base is built as a **RAG (Retrieval Augmented Generation)
 
 **Key Fields**:
 - `title`, `slug`, `excerpt`, `content` - Core content
-- `content_type` - blog | case_study | implementation_guide | test_result | best_practice | tool_guide
+- `content_type` - blog | case_study | implementation_guide | test_result | best_practice | tool_guide | news
 - `status` - draft | published | archived
 - `industry` - eCommerce | Healthcare | Financial Services | Education | B2B/SaaS | General
 - `goals[]` - Array of goals this content relates to
@@ -42,6 +42,7 @@ The PersX.ai knowledge base is built as a **RAG (Retrieval Augmented Generation)
 - Document case studies by industry
 - Create implementation guides for specific tools
 - Archive test results and learnings
+- Publish industry news and updates
 
 ### 2. `content_embeddings`
 **Purpose**: Vector embeddings for semantic search using pgvector
