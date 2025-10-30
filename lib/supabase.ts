@@ -29,5 +29,10 @@ export interface RoadmapSubmission {
   additional_details?: string | null;
   email?: string | null;
   request_full_roadmap?: boolean;
+  ip_address?: string | null;
+  city?: string | null;
+  region?: string | null;
+  country?: string | null;
+  environment?: string | null;
   created_at?: string;
 }

@@ -37,11 +37,11 @@ export default async function AdminDashboard() {
     .limit(5);
 
   const stats = [
-    { label: "Blog Posts", value: blogCount || 0, icon: "📝", color: "blue" },
-    { label: "Case Studies", value: caseStudyCount || 0, icon: "📊", color: "purple" },
-    { label: "Guides", value: guideCount || 0, icon: "📚", color: "green" },
-    { label: "News", value: newsCount || 0, icon: "📰", color: "orange" },
-    { label: "Roadmap Submissions", value: roadmapCount || 0, icon: "🗺️", color: "pink" },
+    { label: "Blog Posts", value: blogCount || 0, icon: "📝", color: "blue", link: null },
+    { label: "Case Studies", value: caseStudyCount || 0, icon: "📊", color: "purple", link: null },
+    { label: "Guides", value: guideCount || 0, icon: "📚", color: "green", link: null },
+    { label: "News", value: newsCount || 0, icon: "📰", color: "orange", link: null },
+    { label: "Roadmap Submissions", value: roadmapCount || 0, icon: "🗺️", color: "pink", link: "/go/cm/rm" },
   ];
 
   const getColorClasses = (color: string) => {
@@ -74,11 +74,8 @@ export default async function AdminDashboard() {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-        {stats.map((stat) => (
-          <div
-            key={stat.label}
-            className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700"
-          >
+        {stats.map((stat) => {
+          const card = (
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600 dark:text-gray-400">{stat.label}</p>
@@ -90,8 +87,29 @@ export default async function AdminDashboard() {
                 {stat.icon}
               </div>
             </div>
-          </div>
-        ))}
+          );
+
+          if (stat.link) {
+            return (
+              <Link
+                key={stat.label}
+                href={stat.link}
+                className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-500 transition-colors cursor-pointer"
+              >
+                {card}
+              </Link>
+            );
+          }
+
+          return (
+            <div
+              key={stat.label}
+              className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700"
+            >
+              {card}
+            </div>
+          );
+        })}
       </div>
 
       {/* Quick Actions */}

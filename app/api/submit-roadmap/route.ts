@@ -6,9 +6,29 @@ export async function POST(request: NextRequest) {
   try {
     const data = await request.json();
 
+    // Get IP address and location from headers (Vercel provides these)
+    const ip = request.headers.get("x-forwarded-for")?.split(",")[0] ||
+               request.headers.get("x-real-ip") ||
+               "unknown";
+
+    const city = request.headers.get("x-vercel-ip-city") || null;
+    const region = request.headers.get("x-vercel-ip-country-region") || null;
+    const country = request.headers.get("x-vercel-ip-country") || null;
+
+    // Determine environment (production or local)
+    const host = request.headers.get("host") || "";
+    const environment = host.includes("localhost") || host.includes("127.0.0.1")
+      ? "local"
+      : "production";
+
     // Log the form submission data for debugging
     console.log("=== New Roadmap Submission ===");
     console.log("Timestamp:", new Date().toISOString());
+    console.log("Environment:", environment);
+    console.log("IP Address:", ip);
+    if (city || region || country) {
+      console.log("Location:", [city, region, country].filter(Boolean).join(", "));
+    }
     console.log("Industry:", data.industry);
     if (data.industryOther) {
       console.log("Industry (Other):", data.industryOther);
@@ -46,6 +66,11 @@ export async function POST(request: NextRequest) {
         additional_details: data.additionalDetails || null,
         email: data.email || null,
         request_full_roadmap: data.requestFullRoadmap || false,
+        ip_address: ip,
+        city,
+        region,
+        country,
+        environment,
       };
 
       // Insert into Supabase

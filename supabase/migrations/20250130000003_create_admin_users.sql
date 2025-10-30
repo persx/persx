@@ -21,15 +21,16 @@ CREATE TABLE IF NOT EXISTS password_reset_tokens (
 );
 
 -- Indexes
-CREATE INDEX idx_admin_users_email ON admin_users(email);
-CREATE INDEX idx_password_reset_tokens_token ON password_reset_tokens(token);
-CREATE INDEX idx_password_reset_tokens_expires ON password_reset_tokens(expires_at);
+CREATE INDEX IF NOT EXISTS idx_admin_users_email ON admin_users(email);
+CREATE INDEX IF NOT EXISTS idx_password_reset_tokens_token ON password_reset_tokens(token);
+CREATE INDEX IF NOT EXISTS idx_password_reset_tokens_expires ON password_reset_tokens(expires_at);
 
 -- Enable RLS
 ALTER TABLE admin_users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE password_reset_tokens ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policies (admin only access)
+DROP POLICY IF EXISTS "Service role can manage admin users" ON admin_users;
 CREATE POLICY "Service role can manage admin users"
   ON admin_users
   FOR ALL
@@ -37,6 +38,7 @@ CREATE POLICY "Service role can manage admin users"
   USING (true)
   WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Service role can manage reset tokens" ON password_reset_tokens;
 CREATE POLICY "Service role can manage reset tokens"
   ON password_reset_tokens
   FOR ALL
@@ -54,6 +56,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Update trigger
+DROP TRIGGER IF EXISTS update_admin_users_updated_at ON admin_users;
 CREATE TRIGGER update_admin_users_updated_at
   BEFORE UPDATE ON admin_users
   FOR EACH ROW
