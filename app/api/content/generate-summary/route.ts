@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import OpenAI from "openai";
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
 
 export async function POST(request: NextRequest) {
   try {
@@ -12,35 +17,26 @@ export async function POST(request: NextRequest) {
 
     const { sources, source, type, title, summary } = await request.json();
 
-    // TODO: Replace this with actual AI API integration (OpenAI, Anthropic, etc.)
-    // For now, returning placeholder responses
-
     switch (type) {
       case "title_and_summary":
-        return NextResponse.json({
-          title: generatePlaceholderTitle(sources),
-          summary: generatePlaceholderSummary(sources),
-        });
+        const titleAndSummary = await generateTitleAndSummary(sources);
+        return NextResponse.json(titleAndSummary);
 
       case "title_only":
-        return NextResponse.json({
-          title: generatePlaceholderTitle(sources),
-        });
+        const titleResult = await generateTitle(sources);
+        return NextResponse.json({ title: titleResult });
 
       case "summary_only":
-        return NextResponse.json({
-          summary: generatePlaceholderSummary(sources),
-        });
+        const summaryResult = await generateSummary(sources);
+        return NextResponse.json({ summary: summaryResult });
 
       case "perspective":
-        return NextResponse.json({
-          perspective: generatePlaceholderPerspective(source),
-        });
+        const perspectiveResult = await generatePerspective(source);
+        return NextResponse.json({ perspective: perspectiveResult });
 
       case "tags":
-        return NextResponse.json({
-          tags: generatePlaceholderTags(sources, title, summary),
-        });
+        const tagsResult = await generateTags(sources, title, summary);
+        return NextResponse.json({ tags: tagsResult });
 
       default:
         return NextResponse.json(
@@ -57,73 +53,102 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// Placeholder functions - Replace with actual AI API calls
-function generatePlaceholderTitle(sources: any[]): string {
-  const titles = sources.map(s => s.title).join(", ");
-  return `Industry Insights: ${titles.substring(0, 100)}...`;
+// AI Generation Functions using OpenAI
+
+async function generateTitle(sources: any[]): Promise<string> {
+  const sourceTitles = sources.map((s: any) => s.title).join("\n");
+
+  const completion = await openai.chat.completions.create({
+    model: "gpt-4o",
+    messages: [
+      {
+        role: "system",
+        content: "You are a professional content curator for PersX.ai, specializing in personalization and marketing technology. Create compelling, concise titles that capture the essence of multiple articles."
+      },
+      {
+        role: "user",
+        content: `Create a compelling title for a news roundup covering these articles:\n\n${sourceTitles}\n\nTitle should be:\n- Concise and engaging\n- Under 100 characters\n- Focus on the main theme or insight\n- Professional tone for B2B marketing audience`
+      }
+    ],
+    temperature: 0.7,
+    max_tokens: 100,
+  });
+
+  return completion.choices[0].message.content || "Industry Insights";
 }
 
-function generatePlaceholderSummary(sources: any[]): string {
-  return `This roundup covers ${sources.length} key articles discussing important developments in personalization and marketing technology. The sources highlight emerging trends, best practices, and strategic insights that are reshaping how businesses approach customer experience optimization.
+async function generateSummary(sources: any[]): Promise<string> {
+  const sourceDetails = sources.map((s: any) =>
+    `- ${s.title}\n  ${s.originalSummary}`
+  ).join("\n\n");
 
-Key themes include:
-${sources.map((s, i) => `${i + 1}. ${s.title}`).join("\n")}
+  const completion = await openai.chat.completions.create({
+    model: "gpt-4o",
+    messages: [
+      {
+        role: "system",
+        content: "You are a professional content curator for PersX.ai, specializing in personalization and marketing technology. Write clear, insightful summaries that synthesize multiple sources."
+      },
+      {
+        role: "user",
+        content: `Create an overall summary for a news roundup covering these ${sources.length} articles:\n\n${sourceDetails}\n\nThe summary should:\n- Be 2-4 paragraphs\n- Synthesize the key themes and insights across all sources\n- Highlight what makes this collection valuable for marketing professionals\n- Maintain a professional, authoritative tone\n- Focus on actionable insights and trends`
+      }
+    ],
+    temperature: 0.7,
+    max_tokens: 500,
+  });
 
-These developments represent significant shifts in the industry and offer valuable lessons for marketing professionals looking to stay ahead of the curve.`;
+  return completion.choices[0].message.content || "";
 }
 
-function generatePlaceholderPerspective(source: any): string {
-  return `From PersX.ai's perspective, this article on "${source.title}" highlights several important considerations for personalization practitioners:
+async function generateTitleAndSummary(sources: any[]): Promise<{ title: string; summary: string }> {
+  const [title, summary] = await Promise.all([
+    generateTitle(sources),
+    generateSummary(sources)
+  ]);
 
-The key takeaway is that successful implementation requires a strategic approach that balances technology capabilities with business objectives. Organizations must focus on:
-
-1. **Data Foundation**: Building robust data infrastructure to support personalization efforts
-2. **Customer Understanding**: Developing deep insights into customer behavior and preferences
-3. **Testing & Optimization**: Implementing systematic experimentation to validate assumptions
-4. **Technology Integration**: Ensuring martech stack components work together seamlessly
-
-For marketers looking to apply these insights, we recommend starting with a pilot program focused on high-impact use cases. This allows teams to build expertise and demonstrate ROI before scaling more broadly.
-
-The article also raises important questions about privacy and personalization that every organization must address. As the landscape evolves, maintaining customer trust while delivering relevant experiences will be critical to long-term success.`;
+  return { title, summary };
 }
 
-function generatePlaceholderTags(sources: any[], title: string, summary: string): string[] {
-  // Extract common words and return as tags
-  const commonTags = ["personalization", "marketing", "ai", "optimization", "strategy"];
-  return commonTags.slice(0, 5);
+async function generatePerspective(source: any): Promise<string> {
+  const completion = await openai.chat.completions.create({
+    model: "gpt-4o",
+    messages: [
+      {
+        role: "system",
+        content: "You are a senior strategist at PersX.ai, an expert in personalization and marketing technology. Your role is to provide strategic perspective on industry articles, helping practitioners understand implications and actionable next steps."
+      },
+      {
+        role: "user",
+        content: `Write a PersX.ai perspective on this article:\n\nTitle: ${source.title}\nURL: ${source.url}\nSummary: ${source.originalSummary}\n\nYour perspective should:\n- Be 100-500 words\n- Start with "From PersX.ai's perspective..." or similar\n- Identify key strategic insights and implications\n- Connect to broader trends in personalization and marketing\n- Provide actionable recommendations for practitioners\n- Address both opportunities and challenges\n- Use clear section headers or bullet points for readability\n- Maintain a professional, consultative tone`
+      }
+    ],
+    temperature: 0.7,
+    max_tokens: 800,
+  });
+
+  return completion.choices[0].message.content || "";
 }
 
-/*
- * TO ENABLE AI GENERATION:
- *
- * 1. Install OpenAI SDK: npm install openai
- * 2. Add OPENAI_API_KEY to your .env.local file
- * 3. Replace the placeholder functions with actual API calls
- *
- * Example with OpenAI:
- *
- * import OpenAI from 'openai';
- *
- * const openai = new OpenAI({
- *   apiKey: process.env.OPENAI_API_KEY,
- * });
- *
- * async function generateTitle(sources: any[]): Promise<string> {
- *   const sourceTitles = sources.map(s => s.title).join("\n");
- *
- *   const completion = await openai.chat.completions.create({
- *     model: "gpt-4",
- *     messages: [{
- *       role: "system",
- *       content: "You are a professional content curator for PersX.ai, specializing in personalization and marketing technology."
- *     }, {
- *       role: "user",
- *       content: `Create a compelling title for a news roundup covering these articles:\n\n${sourceTitles}\n\nTitle should be concise, engaging, and under 100 characters.`
- *     }],
- *   });
- *
- *   return completion.choices[0].message.content || "";
- * }
- *
- * Similar pattern for summary, perspective, and tags generation.
- */
+async function generateTags(sources: any[], title: string, summary: string): Promise<string[]> {
+  const sourceDetails = sources.map((s: any) => s.title).join("\n");
+
+  const completion = await openai.chat.completions.create({
+    model: "gpt-4o",
+    messages: [
+      {
+        role: "system",
+        content: "You are a content tagging expert. Generate relevant, specific tags for marketing and personalization content. Return ONLY a comma-separated list of tags, nothing else."
+      },
+      {
+        role: "user",
+        content: `Generate 3-5 relevant tags for this news roundup:\n\nTitle: ${title}\n\nSummary: ${summary}\n\nSources:\n${sourceDetails}\n\nTags should:\n- Be specific and relevant to the content\n- Focus on personalization, marketing technology, and related topics\n- Use lowercase\n- Be single words or short phrases (2-3 words max)\n- Avoid generic terms like "marketing" or "technology"\n\nReturn ONLY the tags as a comma-separated list, no explanation.`
+      }
+    ],
+    temperature: 0.5,
+    max_tokens: 100,
+  });
+
+  const tagsString = completion.choices[0].message.content || "";
+  return tagsString.split(",").map(tag => tag.trim()).filter(Boolean).slice(0, 5);
+}
