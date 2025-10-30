@@ -1,36 +1,19 @@
-export default function News() {
-  const newsItems = [
-    {
-      id: 1,
-      title: "PersX.ai Raises $50M in Series B Funding",
-      date: "October 29, 2025",
-      content: "We're excited to announce our Series B funding round led by top venture capital firms, enabling us to expand our AI capabilities and reach more customers worldwide.",
-    },
-    {
-      id: 2,
-      title: "New AI Model Release: PersX-GPT v2.0",
-      date: "October 26, 2025",
-      content: "Today we're launching PersX-GPT v2.0, our most powerful language model yet, featuring improved accuracy, faster response times, and enhanced multilingual support.",
-    },
-    {
-      id: 3,
-      title: "Partnership with Leading Tech Companies",
-      date: "October 23, 2025",
-      content: "PersX.ai announces strategic partnerships with Fortune 500 companies to integrate AI solutions into their enterprise workflows.",
-    },
-    {
-      id: 4,
-      title: "Opening New Research Lab in San Francisco",
-      date: "October 18, 2025",
-      content: "We're expanding our presence with a new state-of-the-art research facility focused on advancing AI safety and capability research.",
-    },
-    {
-      id: 5,
-      title: "PersX.ai Wins 'Best AI Platform' Award",
-      date: "October 15, 2025",
-      content: "We're honored to receive the 'Best AI Platform' award at the Global Tech Innovation Summit 2025, recognizing our commitment to excellence.",
-    },
-  ];
+import { createClient } from "@/lib/supabase-server";
+
+export default async function News() {
+  const supabase = createClient();
+
+  // Fetch news content from database
+  const { data: newsItems, error } = await supabase
+    .from("knowledge_base_content")
+    .select("id, title, overall_summary, created_at, status, tags")
+    .eq("content_type", "news")
+    .eq("status", "published")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Error fetching news:", error);
+  }
 
   return (
     <div className="container mx-auto px-4 md:px-6 py-12 md:py-20">
@@ -43,29 +26,53 @@ export default function News() {
         </h2>
 
         <div className="space-y-6">
-          {newsItems.map((item, index) => (
-            <div
-              key={item.id}
-              className="p-6 rounded-lg border border-gray-200 dark:border-gray-800 hover:shadow-lg transition-shadow"
-            >
-              <div className="flex items-start gap-4">
-                <div className="flex-shrink-0 w-12 h-12 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center text-white font-bold">
-                  {index + 1}
-                </div>
-                <div className="flex-1">
-                  <div className="text-sm text-gray-500 dark:text-gray-500 mb-2">
-                    {item.date}
+          {newsItems && newsItems.length > 0 ? (
+            newsItems.map((item, index) => (
+              <div
+                key={item.id}
+                className="p-6 rounded-lg border border-gray-200 dark:border-gray-800 hover:shadow-lg transition-shadow"
+              >
+                <div className="flex items-start gap-4">
+                  <div className="flex-shrink-0 w-12 h-12 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center text-white font-bold">
+                    {index + 1}
                   </div>
-                  <h2 className="text-2xl font-bold mb-3 text-gray-900 dark:text-gray-100">
-                    {item.title}
-                  </h2>
-                  <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
-                    {item.content}
-                  </p>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="text-sm text-gray-500 dark:text-gray-500">
+                        {new Date(item.created_at).toLocaleDateString("en-US", {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        })}
+                      </div>
+                      {item.tags && item.tags.length > 0 && (
+                        <div className="flex gap-2">
+                          {item.tags.slice(0, 3).map((tag: string, i: number) => (
+                            <span
+                              key={i}
+                              className="px-2 py-1 text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full"
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                    <h2 className="text-2xl font-bold mb-3 text-gray-900 dark:text-gray-100">
+                      {item.title}
+                    </h2>
+                    <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+                      {item.overall_summary}
+                    </p>
+                  </div>
                 </div>
               </div>
+            ))
+          ) : (
+            <div className="text-center py-12 text-gray-500 dark:text-gray-400">
+              No news items available yet. Check back soon!
             </div>
-          ))}
+          )}
         </div>
 
         <div className="mt-12 p-6 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">

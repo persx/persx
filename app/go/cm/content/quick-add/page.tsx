@@ -276,8 +276,6 @@ export default function QuickAddPage() {
           overall_summary: overallSummary,
           persx_perspective: sourceSummaries.join("\n\n"),
           tags,
-          industries: [],
-          tool_categories: [],
         }),
       });
 
