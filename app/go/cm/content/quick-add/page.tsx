@@ -36,6 +36,7 @@ export default function QuickAddPage() {
 
   // Step 4: Tags
   const [tags, setTags] = useState<string[]>([]);
+  const [newTag, setNewTag] = useState("");
 
   const handleUrlChange = (index: number, value: string) => {
     const newUrls = [...urls];
@@ -230,6 +231,21 @@ export default function QuickAddPage() {
       console.error(err);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleAddTag = () => {
+    const trimmedTag = newTag.trim().toLowerCase();
+    if (trimmedTag && !tags.includes(trimmedTag)) {
+      setTags([...tags, trimmedTag]);
+      setNewTag("");
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleAddTag();
     }
   };
 
@@ -517,9 +533,9 @@ export default function QuickAddPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-                  Recommended Tags
+                  Tags
                 </label>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-2 mb-4">
                   {tags.map((tag, index) => (
                     <span
                       key={index}
@@ -534,6 +550,23 @@ export default function QuickAddPage() {
                       </button>
                     </span>
                   ))}
+                </div>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={newTag}
+                    onChange={(e) => setNewTag(e.target.value)}
+                    onKeyPress={handleKeyPress}
+                    placeholder="Add a new tag"
+                    className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                  />
+                  <button
+                    onClick={handleAddTag}
+                    disabled={!newTag.trim()}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    Add Tag
+                  </button>
                 </div>
               </div>
             </div>
