@@ -76,6 +76,37 @@ export default function About() {
 
     <div className="container mx-auto px-4 md:px-6 py-12 md:py-20">
       <div className="max-w-4xl mx-auto">
+        {/* Personal Message */}
+        <section className="mb-12 p-6 rounded-lg bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 border-2 border-amber-200 dark:border-amber-800">
+          <div className="flex items-start gap-3 mb-4">
+            <span className="text-2xl">👋</span>
+            <div>
+              <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+                A Personal Note About This Project
+              </h2>
+              <div className="space-y-3 text-gray-700 dark:text-gray-300">
+                <p>
+                  PersX.ai is more than a recommendation engine—it's a learning laboratory where I'm pushing the boundaries of AI-driven personalization and experimentation strategy.
+                </p>
+                <p>
+                  This project serves three purposes:
+                </p>
+                <ul className="list-disc list-inside ml-4 space-y-1">
+                  <li>Continuously improve my AI skills and stay on the cutting edge of experience optimization</li>
+                  <li>Provide actionable personalization and experimentation recommendations drawn from 20+ years of hands-on expertise</li>
+                  <li>Build a <strong>RAG (Retrieval Augmented Generation) system</strong> that learns from accumulated knowledge—blogs, case studies, implementation guides—to deliver increasingly sophisticated and contextual recommendations</li>
+                </ul>
+                <p>
+                  As I add more content about advanced tactics, tool integrations, and industry-specific strategies, the system gets smarter. Every blog post, case study, and test result feeds the engine, making your roadmap more precise and actionable.
+                </p>
+                <p className="text-sm italic">
+                  Think of it as an evolving brain for experience optimization—constantly learning, adapting, and improving with each new insight.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Hero Section */}
         <section className="mb-16">
           <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">

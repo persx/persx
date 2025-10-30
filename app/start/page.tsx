@@ -10,6 +10,7 @@ interface FormData {
   goalOther: string;
   martechStack: string[];
   martechOther: string;
+  martechToolNames: Record<string, string>; // Maps martech category to specific tool name
   additionalDetails: string;
   email?: string;
 }
@@ -25,6 +26,7 @@ export default function StartPage() {
     goalOther: "",
     martechStack: [],
     martechOther: "",
+    martechToolNames: {},
     additionalDetails: "",
   });
 
@@ -70,7 +72,6 @@ export default function StartPage() {
     "B2B/SaaS": [
       "Qualified leads (MQLs) generated",
       "Demo or trial requests",
-      "Demo/trial‑to‑customer conversion",
       "Commerce or membership new purchases",
       "Revenue retention / churn",
       "Customer lifetime value",
@@ -87,11 +88,11 @@ export default function StartPage() {
   const currentGoals = formData.industry ? industryGoals[formData.industry] || [] : [];
 
   const martechOptions = [
-    "Optimizely",
-    "Segment",
-    "Salesforce",
-    "Marketo",
-    "Microsoft Dynamics",
+    "A/B Testing or Feature Experimentation",
+    "CDP or Customer Engagement Platform",
+    "CRM or Lead Management Software",
+    "Email Service Provider or Marketing Automation",
+    "Personalization Experience Manager or Journey Builder",
     "Other",
   ];
 
@@ -115,6 +116,16 @@ export default function StartPage() {
       ? formData.martechStack.filter((item) => item !== value)
       : [...formData.martechStack, value];
     setFormData({ ...formData, martechStack: updatedStack });
+  };
+
+  const handleToolNameChange = (category: string, toolName: string) => {
+    setFormData({
+      ...formData,
+      martechToolNames: {
+        ...formData.martechToolNames,
+        [category]: toolName
+      }
+    });
   };
 
   const canProceed = () => {
@@ -960,18 +971,57 @@ export default function StartPage() {
           {/* Step 4: Additional Details */}
           {currentStep === 4 && (
             <div>
-              <h2 className="text-2xl font-bold mb-6">Additional Information</h2>
-              <p className="text-gray-600 dark:text-gray-400 mb-4">
-                What other details would you like to provide to make this roadmap more valuable and
-                actionable for your business goals?
+              <h2 className="text-2xl font-bold mb-2">Finish Personalizing Your Results</h2>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
+                Add the names of the marketing tools used to get more detailed recommendations
               </p>
-              <textarea
-                value={formData.additionalDetails}
-                onChange={(e) => setFormData({ ...formData, additionalDetails: e.target.value })}
-                rows={6}
-                placeholder="Share any specific challenges, goals, or context about your business..."
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+
+              {/* Show selected martech tools with input fields */}
+              {formData.martechStack.length > 0 && (
+                <div className="space-y-4 mb-8">
+                  {formData.martechStack.map((category) => {
+                    if (category === "Other") {
+                      return null; // Skip "Other" - it has its own field in step 3
+                    }
+                    return (
+                      <div key={category}>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          {category}
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.martechToolNames[category] || ""}
+                          onChange={(e) => handleToolNameChange(category, e.target.value)}
+                          placeholder={`e.g., ${
+                            category === "A/B Testing or Feature Experimentation" ? "Optimizely, VWO, LaunchDarkly" :
+                            category === "CDP or Customer Engagement Platform" ? "Segment, mParticle, Tealium" :
+                            category === "CRM or Lead Management Software" ? "Salesforce, HubSpot, Microsoft Dynamics" :
+                            category === "Email Service Provider or Marketing Automation" ? "Marketo, Mailchimp, Braze" :
+                            category === "Personalization Experience Manager or Journey Builder" ? "Adobe Target, Dynamic Yield, Salesforce Journey Builder" :
+                            "Enter tool name"
+                          }`}
+                          className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+
+              {/* Additional details section */}
+              <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+                <p className="text-gray-600 dark:text-gray-400 mb-4">
+                  What other details would you like to provide to make this roadmap more valuable and
+                  actionable for your business goals?
+                </p>
+                <textarea
+                  value={formData.additionalDetails}
+                  onChange={(e) => setFormData({ ...formData, additionalDetails: e.target.value })}
+                  rows={6}
+                  placeholder="Share any specific challenges, goals, or context about your business..."
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
             </div>
           )}
 
