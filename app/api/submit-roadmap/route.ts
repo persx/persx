@@ -21,6 +21,9 @@ export async function POST(request: NextRequest) {
     if (data.martechOther) {
       console.log("Martech Stack (Other):", data.martechOther);
     }
+    if (data.martechToolNames && Object.keys(data.martechToolNames).length > 0) {
+      console.log("Martech Tool Names:", JSON.stringify(data.martechToolNames, null, 2));
+    }
     console.log("Additional Details:", data.additionalDetails);
     if (data.email) {
       console.log("Email:", data.email);
@@ -39,6 +42,7 @@ export async function POST(request: NextRequest) {
         goal_other: data.goalOther || null,
         martech_stack: data.martechStack,
         martech_other: data.martechOther || null,
+        martech_tool_names: data.martechToolNames || null,
         additional_details: data.additionalDetails || null,
         email: data.email || null,
         request_full_roadmap: data.requestFullRoadmap || false,

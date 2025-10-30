@@ -25,6 +25,7 @@ export interface RoadmapSubmission {
   goal_other?: string | null;
   martech_stack: string[];
   martech_other?: string | null;
+  martech_tool_names?: Record<string, string> | null; // Maps martech category to specific tool name
   additional_details?: string | null;
   email?: string | null;
   request_full_roadmap?: boolean;
