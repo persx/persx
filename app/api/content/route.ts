@@ -23,11 +23,19 @@ export async function POST(request: NextRequest) {
 
     const supabase = createAdminClient();
 
+    // Generate slug from title
+    const slug = data.title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)/g, "")
+      + "-" + Date.now();
+
     // Insert content
     const { data: content, error } = await supabase
       .from("knowledge_base_content")
       .insert({
         title: data.title,
+        slug: slug,
         content: data.content,
         excerpt: data.excerpt || null,
         content_type: data.content_type,
@@ -35,6 +43,14 @@ export async function POST(request: NextRequest) {
         industries: data.industries || [],
         tool_categories: data.tool_categories || [],
         tags: data.tags || [],
+        // External content fields
+        source_type: data.source_type || "internal",
+        source_name: data.source_name || null,
+        source_url: data.source_url || null,
+        source_author: data.source_author || null,
+        source_published_date: data.source_published_date || null,
+        curator_notes: data.curator_notes || null,
+        summary: data.summary || null,
       })
       .select()
       .single();

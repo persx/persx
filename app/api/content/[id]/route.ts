@@ -29,6 +29,14 @@ export async function PUT(
         industries: data.industries || [],
         tool_categories: data.tool_categories || [],
         tags: data.tags || [],
+        // External content fields
+        source_type: data.source_type || "internal",
+        source_name: data.source_name || null,
+        source_url: data.source_url || null,
+        source_author: data.source_author || null,
+        source_published_date: data.source_published_date || null,
+        curator_notes: data.curator_notes || null,
+        summary: data.summary || null,
         updated_at: new Date().toISOString(),
       })
       .eq("id", params.id)

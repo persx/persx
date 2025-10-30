@@ -55,6 +55,14 @@ export default function ContentEditor({
     industries: initialData?.industries || [],
     tool_categories: initialData?.tool_categories || [],
     tags: initialData?.tags ? initialData.tags.join(", ") : "",
+    // External content fields
+    source_type: initialData?.source_type || "internal",
+    source_name: initialData?.source_name || "",
+    source_url: initialData?.source_url || "",
+    source_author: initialData?.source_author || "",
+    source_published_date: initialData?.source_published_date || "",
+    curator_notes: initialData?.curator_notes || "",
+    summary: initialData?.summary || "",
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -208,6 +216,135 @@ export default function ContentEditor({
               Supports Markdown formatting
             </p>
           </div>
+        </div>
+      </div>
+
+      {/* Source Information */}
+      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+          Source Information
+        </h2>
+
+        <div className="space-y-4">
+          <div>
+            <label htmlFor="source_type" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Source Type *
+            </label>
+            <select
+              id="source_type"
+              value={formData.source_type}
+              onChange={(e) => setFormData({ ...formData, source_type: e.target.value })}
+              required
+              className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="internal">Internal (Created by us)</option>
+              <option value="external_curated">External Curated (Summarized from external source)</option>
+              <option value="external_referenced">External Referenced (Link only)</option>
+            </select>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              Select "External" if this content is from another source
+            </p>
+          </div>
+
+          {/* Show external fields only if not internal */}
+          {formData.source_type !== "internal" && (
+            <>
+              <div>
+                <label htmlFor="source_url" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Source URL *
+                </label>
+                <input
+                  id="source_url"
+                  type="url"
+                  value={formData.source_url}
+                  onChange={(e) => setFormData({ ...formData, source_url: e.target.value })}
+                  required={formData.source_type !== "internal"}
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="https://example.com/article"
+                />
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  URL to the original article for proper attribution
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="source_name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Source Name
+                  </label>
+                  <input
+                    id="source_name"
+                    type="text"
+                    value={formData.source_name}
+                    onChange={(e) => setFormData({ ...formData, source_name: e.target.value })}
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="MarketingDive, TechCrunch, etc."
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="source_author" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Source Author
+                  </label>
+                  <input
+                    id="source_author"
+                    type="text"
+                    value={formData.source_author}
+                    onChange={(e) => setFormData({ ...formData, source_author: e.target.value })}
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Original author name"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="source_published_date" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Original Publication Date
+                </label>
+                <input
+                  id="source_published_date"
+                  type="date"
+                  value={formData.source_published_date}
+                  onChange={(e) => setFormData({ ...formData, source_published_date: e.target.value })}
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="summary" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Summary
+                </label>
+                <textarea
+                  id="summary"
+                  value={formData.summary}
+                  onChange={(e) => setFormData({ ...formData, summary: e.target.value })}
+                  rows={4}
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Your summary or key takeaways from the external article"
+                />
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  Write a summary in your own words (do not copy original content)
+                </p>
+              </div>
+
+              <div>
+                <label htmlFor="curator_notes" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Curator Notes (Internal Only)
+                </label>
+                <textarea
+                  id="curator_notes"
+                  value={formData.curator_notes}
+                  onChange={(e) => setFormData({ ...formData, curator_notes: e.target.value })}
+                  rows={2}
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Why is this content relevant? Internal notes for the team..."
+                />
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  Internal notes (not shown to users)
+                </p>
+              </div>
+            </>
+          )}
         </div>
       </div>
 
