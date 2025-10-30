@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase-server";
+import Link from "next/link";
 
 export default async function News() {
   const supabase = createClient();
@@ -6,7 +7,7 @@ export default async function News() {
   // Fetch news content from database
   const { data: newsItems, error } = await supabase
     .from("knowledge_base_content")
-    .select("id, title, overall_summary, created_at, status, tags")
+    .select("id, title, slug, overall_summary, created_at, status, tags")
     .eq("content_type", "news")
     .eq("status", "published")
     .order("created_at", { ascending: false });
@@ -58,12 +59,20 @@ export default async function News() {
                         </div>
                       )}
                     </div>
-                    <h2 className="text-2xl font-bold mb-3 text-gray-900 dark:text-gray-100">
-                      {item.title}
-                    </h2>
-                    <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+                    <Link href={`/news/${item.slug}`}>
+                      <h2 className="text-2xl font-bold mb-3 text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer">
+                        {item.title}
+                      </h2>
+                    </Link>
+                    <p className="text-gray-600 dark:text-gray-400 leading-relaxed mb-4">
                       {item.overall_summary}
                     </p>
+                    <Link
+                      href={`/news/${item.slug}`}
+                      className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-semibold text-sm"
+                    >
+                      Read more →
+                    </Link>
                   </div>
                 </div>
               </div>

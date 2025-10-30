@@ -26,6 +26,7 @@ export default function QuickAddPage() {
 
   // Step 2: Title & Overall Summary
   const [title, setTitle] = useState("");
+  const [slug, setSlug] = useState("");
   const [overallSummary, setOverallSummary] = useState("");
   const [isRegeneratingTitle, setIsRegeneratingTitle] = useState(false);
   const [isRegeneratingSummary, setIsRegeneratingSummary] = useState(false);
@@ -37,6 +38,20 @@ export default function QuickAddPage() {
   // Step 4: Tags
   const [tags, setTags] = useState<string[]>([]);
   const [newTag, setNewTag] = useState("");
+
+  // Helper function to generate slug from title
+  const generateSlug = (text: string) => {
+    return text
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)/g, "");
+  };
+
+  // Update slug when title changes
+  const handleTitleChange = (newTitle: string) => {
+    setTitle(newTitle);
+    setSlug(generateSlug(newTitle));
+  };
 
   const handleUrlChange = (index: number, value: string) => {
     const newUrls = [...urls];
@@ -103,7 +118,7 @@ export default function QuickAddPage() {
       if (!response.ok) throw new Error("Failed to generate summary");
 
       const data = await response.json();
-      setTitle(data.title);
+      handleTitleChange(data.title);
       setOverallSummary(data.summary);
     } catch (err) {
       setError("Failed to generate summary. Please try again.");
@@ -125,7 +140,7 @@ export default function QuickAddPage() {
       if (!response.ok) throw new Error("Failed to regenerate title");
 
       const data = await response.json();
-      setTitle(data.title);
+      handleTitleChange(data.title);
     } catch (err) {
       setError("Failed to regenerate title");
       console.error(err);
@@ -267,6 +282,7 @@ export default function QuickAddPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           title,
+          slug,
           content: sourceSummaries.join("\n\n"),
           excerpt: overallSummary.substring(0, 200),
           content_type: "news",
@@ -405,7 +421,7 @@ export default function QuickAddPage() {
                 <input
                   type="text"
                   value={title}
-                  onChange={(e) => setTitle(e.target.value)}
+                  onChange={(e) => handleTitleChange(e.target.value)}
                   className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
                 />
                 <button
@@ -526,9 +542,32 @@ export default function QuickAddPage() {
           <div className="space-y-6">
             <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
               <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-                Step 4: Tags & Publish
+                Step 4: URL Slug, Tags & Publish
               </h2>
 
+              {/* URL Slug */}
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  URL Slug
+                </label>
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-sm text-gray-500 dark:text-gray-400">
+                    /news/
+                  </span>
+                  <input
+                    type="text"
+                    value={slug}
+                    onChange={(e) => setSlug(e.target.value)}
+                    className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                    placeholder="article-slug"
+                  />
+                </div>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  This will be the URL for your article: /news/{slug || "article-slug"}
+                </p>
+              </div>
+
+              {/* Tags */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
                   Tags
