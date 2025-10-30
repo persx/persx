@@ -40,8 +40,6 @@ export async function POST(request: NextRequest) {
         excerpt: data.excerpt || null,
         content_type: data.content_type,
         status: data.status || "draft",
-        industries: data.industries || [],
-        tool_categories: data.tool_categories || [],
         tags: data.tags || [],
         // External content fields (single source)
         source_type: data.source_type || "internal",
