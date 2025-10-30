@@ -1,8 +1,15 @@
 import { createClient } from "@/lib/supabase-server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import Link from "next/link";
 
 export default async function AdminDashboard() {
+  const session = await getServerSession(authOptions);
   const supabase = createClient();
+
+  // Extract first name from email
+  const userEmail = session?.user?.email || "";
+  const userName = userEmail.split("@")[0] || "User";
 
   // Get content counts
   const { count: blogCount } = await supabase
@@ -66,7 +73,9 @@ export default async function AdminDashboard() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+          Hello, {userName}! 👋
+        </h1>
         <p className="text-gray-600 dark:text-gray-400 mt-2">
           Welcome to the PersX.ai Content Management System
         </p>
