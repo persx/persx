@@ -46,6 +46,11 @@ export default function ContentEditor({
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
 
+  // Get first external source URL if exists (for multi-source content from Quick Add)
+  const firstExternalSourceUrl = initialData?.external_sources && initialData.external_sources.length > 0
+    ? initialData.external_sources[0].url || ""
+    : initialData?.source_url || "";
+
   const [formData, setFormData] = useState({
     title: initialData?.title || "",
     content: initialData?.content || "",
@@ -58,11 +63,11 @@ export default function ContentEditor({
     // External content fields
     source_type: initialData?.source_type || "internal",
     source_name: initialData?.source_name || "",
-    source_url: initialData?.source_url || "",
+    source_url: firstExternalSourceUrl,
     source_author: initialData?.source_author || "",
     source_published_date: initialData?.source_published_date || "",
     curator_notes: initialData?.curator_notes || "",
-    summary: initialData?.summary || "",
+    summary: initialData?.summary || initialData?.overall_summary || "",
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -249,6 +254,37 @@ export default function ContentEditor({
           {/* Show external fields only if not internal */}
           {formData.source_type !== "internal" && (
             <>
+              {/* Display all external sources if they exist (from Quick Add) */}
+              {initialData?.external_sources && initialData.external_sources.length > 0 && (
+                <div className="mb-4 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                  <h3 className="text-sm font-semibold text-blue-900 dark:text-blue-200 mb-2">
+                    External Sources ({initialData.external_sources.length})
+                  </h3>
+                  <div className="space-y-2">
+                    {initialData.external_sources.map((source: any, index: number) => (
+                      <div key={index} className="text-sm">
+                        <a
+                          href={source.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium"
+                        >
+                          {index + 1}. {source.name || new URL(source.url).hostname}
+                        </a>
+                        {source.author && (
+                          <span className="text-gray-600 dark:text-gray-400 ml-2">
+                            by {source.author}
+                          </span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                  <p className="text-xs text-gray-600 dark:text-gray-400 mt-2">
+                    These sources were added via Quick Add. The first source URL is prefilled below.
+                  </p>
+                </div>
+              )}
+
               <div>
                 <label htmlFor="source_url" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Source URL *
