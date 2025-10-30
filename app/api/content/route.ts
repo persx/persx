@@ -61,8 +61,13 @@ export async function POST(request: NextRequest) {
 
     if (error) {
       console.error("Error creating content:", error);
+      console.error("Error details:", JSON.stringify(error, null, 2));
       return NextResponse.json(
-        { error: "Failed to create content" },
+        {
+          error: "Failed to create content",
+          details: error.message,
+          hint: error.hint
+        },
         { status: 500 }
       );
     }
