@@ -47,7 +47,7 @@ export function markdownToHtml(markdown: string): string {
 
   // Convert unordered lists (lines starting with -, *, or +)
   html = html.replace(/^\s*[-*+]\s+(.+)$/gim, "<li>$1</li>");
-  html = html.replace(/(<li>.*<\/li>\s*)+/gs, "<ul>$&</ul>");
+  html = html.replace(/(<li>[\s\S]*?<\/li>\s*)+/g, "<ul>$&</ul>");
 
   // Convert ordered lists (lines starting with numbers)
   html = html.replace(/^\s*\d+\.\s+(.+)$/gim, "<li>$1</li>");
