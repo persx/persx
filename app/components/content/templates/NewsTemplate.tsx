@@ -1,18 +1,20 @@
 import ContentHeader from "../ContentHeader";
 import ContentBody from "../ContentBody";
+import { ExternalSource } from "@/types/knowledge-base";
 
 interface NewsTemplateProps {
   content: any; // knowledge_base_content record
 }
 
 /**
- * NewsTemplate - Multi-source news roundup layout
- * Displays sources, summaries, and PersX perspective
+ * NewsTemplate - Editorial-style news roundup layout
+ * Follows PersX editorial guidelines for scannable, action-oriented content
+ * Structure: Title → TL;DR → Content (vendors, checklist, links) → Sources
  */
 export default function NewsTemplate({ content }: NewsTemplateProps) {
   return (
-    <div>
-      {/* Header */}
+    <article className="max-w-4xl">
+      {/* Header with Title & Metadata */}
       <ContentHeader
         title={content.title}
         contentType="news"
@@ -24,11 +26,12 @@ export default function NewsTemplate({ content }: NewsTemplateProps) {
 
       {/* Tags */}
       {content.tags && content.tags.length > 0 && (
-        <div className="flex flex-wrap gap-2 mb-8">
+        <div className="flex flex-wrap gap-2 mb-6 md:mb-8" role="list" aria-label="Article tags">
           {content.tags.map((tag: string, i: number) => (
             <span
               key={i}
-              className="px-3 py-1 text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full"
+              role="listitem"
+              className="px-3 py-1 text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full"
             >
               {tag}
             </span>
@@ -36,82 +39,106 @@ export default function NewsTemplate({ content }: NewsTemplateProps) {
         </div>
       )}
 
-      {/* Overall Summary */}
+      {/* TL;DR - Prominent one-sentence summary */}
       {content.overall_summary && (
-        <div className="mb-6 md:mb-8 p-4 md:p-6 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-          <h2 className="text-base md:text-lg font-semibold mb-2 text-blue-900 dark:text-blue-200">
-            Summary
-          </h2>
-          <p className="text-sm md:text-base text-gray-700 dark:text-gray-300 leading-relaxed">
+        <aside className="mb-8 md:mb-10 p-5 md:p-6 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-l-4 border-blue-600 dark:border-blue-400 rounded-r-lg">
+          <p className="text-sm uppercase tracking-wide font-semibold text-blue-700 dark:text-blue-300 mb-2">
+            TL;DR
+          </p>
+          <p className="text-base md:text-lg text-gray-800 dark:text-gray-200 leading-relaxed font-medium">
             {content.overall_summary}
           </p>
+        </aside>
+      )}
+
+      {/* Main Editorial Content */}
+      {/* Expected structure in markdown:
+          - Highlights by Vendor (H2)
+            - Vendor Name (H3) with What/Why/Try sections
+          - Cross-Vendor Checklist (H2)
+          - Internal Links (H2)
+          - Meta Description (H2)
+          - Automated Schema Plan (H2)
+      */}
+      {content.content && (
+        <div className="mb-10 md:mb-12">
+          <ContentBody content={content.content} />
         </div>
       )}
 
-      {/* PersX Perspective */}
-      {content.persx_perspective && (
-        <section className="mb-8 md:mb-12">
-          <h2 className="text-xl md:text-2xl font-bold mb-3 md:mb-4 text-gray-900 dark:text-white">
-            PersX.ai Perspective
-          </h2>
-          <div className="prose prose-sm md:prose-base dark:prose-invert max-w-none">
-            <div className="text-sm md:text-base text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">
-              {content.persx_perspective}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* External Sources */}
+      {/* Sources Section - Clean link list */}
       {content.external_sources && content.external_sources.length > 0 && (
-        <section className="mb-8 md:mb-12">
-          <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6 text-gray-900 dark:text-white">
+        <section className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700">
+          <h2 className="text-xl md:text-2xl font-bold mb-5 text-gray-900 dark:text-white">
             Sources
           </h2>
-          <div className="space-y-3 md:space-y-4">
-            {content.external_sources.map((source: any, index: number) => (
-              <div
-                key={index}
-                className="p-4 md:p-6 border border-gray-200 dark:border-gray-700 rounded-lg hover:shadow-md transition-shadow"
-              >
-                <h3 className="font-semibold text-base md:text-lg mb-2 text-gray-900 dark:text-white">
+          <ul className="space-y-3" role="list">
+            {content.external_sources.map((source: ExternalSource, index: number) => {
+              const domain = source.url ? new URL(source.url).hostname.replace('www.', '') : '';
+              const displayName = source.name || domain;
+
+              return (
+                <li key={index} className="text-sm md:text-base">
                   <a
                     href={source.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 hover:underline break-words"
+                    className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 hover:underline inline-flex items-center gap-2 group"
                   >
-                    {source.name || new URL(source.url).hostname}
+                    <span className="font-medium">{displayName}</span>
+                    <span className="text-gray-500 dark:text-gray-400 text-xs">({domain})</span>
+                    <svg
+                      className="w-4 h-4 opacity-50 group-hover:opacity-100 transition-opacity"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
                   </a>
-                </h3>
-                {source.author && (
-                  <p className="text-xs md:text-sm text-gray-600 dark:text-gray-400 mb-2">
-                    By {source.author}
-                  </p>
-                )}
-                {source.published_date && (
-                  <p className="text-xs md:text-sm text-gray-600 dark:text-gray-400 mb-2 md:mb-3">
-                    Published:{" "}
-                    {new Date(source.published_date).toLocaleDateString()}
-                  </p>
-                )}
-                {source.summary && (
-                  <p className="text-sm md:text-base text-gray-700 dark:text-gray-300 leading-relaxed">
-                    {source.summary}
-                  </p>
-                )}
-              </div>
-            ))}
-          </div>
+                </li>
+              );
+            })}
+          </ul>
         </section>
       )}
 
-      {/* Main Content (if any) */}
-      {content.content && (
-        <div className="mb-8">
-          <ContentBody content={content.content} />
-        </div>
+      {/* Schema.org structured data for SEO */}
+      {typeof window === 'undefined' && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "NewsArticle",
+              headline: content.title,
+              description: content.overall_summary || content.excerpt,
+              datePublished: content.published_at,
+              dateModified: content.updated_at,
+              author: {
+                "@type": "Organization",
+                name: content.author || "PersX.ai",
+                url: "https://www.persx.ai"
+              },
+              publisher: {
+                "@type": "Organization",
+                name: "PersX.ai",
+                url: "https://www.persx.ai"
+              },
+              about: content.tags?.map((tag: string) => ({
+                "@type": "Thing",
+                name: tag
+              })),
+              mentions: content.external_sources?.map((source: ExternalSource) => ({
+                "@type": "Thing",
+                name: source.name,
+                url: source.url
+              }))
+            })
+          }}
+        />
       )}
-    </div>
+    </article>
   );
 }
