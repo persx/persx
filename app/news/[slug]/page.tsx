@@ -11,6 +11,9 @@ interface PageProps {
   };
 }
 
+// Revalidate every 60 seconds to show fresh content
+export const revalidate = 60;
+
 export default async function NewsArticlePage({ params }: PageProps) {
   const supabase = createClient();
 
