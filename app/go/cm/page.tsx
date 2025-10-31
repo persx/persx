@@ -44,10 +44,10 @@ export default async function AdminDashboard() {
     .limit(5);
 
   const stats = [
-    { label: "Blog Posts", value: blogCount || 0, icon: "📝", color: "blue", link: null },
-    { label: "Case Studies", value: caseStudyCount || 0, icon: "📊", color: "purple", link: null },
-    { label: "Guides", value: guideCount || 0, icon: "📚", color: "green", link: null },
-    { label: "News", value: newsCount || 0, icon: "📰", color: "orange", link: null },
+    { label: "Blog Posts", value: blogCount || 0, icon: "📝", color: "blue", link: "/go/cm/content?type=blog" },
+    { label: "Case Studies", value: caseStudyCount || 0, icon: "📊", color: "purple", link: "/go/cm/content?type=case_study" },
+    { label: "Guides", value: guideCount || 0, icon: "📚", color: "green", link: "/go/cm/content?type=implementation_guide" },
+    { label: "News", value: newsCount || 0, icon: "📰", color: "orange", link: "/go/cm/content?type=news" },
     { label: "Roadmap Submissions", value: roadmapCount || 0, icon: "🗺️", color: "pink", link: "/go/cm/rm" },
   ];
 

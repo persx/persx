@@ -1,7 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import ContentEditorToolbar from "./ContentEditorToolbar";
+import { ContentPreviewModal } from "@/app/components/content";
+import RichTextEditor from "./RichTextEditor";
 
 const contentTypes = [
   { value: "blog", label: "Blog Post" },
@@ -45,6 +48,13 @@ export default function ContentEditor({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+
+  // Preview and toolbar state
+  const [showPreviewModal, setShowPreviewModal] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [lastSaved, setLastSaved] = useState<Date | null>(null);
+  const [initialFormData, setInitialFormData] = useState<any>(null);
 
   // Get first external source URL if exists (for multi-source content from Quick Add)
   const firstExternalSourceUrl = initialData?.external_sources && initialData.external_sources.length > 0
@@ -134,6 +144,170 @@ export default function ContentEditor({
     }));
   };
 
+  // Track initial form data for unsaved changes detection
+  useEffect(() => {
+    if (!initialFormData && formData.title) {
+      setInitialFormData(JSON.stringify(formData));
+      if (contentId) {
+        setLastSaved(new Date());
+      }
+    }
+  }, [formData, initialFormData, contentId]);
+
+  // Track unsaved changes
+  useEffect(() => {
+    if (initialFormData) {
+      const hasChanges = JSON.stringify(formData) !== initialFormData;
+      setHasUnsavedChanges(hasChanges);
+    }
+  }, [formData, initialFormData]);
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Cmd+S or Ctrl+S - Save Draft
+      if ((e.metaKey || e.ctrlKey) && e.key === "s") {
+        e.preventDefault();
+        handleSaveDraft();
+      }
+      // Cmd+P or Ctrl+P - Preview
+      if ((e.metaKey || e.ctrlKey) && e.key === "p") {
+        e.preventDefault();
+        handlePreview();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [formData]);
+
+  // Preview handler
+  const handlePreview = useCallback(() => {
+    setShowPreviewModal(true);
+  }, []);
+
+  // Save draft handler
+  const handleSaveDraft = useCallback(async () => {
+    setIsLoading(true);
+    setError("");
+
+    try {
+      const tagsArray = formData.tags
+        .split(",")
+        .map((tag: string) => tag.trim())
+        .filter((tag: string) => tag.length > 0);
+
+      const payload = {
+        ...formData,
+        tags: tagsArray,
+        status: "draft",
+      };
+
+      const url = contentId ? `/api/content/${contentId}` : "/api/content";
+      const method = contentId ? "PUT" : "POST";
+
+      const response = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setLastSaved(new Date());
+        setInitialFormData(JSON.stringify(formData));
+        setHasUnsavedChanges(false);
+        // Don't redirect, stay on page
+      } else {
+        setError(data.error || "Failed to save draft");
+      }
+    } catch (err) {
+      setError("An error occurred while saving draft");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [formData, contentId]);
+
+  // Publish handler
+  const handlePublish = useCallback(async () => {
+    if (!confirm("Are you sure you want to publish this content? It will be visible to the public.")) {
+      return;
+    }
+
+    setIsLoading(true);
+    setError("");
+
+    try {
+      const tagsArray = formData.tags
+        .split(",")
+        .map((tag: string) => tag.trim())
+        .filter((tag: string) => tag.length > 0);
+
+      const payload = {
+        ...formData,
+        tags: tagsArray,
+        status: "published",
+      };
+
+      const url = contentId ? `/api/content/${contentId}` : "/api/content";
+      const method = contentId ? "PUT" : "POST";
+
+      const response = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setSuccess(true);
+        setTimeout(() => {
+          router.push("/go/cm/content");
+          router.refresh();
+        }, 1500);
+      } else {
+        setError(data.error || "Failed to publish content");
+      }
+    } catch (err) {
+      setError("An error occurred while publishing");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [formData, contentId, router]);
+
+  // Get preview link handler
+  const handleGetPreviewLink = useCallback(async () => {
+    if (!contentId) {
+      setError("Please save the content first before generating a preview link");
+      return;
+    }
+
+    setIsLoading(true);
+    setError("");
+
+    try {
+      const response = await fetch("/api/content/preview-token", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ contentId }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setPreviewUrl(data.previewUrl);
+      } else {
+        setError(data.error || "Failed to generate preview link");
+      }
+    } catch (err) {
+      setError("An error occurred while generating preview link");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [contentId]);
+
   if (success) {
     return (
       <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-8 text-center">
@@ -149,11 +323,33 @@ export default function ContentEditor({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
-        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
-          Basic Information
-        </h2>
+    <>
+      {/* Preview Modal */}
+      <ContentPreviewModal
+        content={{ ...formData, id: contentId }}
+        isOpen={showPreviewModal}
+        onClose={() => setShowPreviewModal(false)}
+      />
+
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Toolbar */}
+        <ContentEditorToolbar
+          onPreview={handlePreview}
+          onSaveDraft={handleSaveDraft}
+          onPublish={handlePublish}
+          onGetPreviewLink={handleGetPreviewLink}
+          contentId={contentId}
+          currentStatus={formData.status as "draft" | "published" | "archived"}
+          hasUnsavedChanges={hasUnsavedChanges}
+          isSaving={isLoading}
+          lastSaved={lastSaved}
+          previewUrl={previewUrl}
+        />
+
+        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+            Basic Information
+          </h2>
 
         <div className="space-y-4">
           <div>
@@ -205,20 +401,16 @@ export default function ContentEditor({
           </div>
 
           <div>
-            <label htmlFor="content" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label htmlFor="content" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Content *
             </label>
-            <textarea
-              id="content"
-              value={formData.content}
-              onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-              required
-              rows={15}
-              className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm"
-              placeholder="Write your content here (supports Markdown)"
+            <RichTextEditor
+              content={formData.content}
+              onChange={(newContent) => setFormData({ ...formData, content: newContent })}
+              placeholder="Start writing your content..."
             />
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-              Supports Markdown formatting
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+              Use the toolbar above to format your content with headings, bold, italic, lists, links, and images.
             </p>
           </div>
         </div>
@@ -502,5 +694,6 @@ export default function ContentEditor({
         </button>
       </div>
     </form>
+    </>
   );
 }

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase-server";
+import { submitContentToIndexNow } from "@/lib/indexnow";
 
 export async function PUT(
   request: NextRequest,
@@ -53,6 +54,15 @@ export async function PUT(
         { error: "Failed to update content" },
         { status: 500 }
       );
+    }
+
+    // Submit to IndexNow if published
+    if (content.status === "published" && content.slug) {
+      // Submit asynchronously, don't wait for response
+      submitContentToIndexNow(content.content_type, content.slug).catch((err) => {
+        console.error("IndexNow submission failed:", err);
+        // Don't fail the request if IndexNow fails
+      });
     }
 
     return NextResponse.json({ content }, { status: 200 });
