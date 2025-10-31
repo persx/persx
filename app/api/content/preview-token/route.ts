@@ -1,18 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase-server";
 import { getServerSession } from "next-auth";
+import { randomBytes } from "crypto";
+import { checkRateLimit, getClientIdentifier, RATE_LIMITS } from "@/lib/rate-limiter";
 
 /**
- * Generate a random token for preview URLs
+ * Generate a cryptographically secure random token for preview URLs
+ * Uses crypto.randomBytes instead of Math.random() for security
  */
 function generateToken(): string {
-  const chars =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  let token = "";
-  for (let i = 0; i < 32; i++) {
-    token += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return token;
+  return randomBytes(32).toString("base64url");
 }
 
 /**
@@ -20,6 +17,24 @@ function generateToken(): string {
  * Generate a shareable preview token for draft content
  */
 export async function POST(request: NextRequest) {
+  // Rate limiting
+  const identifier = getClientIdentifier(request);
+  const rateLimit = checkRateLimit(identifier, RATE_LIMITS.API);
+
+  if (rateLimit.limited) {
+    return NextResponse.json(
+      { error: RATE_LIMITS.API.message },
+      {
+        status: 429,
+        headers: {
+          "X-RateLimit-Limit": RATE_LIMITS.API.maxRequests.toString(),
+          "X-RateLimit-Remaining": rateLimit.remaining.toString(),
+          "X-RateLimit-Reset": new Date(rateLimit.resetTime).toISOString(),
+        },
+      }
+    );
+  }
+
   try {
     // Check authentication
     const session = await getServerSession();

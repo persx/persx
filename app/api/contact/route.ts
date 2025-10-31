@@ -1,10 +1,32 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
+import { checkRateLimit, getClientIdentifier, RATE_LIMITS } from "@/lib/rate-limiter";
 
 // Initialize Resend with API key from environment variables
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(request: NextRequest) {
+  // Rate limiting - strict limits for contact form to prevent spam
+  const identifier = getClientIdentifier(request);
+  const rateLimit = checkRateLimit(identifier, RATE_LIMITS.CONTACT);
+
+  if (rateLimit.limited) {
+    return NextResponse.json(
+      {
+        success: false,
+        message: RATE_LIMITS.CONTACT.message,
+      },
+      {
+        status: 429,
+        headers: {
+          "X-RateLimit-Limit": RATE_LIMITS.CONTACT.maxRequests.toString(),
+          "X-RateLimit-Remaining": rateLimit.remaining.toString(),
+          "X-RateLimit-Reset": new Date(rateLimit.resetTime).toISOString(),
+        },
+      }
+    );
+  }
+
   try {
     const data = await request.json();
     const { name, email, message, industry } = data;

@@ -1,10 +1,29 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createPasswordResetToken } from "@/lib/auth";
 import { Resend } from "resend";
+import { checkRateLimit, getClientIdentifier, RATE_LIMITS } from "@/lib/rate-limiter";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(request: NextRequest) {
+  // Rate limiting - strict limits for password reset to prevent abuse
+  const identifier = getClientIdentifier(request);
+  const rateLimit = checkRateLimit(identifier, RATE_LIMITS.AUTH);
+
+  if (rateLimit.limited) {
+    return NextResponse.json(
+      { error: RATE_LIMITS.AUTH.message },
+      {
+        status: 429,
+        headers: {
+          "X-RateLimit-Limit": RATE_LIMITS.AUTH.maxRequests.toString(),
+          "X-RateLimit-Remaining": rateLimit.remaining.toString(),
+          "X-RateLimit-Reset": new Date(rateLimit.resetTime).toISOString(),
+        },
+      }
+    );
+  }
+
   try {
     const { email } = await request.json();
 

@@ -1,8 +1,31 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import type { RoadmapSubmission } from "@/lib/supabase";
+import { checkRateLimit, getClientIdentifier, RATE_LIMITS } from "@/lib/rate-limiter";
 
 export async function POST(request: NextRequest) {
+  // Rate limiting
+  const identifier = getClientIdentifier(request);
+  const rateLimit = checkRateLimit(identifier, RATE_LIMITS.FORM_SUBMISSION);
+
+  if (rateLimit.limited) {
+    return NextResponse.json(
+      {
+        success: false,
+        message: RATE_LIMITS.FORM_SUBMISSION.message,
+        error: "Rate limit exceeded",
+      },
+      {
+        status: 429,
+        headers: {
+          "X-RateLimit-Limit": RATE_LIMITS.FORM_SUBMISSION.maxRequests.toString(),
+          "X-RateLimit-Remaining": rateLimit.remaining.toString(),
+          "X-RateLimit-Reset": new Date(rateLimit.resetTime).toISOString(),
+        },
+      }
+    );
+  }
+
   try {
     const data = await request.json();
 
@@ -114,6 +137,28 @@ export async function POST(request: NextRequest) {
 }
 
 export async function PATCH(request: NextRequest) {
+  // Rate limiting
+  const identifier = getClientIdentifier(request);
+  const rateLimit = checkRateLimit(identifier, RATE_LIMITS.FORM_SUBMISSION);
+
+  if (rateLimit.limited) {
+    return NextResponse.json(
+      {
+        success: false,
+        message: RATE_LIMITS.FORM_SUBMISSION.message,
+        error: "Rate limit exceeded",
+      },
+      {
+        status: 429,
+        headers: {
+          "X-RateLimit-Limit": RATE_LIMITS.FORM_SUBMISSION.maxRequests.toString(),
+          "X-RateLimit-Remaining": rateLimit.remaining.toString(),
+          "X-RateLimit-Reset": new Date(rateLimit.resetTime).toISOString(),
+        },
+      }
+    );
+  }
+
   try {
     const data = await request.json();
     const { id, email, requestFullRoadmap } = data;
