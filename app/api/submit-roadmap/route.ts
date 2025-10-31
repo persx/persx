@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import type { RoadmapSubmission } from "@/lib/supabase";
 import { checkRateLimit, getClientIdentifier, RATE_LIMITS } from "@/lib/rate-limiter";
+import { subscribeToRoadmap } from "@/lib/convertkit";
 
 export async function POST(request: NextRequest) {
   // CSRF Protection - validate request origin
@@ -214,8 +215,25 @@ export async function PATCH(request: NextRequest) {
     console.log("Full Roadmap Requested:", requestFullRoadmap || false);
 
     let updatedData = null;
+    let originalSubmission = null;
 
     if (isSupabaseConfigured) {
+      // First, fetch the original submission to get industry, goals, martech stack
+      if (requestFullRoadmap && email) {
+        const { data: original, error: fetchError } = await supabase
+          .from("roadmap_submissions")
+          .select("*")
+          .eq("id", id)
+          .single();
+
+        if (fetchError) {
+          console.error("Error fetching original submission:", fetchError);
+        } else {
+          originalSubmission = original;
+        }
+      }
+
+      // Update the submission
       const { data: result, error } = await supabase
         .from("roadmap_submissions")
         .update({
@@ -233,6 +251,24 @@ export async function PATCH(request: NextRequest) {
 
       updatedData = result;
       console.log("Successfully updated in Supabase:", updatedData);
+
+      // Send roadmap via ConvertKit if requested
+      if (requestFullRoadmap && email && originalSubmission) {
+        console.log("Sending full roadmap via ConvertKit...");
+
+        const convertkitResult = await subscribeToRoadmap(email, {
+          industry: originalSubmission.industry,
+          goals: originalSubmission.goals || [],
+          martechStack: originalSubmission.martech_stack || [],
+        });
+
+        if (convertkitResult.success) {
+          console.log("ConvertKit roadmap delivery successful");
+        } else {
+          console.error("ConvertKit roadmap delivery failed:", convertkitResult.message);
+          // Don't throw error - we still want to return success for the update
+        }
+      }
     } else {
       console.warn("Supabase not configured. Update logged to console only.");
     }

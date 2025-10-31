@@ -11,11 +11,25 @@ export default function NewsletterSubscription() {
     e.preventDefault();
     setStatus("loading");
 
-    // TODO: Implement newsletter subscription API call
-    // For now, just show a success message
-    setTimeout(() => {
+    try {
+      const response = await fetch('/api/newsletter/subscribe', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        setStatus("error");
+        setMessage(data.message || "Subscription failed. Please try again.");
+        return;
+      }
+
       setStatus("success");
-      setMessage("Thank you for subscribing! Check your inbox for confirmation.");
+      setMessage(data.message || "Thank you for subscribing! Check your inbox for confirmation.");
       setEmail("");
 
       // Reset after 5 seconds
@@ -23,7 +37,11 @@ export default function NewsletterSubscription() {
         setStatus("idle");
         setMessage("");
       }, 5000);
-    }, 1000);
+    } catch (error) {
+      console.error('Newsletter subscription error:', error);
+      setStatus("error");
+      setMessage("Network error. Please try again.");
+    }
   };
 
   return (
