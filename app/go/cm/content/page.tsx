@@ -5,6 +5,7 @@ import ContentFilter from "./components/ContentFilter";
 type SearchParams = {
   type?: string;
   status?: string;
+  search?: string;
 };
 
 export default async function ContentListPage({
@@ -17,7 +18,7 @@ export default async function ContentListPage({
   let query = supabase
     .from("knowledge_base_content")
     .select("*")
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: false});
 
   // Apply filters
   if (searchParams.type) {
@@ -25,6 +26,10 @@ export default async function ContentListPage({
   }
   if (searchParams.status) {
     query = query.eq("status", searchParams.status);
+  }
+  if (searchParams.search) {
+    // Search in title and excerpt (case-insensitive)
+    query = query.or(`title.ilike.%${searchParams.search}%,excerpt.ilike.%${searchParams.search}%`);
   }
 
   const { data: content, error } = await query;
@@ -85,7 +90,7 @@ export default async function ContentListPage({
       </div>
 
       {/* Filters */}
-      <ContentFilter currentType={searchParams.type} currentStatus={searchParams.status} />
+      <ContentFilter currentType={searchParams.type} currentStatus={searchParams.status} currentSearch={searchParams.search} />
 
       {/* Content List */}
       <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
@@ -96,8 +101,8 @@ export default async function ContentListPage({
               No content found
             </h3>
             <p className="text-gray-600 dark:text-gray-400 mb-6">
-              {searchParams.type || searchParams.status
-                ? "Try adjusting your filters"
+              {searchParams.type || searchParams.status || searchParams.search
+                ? "Try adjusting your filters or search"
                 : "Get started by creating your first piece of content"}
             </p>
             <Link
@@ -108,56 +113,108 @@ export default async function ContentListPage({
             </Link>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50 dark:bg-gray-700/50 border-b border-gray-200 dark:border-gray-700">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    Title
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    Type
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    Created
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                {content.map((item) => (
-                  <tr
-                    key={item.id}
-                    className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
-                  >
-                    <td className="px-6 py-4">
-                      <div className="flex items-start">
-                        <div>
-                          <Link
-                            href={`/go/cm/content/${item.id}`}
-                            className="font-medium text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400"
-                          >
-                            {item.title}
-                          </Link>
-                          {item.excerpt && (
-                            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 line-clamp-1">
-                              {item.excerpt}
-                            </p>
-                          )}
+          <>
+            {/* Desktop Table View */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gray-50 dark:bg-gray-700/50 border-b border-gray-200 dark:border-gray-700">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                      Title
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                      Type
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                      Status
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                      Created
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                  {content.map((item) => (
+                    <tr
+                      key={item.id}
+                      className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+                    >
+                      <td className="px-6 py-4">
+                        <div className="flex items-start">
+                          <div>
+                            <Link
+                              href={`/go/cm/content/${item.id}`}
+                              className="font-medium text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400"
+                            >
+                              {item.title}
+                            </Link>
+                            {item.excerpt && (
+                              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 line-clamp-1">
+                                {item.excerpt}
+                              </p>
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className={`inline-block px-2 py-1 text-xs rounded-full ${getTypeColor(item.content_type)}`}>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className={`inline-block px-2 py-1 text-xs rounded-full ${getTypeColor(item.content_type)}`}>
+                          {formatType(item.content_type)}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className={`inline-block px-2 py-1 text-xs rounded-full ${
+                          item.status === "published"
+                            ? "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400"
+                            : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400"
+                        }`}>
+                          {item.status}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">
+                        {formatDate(item.created_at)}
+                      </td>
+                      <td className="px-6 py-4">
+                        <Link
+                          href={`/go/cm/content/${item.id}`}
+                          className="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 font-medium"
+                        >
+                          Edit →
+                        </Link>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile Card View */}
+            <div className="md:hidden divide-y divide-gray-200 dark:divide-gray-700">
+              {content.map((item) => (
+                <Link
+                  key={item.id}
+                  href={`/go/cm/content/${item.id}`}
+                  className="block p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+                >
+                  <div className="space-y-2">
+                    <div className="flex items-start justify-between gap-2">
+                      <h3 className="font-medium text-gray-900 dark:text-white flex-1">
+                        {item.title}
+                      </h3>
+                      <span className={`inline-block px-2 py-1 text-xs rounded-full shrink-0 ${getTypeColor(item.content_type)}`}>
                         {formatType(item.content_type)}
                       </span>
-                    </td>
-                    <td className="px-6 py-4">
+                    </div>
+
+                    {item.excerpt && (
+                      <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
+                        {item.excerpt}
+                      </p>
+                    )}
+
+                    <div className="flex items-center justify-between text-sm">
                       <span className={`inline-block px-2 py-1 text-xs rounded-full ${
                         item.status === "published"
                           ? "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400"
@@ -165,23 +222,15 @@ export default async function ContentListPage({
                       }`}>
                         {item.status}
                       </span>
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">
-                      {formatDate(item.created_at)}
-                    </td>
-                    <td className="px-6 py-4">
-                      <Link
-                        href={`/go/cm/content/${item.id}`}
-                        className="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 font-medium"
-                      >
-                        Edit →
-                      </Link>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                      <span className="text-gray-500 dark:text-gray-400">
+                        {formatDate(item.created_at)}
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </>
         )}
       </div>
     </div>
