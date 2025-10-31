@@ -19,6 +19,7 @@ export default function StartPage() {
   const [currentStep, setCurrentStep] = useState(1);
   const [showPreview, setShowPreview] = useState(false);
   const [showEmailCapture, setShowEmailCapture] = useState(false);
+  const [submissionId, setSubmissionId] = useState<string | null>(null);
   const [formData, setFormData] = useState<FormData>({
     industry: "",
     industryOther: "",
@@ -170,6 +171,11 @@ export default function StartPage() {
         return;
       }
 
+      // Store the submission ID for later update
+      if (result.data && result.data.length > 0) {
+        setSubmissionId(result.data[0].id);
+      }
+
       console.log("Form submitted successfully:", result);
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -180,16 +186,36 @@ export default function StartPage() {
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      // Submit email for full roadmap
-      await fetch("/api/submit-roadmap", {
-        method: "POST",
+      if (!submissionId) {
+        console.error("No submission ID found");
+        alert("Error: Unable to update your submission. Please try again.");
+        return;
+      }
+
+      // Update existing submission with email
+      const response = await fetch("/api/submit-roadmap", {
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...formData, requestFullRoadmap: true }),
+        body: JSON.stringify({
+          id: submissionId,
+          email: formData.email,
+          requestFullRoadmap: true,
+        }),
       });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        console.error("Email update failed:", result);
+        alert(`Update failed: ${result.message || "Unknown error"}`);
+        return;
+      }
+
       alert("Thank you! We'll send your full 90-day roadmap to your email shortly.");
       setShowEmailCapture(false);
     } catch (error) {
       console.error("Error submitting email:", error);
+      alert("Network error: Could not update your email. Please try again.");
     }
   };
 

@@ -112,3 +112,68 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+
+export async function PATCH(request: NextRequest) {
+  try {
+    const data = await request.json();
+    const { id, email, requestFullRoadmap } = data;
+
+    if (!id) {
+      return NextResponse.json(
+        { success: false, message: "Submission ID is required" },
+        { status: 400 }
+      );
+    }
+
+    console.log("=== Updating Roadmap Submission ===");
+    console.log("Timestamp:", new Date().toISOString());
+    console.log("Submission ID:", id);
+    console.log("Email:", email);
+    console.log("Full Roadmap Requested:", requestFullRoadmap || false);
+
+    let updatedData = null;
+
+    if (isSupabaseConfigured) {
+      const { data: result, error } = await supabase
+        .from("roadmap_submissions")
+        .update({
+          email: email || null,
+          request_full_roadmap: requestFullRoadmap || false,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", id)
+        .select();
+
+      if (error) {
+        console.error("Supabase error:", error);
+        throw error;
+      }
+
+      updatedData = result;
+      console.log("Successfully updated in Supabase:", updatedData);
+    } else {
+      console.warn("Supabase not configured. Update logged to console only.");
+    }
+
+    console.log("=============================\n");
+
+    return NextResponse.json(
+      {
+        success: true,
+        message: "Submission updated successfully",
+        data: updatedData,
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Error updating roadmap submission:", error);
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Error updating submission",
+        error: error instanceof Error ? error.message : "Unknown error",
+      },
+      { status: 500 }
+    );
+  }
+}
