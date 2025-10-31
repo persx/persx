@@ -77,6 +77,32 @@ export default function StartPage() {
     }
   }, [formData, currentStep, isLoaded]);
 
+  // Keyboard navigation: Enter to proceed, Escape to go back
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      // Don't trigger if user is typing in an input/textarea
+      const target = e.target as HTMLElement;
+      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
+        return;
+      }
+
+      // Enter key to proceed
+      if (e.key === 'Enter' && !showPreview && canProceed() && !isSubmitting) {
+        e.preventDefault();
+        handleNext();
+      }
+
+      // Escape key to go back
+      if (e.key === 'Escape' && !showPreview && currentStep > 1 && !isSubmitting) {
+        e.preventDefault();
+        setCurrentStep(currentStep - 1);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [currentStep, canProceed, isSubmitting, showPreview]);
+
   const industries = [
     "eCommerce",
     "Healthcare",
@@ -968,9 +994,17 @@ export default function StartPage() {
               />
             ))}
           </div>
-          <p className="text-center text-sm text-gray-600 dark:text-gray-400">
-            Step {currentStep} of 4
-          </p>
+          <div className="flex items-center justify-center gap-4">
+            <p className="text-center text-sm text-gray-600 dark:text-gray-400">
+              Step {currentStep} of 4
+            </p>
+            <p className="text-center text-xs text-gray-500 dark:text-gray-500">
+              • Press <kbd className="px-1.5 py-0.5 text-xs bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded">Enter</kbd> to continue
+              {currentStep > 1 && (
+                <> • <kbd className="px-1.5 py-0.5 text-xs bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded">Esc</kbd> to go back</>
+              )}
+            </p>
+          </div>
         </div>
 
         {/* Form Steps */}
