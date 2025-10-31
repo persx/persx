@@ -88,6 +88,9 @@ export default async function RootLayout({
   const showUtilityBar = await shouldShowUtilityBar();
   const adminState = showUtilityBar ? await getAdminSessionState() : null;
 
+  // Only add padding if the bar will actually render (has an industry)
+  const showAdminBar = showUtilityBar && adminState && adminState.industry;
+
   return (
     <html lang="en">
       <body className="min-h-screen flex flex-col">
@@ -101,7 +104,7 @@ export default async function RootLayout({
         )}
 
         {/* Main content with top padding when utility bar is visible */}
-        <div className={showUtilityBar ? "pt-12" : ""}>
+        <div className={showAdminBar ? "pt-12" : ""}>
           <RootErrorBoundary>
             <Header />
             <main className="flex-1">{children}</main>
