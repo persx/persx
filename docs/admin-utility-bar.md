@@ -5,7 +5,7 @@ The Admin Utility Bar is a site-wide utility component that appears at the top o
 ## Features
 
 ### 1. Admin Link
-- Quick access to `/go/admin` from any page
+- Quick access to `/go/cm` (Content Management) from any page
 - Always visible when the utility bar is shown
 
 ### 2. Personalization State Display
