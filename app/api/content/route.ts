@@ -24,13 +24,15 @@ export async function POST(request: NextRequest) {
 
     const supabase = createAdminClient();
 
-    // Use provided slug or generate from title
+    // Use provided slug or generate from title (limited to 5 words)
     const slug = data.slug || (
       data.title
         .toLowerCase()
-        .replace(/[^a-z0-9]+/g, "-")
+        .split(/\s+/)
+        .slice(0, 5)
+        .join("-")
+        .replace(/[^a-z0-9-]+/g, "")
         .replace(/(^-|-$)/g, "")
-        + "-" + Date.now()
     );
 
     // Insert content

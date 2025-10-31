@@ -4,6 +4,13 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { sanitizeContentForSave } from "@/lib/content-utils";
+import dynamic from "next/dynamic";
+
+// Import RichTextEditor dynamically to avoid SSR issues
+const RichTextEditor = dynamic(() => import("../components/RichTextEditor"), {
+  ssr: false,
+  loading: () => <div className="h-48 bg-gray-100 dark:bg-gray-700 rounded-lg animate-pulse"></div>,
+});
 
 type Step = 1 | 2 | 3 | 4;
 
@@ -40,11 +47,14 @@ export default function QuickAddPage() {
   const [tags, setTags] = useState<string[]>([]);
   const [newTag, setNewTag] = useState("");
 
-  // Helper function to generate slug from title
+  // Helper function to generate slug from title (limited to 5 words)
   const generateSlug = (text: string) => {
     return text
       .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
+      .split(/\s+/)
+      .slice(0, 5)
+      .join("-")
+      .replace(/[^a-z0-9-]+/g, "")
       .replace(/(^-|-$)/g, "");
   };
 
@@ -270,21 +280,18 @@ export default function QuickAddPage() {
     setError("");
 
     try {
-      // Sanitize title and summaries
+      // Sanitize title only (overall_summary and perspectives are HTML from rich text editor)
       const sanitizedData = sanitizeContentForSave({
         title,
-        overall_summary: overallSummary,
-        persx_perspective: sourceSummaries.join("\n\n"),
       });
 
       const externalSources = fetchedSources.map((source, index) => {
-        const sanitizedSummary = sanitizeContentForSave({ summary: sourceSummaries[index] });
         return {
           url: source.url,
           name: new URL(source.url).hostname,
           author: source.author,
           published_date: source.publishedDate,
-          summary: sanitizedSummary.summary,
+          summary: sourceSummaries[index], // Already HTML from RichTextEditor
         };
       });
 
@@ -294,14 +301,14 @@ export default function QuickAddPage() {
         body: JSON.stringify({
           title: sanitizedData.title,
           slug,
-          content: sanitizedData.persx_perspective,
-          excerpt: sanitizedData.overall_summary?.substring(0, 200),
+          content: sourceSummaries.join("\n\n"), // HTML from RichTextEditor
+          excerpt: overallSummary.replace(/<[^>]*>/g, "").substring(0, 200), // Strip HTML for excerpt
           content_type: "news",
           status,
           source_type: "external_curated",
           external_sources: externalSources,
-          overall_summary: sanitizedData.overall_summary,
-          persx_perspective: sanitizedData.persx_perspective,
+          overall_summary: overallSummary, // HTML from RichTextEditor
+          persx_perspective: sourceSummaries.join("\n\n"), // HTML from RichTextEditor
           tags,
         }),
       });
@@ -449,11 +456,10 @@ export default function QuickAddPage() {
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Overall Summary
                 </label>
-                <textarea
-                  value={overallSummary}
-                  onChange={(e) => setOverallSummary(e.target.value)}
-                  rows={6}
-                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                <RichTextEditor
+                  content={overallSummary}
+                  onChange={setOverallSummary}
+                  placeholder="Overall summary of all sources..."
                 />
                 <button
                   onClick={handleRegenerateSummary}
@@ -508,15 +514,14 @@ export default function QuickAddPage() {
                     >
                       {source.url}
                     </a>
-                    <textarea
-                      value={sourceSummaries[index] || ""}
-                      onChange={(e) => {
+                    <RichTextEditor
+                      content={sourceSummaries[index] || ""}
+                      onChange={(value) => {
                         const newSummaries = [...sourceSummaries];
-                        newSummaries[index] = e.target.value;
+                        newSummaries[index] = value;
                         setSourceSummaries(newSummaries);
                       }}
-                      rows={6}
-                      className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                      placeholder={`PersX perspective for source ${index + 1}...`}
                     />
                     <button
                       onClick={() => handleRegeneratePerspective(index)}
