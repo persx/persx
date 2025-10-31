@@ -73,7 +73,7 @@ export default async function News() {
                       </h2>
                     </Link>
                     <p className="text-gray-600 dark:text-gray-400 leading-relaxed mb-4">
-                      {truncateToWords(item.overall_summary, 200)}
+                      {truncateToWords(item.overall_summary, 100)}
                     </p>
                     <Link
                       href={`/news/${item.slug}`}
