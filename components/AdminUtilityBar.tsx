@@ -21,6 +21,11 @@ export default function AdminUtilityBar({ industry, tool, goal }: AdminUtilityBa
   const [message, setMessage] = useState<string>("");
   const [isPending, startTransition] = useTransition();
 
+  // Only show admin bar if there's an industry selected
+  if (!industry) {
+    return null;
+  }
+
   const hasPersonalization = !!(industry || tool || goal);
 
   const handleClearIndustry = () => {

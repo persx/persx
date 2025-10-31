@@ -48,6 +48,20 @@ export default function NewsTemplate({ content }: NewsTemplateProps) {
         </div>
       )}
 
+      {/* PersX Perspective */}
+      {content.persx_perspective && (
+        <section className="mb-8 md:mb-12">
+          <h2 className="text-xl md:text-2xl font-bold mb-3 md:mb-4 text-gray-900 dark:text-white">
+            PersX.ai Perspective
+          </h2>
+          <div className="prose prose-sm md:prose-base dark:prose-invert max-w-none">
+            <div className="text-sm md:text-base text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">
+              {content.persx_perspective}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* External Sources */}
       {content.external_sources && content.external_sources.length > 0 && (
         <section className="mb-8 md:mb-12">
@@ -88,20 +102,6 @@ export default function NewsTemplate({ content }: NewsTemplateProps) {
                 )}
               </div>
             ))}
-          </div>
-        </section>
-      )}
-
-      {/* PersX Perspective */}
-      {content.persx_perspective && (
-        <section className="mb-8 md:mb-12">
-          <h2 className="text-xl md:text-2xl font-bold mb-3 md:mb-4 text-gray-900 dark:text-white">
-            PersX.ai Perspective
-          </h2>
-          <div className="prose prose-sm md:prose-base dark:prose-invert max-w-none">
-            <div className="text-sm md:text-base text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">
-              {content.persx_perspective}
-            </div>
           </div>
         </section>
       )}
