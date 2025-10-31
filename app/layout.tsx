@@ -4,6 +4,8 @@ import Header from "@/components/Header";
 import ConditionalFooter from "@/components/ConditionalFooter";
 import ConditionalAnalytics from "@/components/ConditionalAnalytics";
 import RootErrorBoundary from "@/components/RootErrorBoundary";
+import AdminUtilityBar from "@/components/AdminUtilityBar";
+import { getAdminSessionState, shouldShowUtilityBar } from "@/lib/admin-session";
 
 export const metadata: Metadata = {
   title: {
@@ -77,19 +79,36 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Check if admin utility bar should be shown
+  const showUtilityBar = await shouldShowUtilityBar();
+  const adminState = showUtilityBar ? await getAdminSessionState() : null;
+
   return (
     <html lang="en">
       <body className="min-h-screen flex flex-col">
-        <RootErrorBoundary>
-          <Header />
-          <main className="flex-1">{children}</main>
-          <ConditionalFooter />
-        </RootErrorBoundary>
+        {/* Admin Utility Bar - only visible in admin sessions */}
+        {showUtilityBar && adminState && (
+          <AdminUtilityBar
+            industry={adminState.industry}
+            tool={adminState.tool}
+            goal={adminState.goal}
+          />
+        )}
+
+        {/* Main content with top padding when utility bar is visible */}
+        <div className={showUtilityBar ? "pt-12" : ""}>
+          <RootErrorBoundary>
+            <Header />
+            <main className="flex-1">{children}</main>
+            <ConditionalFooter />
+          </RootErrorBoundary>
+        </div>
+
         <ConditionalAnalytics />
       </body>
     </html>
