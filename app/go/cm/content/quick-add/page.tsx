@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { sanitizeContentForSave } from "@/lib/content-utils";
 
 type Step = 1 | 2 | 3 | 4;
 
@@ -269,28 +270,38 @@ export default function QuickAddPage() {
     setError("");
 
     try {
-      const externalSources = fetchedSources.map((source, index) => ({
-        url: source.url,
-        name: new URL(source.url).hostname,
-        author: source.author,
-        published_date: source.publishedDate,
-        summary: sourceSummaries[index],
-      }));
+      // Sanitize title and summaries
+      const sanitizedData = sanitizeContentForSave({
+        title,
+        overall_summary: overallSummary,
+        persx_perspective: sourceSummaries.join("\n\n"),
+      });
+
+      const externalSources = fetchedSources.map((source, index) => {
+        const sanitizedSummary = sanitizeContentForSave({ summary: sourceSummaries[index] });
+        return {
+          url: source.url,
+          name: new URL(source.url).hostname,
+          author: source.author,
+          published_date: source.publishedDate,
+          summary: sanitizedSummary.summary,
+        };
+      });
 
       const response = await fetch("/api/content", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          title,
+          title: sanitizedData.title,
           slug,
-          content: sourceSummaries.join("\n\n"),
-          excerpt: overallSummary.substring(0, 200),
+          content: sanitizedData.persx_perspective,
+          excerpt: sanitizedData.overall_summary?.substring(0, 200),
           content_type: "news",
           status,
           source_type: "external_curated",
           external_sources: externalSources,
-          overall_summary: overallSummary,
-          persx_perspective: sourceSummaries.join("\n\n"),
+          overall_summary: sanitizedData.overall_summary,
+          persx_perspective: sanitizedData.persx_perspective,
           tags,
         }),
       });

@@ -38,11 +38,11 @@ export default function NewsTemplate({ content }: NewsTemplateProps) {
 
       {/* Overall Summary */}
       {content.overall_summary && (
-        <div className="mb-8 p-6 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-          <h2 className="text-lg font-semibold mb-2 text-blue-900 dark:text-blue-200">
+        <div className="mb-6 md:mb-8 p-4 md:p-6 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+          <h2 className="text-base md:text-lg font-semibold mb-2 text-blue-900 dark:text-blue-200">
             Summary
           </h2>
-          <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+          <p className="text-sm md:text-base text-gray-700 dark:text-gray-300 leading-relaxed">
             {content.overall_summary}
           </p>
         </div>
@@ -50,39 +50,39 @@ export default function NewsTemplate({ content }: NewsTemplateProps) {
 
       {/* External Sources */}
       {content.external_sources && content.external_sources.length > 0 && (
-        <section className="mb-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">
+        <section className="mb-8 md:mb-12">
+          <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6 text-gray-900 dark:text-white">
             Sources
           </h2>
-          <div className="space-y-4">
+          <div className="space-y-3 md:space-y-4">
             {content.external_sources.map((source: any, index: number) => (
               <div
                 key={index}
-                className="p-6 border border-gray-200 dark:border-gray-700 rounded-lg hover:shadow-md transition-shadow"
+                className="p-4 md:p-6 border border-gray-200 dark:border-gray-700 rounded-lg hover:shadow-md transition-shadow"
               >
-                <h3 className="font-semibold text-lg mb-2 text-gray-900 dark:text-white">
+                <h3 className="font-semibold text-base md:text-lg mb-2 text-gray-900 dark:text-white">
                   <a
                     href={source.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 hover:underline"
+                    className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 hover:underline break-words"
                   >
                     {source.name || new URL(source.url).hostname}
                   </a>
                 </h3>
                 {source.author && (
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                  <p className="text-xs md:text-sm text-gray-600 dark:text-gray-400 mb-2">
                     By {source.author}
                   </p>
                 )}
                 {source.published_date && (
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                  <p className="text-xs md:text-sm text-gray-600 dark:text-gray-400 mb-2 md:mb-3">
                     Published:{" "}
                     {new Date(source.published_date).toLocaleDateString()}
                   </p>
                 )}
                 {source.summary && (
-                  <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                  <p className="text-sm md:text-base text-gray-700 dark:text-gray-300 leading-relaxed">
                     {source.summary}
                   </p>
                 )}
@@ -94,12 +94,12 @@ export default function NewsTemplate({ content }: NewsTemplateProps) {
 
       {/* PersX Perspective */}
       {content.persx_perspective && (
-        <section className="mb-12">
-          <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
+        <section className="mb-8 md:mb-12">
+          <h2 className="text-xl md:text-2xl font-bold mb-3 md:mb-4 text-gray-900 dark:text-white">
             PersX.ai Perspective
           </h2>
-          <div className="prose dark:prose-invert max-w-none">
-            <div className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">
+          <div className="prose prose-sm md:prose-base dark:prose-invert max-w-none">
+            <div className="text-sm md:text-base text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">
               {content.persx_perspective}
             </div>
           </div>

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import ContentEditorToolbar from "./ContentEditorToolbar";
 import { ContentPreviewModal } from "@/app/components/content";
 import RichTextEditor from "./RichTextEditor";
+import { sanitizeContentForSave } from "@/lib/content-utils";
 
 const contentTypes = [
   { value: "blog", label: "Blog Post" },
@@ -92,8 +93,18 @@ export default function ContentEditor({
         .map((tag: string) => tag.trim())
         .filter((tag: string) => tag.length > 0);
 
+      // Sanitize content before saving
+      const sanitizedData = sanitizeContentForSave({
+        title: formData.title,
+        excerpt: formData.excerpt,
+        summary: formData.summary,
+      });
+
       const payload = {
         ...formData,
+        title: sanitizedData.title,
+        excerpt: sanitizedData.excerpt,
+        summary: sanitizedData.summary,
         tags: tagsArray,
       };
 
@@ -197,8 +208,18 @@ export default function ContentEditor({
         .map((tag: string) => tag.trim())
         .filter((tag: string) => tag.length > 0);
 
+      // Sanitize content before saving
+      const sanitizedData = sanitizeContentForSave({
+        title: formData.title,
+        excerpt: formData.excerpt,
+        summary: formData.summary,
+      });
+
       const payload = {
         ...formData,
+        title: sanitizedData.title,
+        excerpt: sanitizedData.excerpt,
+        summary: sanitizedData.summary,
         tags: tagsArray,
         status: "draft",
       };
@@ -244,8 +265,18 @@ export default function ContentEditor({
         .map((tag: string) => tag.trim())
         .filter((tag: string) => tag.length > 0);
 
+      // Sanitize content before publishing
+      const sanitizedData = sanitizeContentForSave({
+        title: formData.title,
+        excerpt: formData.excerpt,
+        summary: formData.summary,
+      });
+
       const payload = {
         ...formData,
+        title: sanitizedData.title,
+        excerpt: sanitizedData.excerpt,
+        summary: sanitizedData.summary,
         tags: tagsArray,
         status: "published",
       };
