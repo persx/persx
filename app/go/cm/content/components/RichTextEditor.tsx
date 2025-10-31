@@ -36,6 +36,8 @@ export default function RichTextEditor({
           heading: {
             levels: [2, 3, 4],
           },
+          // Disable link in StarterKit since we're adding it separately with custom config
+          link: false,
         }),
         Link.configure({
           openOnClick: false,
