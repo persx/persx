@@ -3,6 +3,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import ConditionalFooter from "@/components/ConditionalFooter";
 import ConditionalAnalytics from "@/components/ConditionalAnalytics";
+import RootErrorBoundary from "@/components/RootErrorBoundary";
 
 export const metadata: Metadata = {
   title: {
@@ -84,9 +85,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="min-h-screen flex flex-col">
-        <Header />
-        <main className="flex-1">{children}</main>
-        <ConditionalFooter />
+        <RootErrorBoundary>
+          <Header />
+          <main className="flex-1">{children}</main>
+          <ConditionalFooter />
+        </RootErrorBoundary>
         <ConditionalAnalytics />
       </body>
     </html>
