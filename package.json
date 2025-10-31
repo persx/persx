@@ -14,12 +14,14 @@
     "@vercel/speed-insights": "^1.2.0",
     "bcryptjs": "^3.0.2",
     "cheerio": "^1.1.2",
+    "isomorphic-dompurify": "^2.30.1",
     "next": "^14.2.5",
     "next-auth": "^4.24.13",
     "openai": "^6.7.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "resend": "^6.3.0"
+    "resend": "^6.3.0",
+    "zod": "^4.1.12"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",

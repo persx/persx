@@ -2,26 +2,43 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase-server";
+import { verifyCsrfToken, createCsrfErrorResponse } from "@/lib/csrf";
 
 export async function POST(request: NextRequest) {
   try {
+    // CSRF protection
+    if (!verifyCsrfToken(request)) {
+      return createCsrfErrorResponse();
+    }
+
     // Check authentication
     const session = await getServerSession(authOptions);
     if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const data = await request.json();
+    const rawData = await request.json();
 
-    // Validate required fields
-    if (!data.title || !data.content || !data.content_type) {
+    // Validate input
+    const { ContentSchema, sanitizeHtml } = await import("@/lib/validation");
+    const validation = ContentSchema.safeParse(rawData);
+
+    if (!validation.success) {
+      const errors = validation.error.format();
       return NextResponse.json(
-        { error: "Missing required fields" },
+        {
+          error: "Validation failed",
+          details: errors,
+        },
         { status: 400 }
       );
     }
 
+    const data = validation.data;
     const supabase = createAdminClient();
+
+    // Sanitize HTML content
+    const sanitizedContent = sanitizeHtml(data.content);
 
     // Use provided slug or generate from title
     const slug = data.slug || (
@@ -38,7 +55,7 @@ export async function POST(request: NextRequest) {
       .insert({
         title: data.title,
         slug: slug,
-        content: data.content,
+        content: sanitizedContent,
         excerpt: data.excerpt || null,
         content_type: data.content_type,
         status: data.status || "draft",

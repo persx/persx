@@ -15,6 +15,34 @@ const supabaseAdmin = createClient(
   }
 );
 
+// Simple in-memory rate limiter for login attempts
+const loginAttempts = new Map<string, { count: number; resetAt: number }>();
+
+function checkLoginRateLimit(email: string): boolean {
+  const now = Date.now();
+  const attempt = loginAttempts.get(email);
+
+  if (!attempt || now > attempt.resetAt) {
+    // First attempt or expired window - reset
+    loginAttempts.set(email, { count: 1, resetAt: now + 15 * 60 * 1000 }); // 15 minutes
+    return true;
+  }
+
+  if (attempt.count >= 5) {
+    // Too many attempts
+    return false;
+  }
+
+  // Increment attempts
+  attempt.count += 1;
+  loginAttempts.set(email, attempt);
+  return true;
+}
+
+function resetLoginAttempts(email: string): void {
+  loginAttempts.delete(email);
+}
+
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
@@ -26,6 +54,11 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
           throw new Error("Email and password required");
+        }
+
+        // Check rate limit
+        if (!checkLoginRateLimit(credentials.email)) {
+          throw new Error("Too many login attempts. Please try again in 15 minutes.");
         }
 
         // Fetch user from database
@@ -56,6 +89,9 @@ export const authOptions: NextAuthOptions = {
           .update({ last_login_at: new Date().toISOString() })
           .eq("id", user.id);
 
+        // Reset login attempts on successful login
+        resetLoginAttempts(credentials.email);
+
         return {
           id: user.id,
           email: user.email,
@@ -70,7 +106,8 @@ export const authOptions: NextAuthOptions = {
   },
   session: {
     strategy: "jwt",
-    maxAge: 30 * 24 * 60 * 60, // 30 days
+    maxAge: 7 * 24 * 60 * 60, // 7 days (reduced for security)
+    updateAge: 24 * 60 * 60, // Refresh session every 24 hours
   },
   callbacks: {
     async jwt({ token, user }) {

@@ -1,10 +1,59 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import type { RoadmapSubmission } from "@/lib/supabase";
+import { formRateLimiter, getIdentifier } from "@/lib/rate-limit";
+import { verifyCsrfToken, createCsrfErrorResponse } from "@/lib/csrf";
 
 export async function POST(request: NextRequest) {
+  // CSRF protection
+  if (!verifyCsrfToken(request)) {
+    return createCsrfErrorResponse();
+  }
+
+  // Rate limiting
+  const identifier = getIdentifier(request);
+  const rateLimitResult = formRateLimiter.check(identifier);
+
+  if (!rateLimitResult.success) {
+    const resetDate = new Date(rateLimitResult.reset);
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Too many requests. Please try again later.",
+        retryAfter: Math.ceil((rateLimitResult.reset - Date.now()) / 1000)
+      },
+      {
+        status: 429,
+        headers: {
+          "Retry-After": String(Math.ceil((rateLimitResult.reset - Date.now()) / 1000)),
+          "X-RateLimit-Limit": "3",
+          "X-RateLimit-Remaining": String(rateLimitResult.remaining),
+          "X-RateLimit-Reset": resetDate.toISOString(),
+        }
+      }
+    );
+  }
+
   try {
-    const data = await request.json();
+    const rawData = await request.json();
+
+    // Validate input
+    const { RoadmapSubmissionSchema } = await import("@/lib/validation");
+    const validation = RoadmapSubmissionSchema.safeParse(rawData);
+
+    if (!validation.success) {
+      const errors = validation.error.format();
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Validation failed",
+          errors: errors,
+        },
+        { status: 400 }
+      );
+    }
+
+    const data = validation.data;
 
     // Get IP address and location from headers (Vercel provides these)
     const ip = request.headers.get("x-forwarded-for")?.split(",")[0] ||
@@ -21,33 +70,27 @@ export async function POST(request: NextRequest) {
       ? "local"
       : "production";
 
-    // Log the form submission data for debugging
-    console.log("=== New Roadmap Submission ===");
-    console.log("Timestamp:", new Date().toISOString());
-    console.log("Environment:", environment);
-    console.log("IP Address:", ip);
-    if (city || region || country) {
-      console.log("Location:", [city, region, country].filter(Boolean).join(", "));
-    }
-    console.log("Industry:", data.industry);
-    if (data.industryOther) {
-      console.log("Industry (Other):", data.industryOther);
-    }
-    console.log("Goals:", data.goals.join(", "));
-    if (data.goalOther) {
-      console.log("Goal (Other):", data.goalOther);
-    }
-    console.log("Martech Stack:", data.martechStack.join(", "));
-    if (data.martechOther) {
-      console.log("Martech Stack (Other):", data.martechOther);
-    }
-    if (data.martechToolNames && Object.keys(data.martechToolNames).length > 0) {
-      console.log("Martech Tool Names:", JSON.stringify(data.martechToolNames, null, 2));
-    }
-    console.log("Additional Details:", data.additionalDetails);
-    if (data.email) {
-      console.log("Email:", data.email);
-      console.log("Full Roadmap Requested:", data.requestFullRoadmap || false);
+    // Log the form submission data for debugging (only in development)
+    if (process.env.NODE_ENV !== "production") {
+      console.log("=== New Roadmap Submission ===");
+      console.log("Timestamp:", new Date().toISOString());
+      console.log("Environment:", environment);
+      console.log("Industry:", data.industry);
+      if (data.industryOther) {
+        console.log("Industry (Other):", data.industryOther);
+      }
+      console.log("Goals:", data.goals.join(", "));
+      if (data.goalOther) {
+        console.log("Goal (Other):", data.goalOther);
+      }
+      console.log("Martech Stack:", data.martechStack.join(", "));
+      if (data.martechOther) {
+        console.log("Martech Stack (Other):", data.martechOther);
+      }
+      if (data.martechToolNames && Object.keys(data.martechToolNames).length > 0) {
+        console.log("Martech Tool Names:", JSON.stringify(data.martechToolNames, null, 2));
+      }
+      console.log("Additional Details:", data.additionalDetails);
     }
 
     let insertedData = null;
@@ -80,17 +123,18 @@ export async function POST(request: NextRequest) {
         .select();
 
       if (error) {
-        console.error("Supabase error:", error);
+        console.error("Supabase error:", error.message);
         throw error;
       }
 
       insertedData = result;
-      console.log("Successfully saved to Supabase:", insertedData);
+      if (process.env.NODE_ENV !== "production") {
+        console.log("Successfully saved to Supabase");
+        console.log("=============================\n");
+      }
     } else {
       console.warn("Supabase not configured. Data logged to console only.");
     }
-
-    console.log("=============================\n");
 
     return NextResponse.json(
       {
