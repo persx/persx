@@ -97,11 +97,22 @@ export default function StartPage() {
     "Other",
   ];
 
-  const handleIndustryChange = (value: string) => {
+  const handleIndustryChange = async (value: string) => {
     setFormData({ ...formData, industry: value, goals: [], goalOther: "" });
     // Store industry in sessionStorage for use on contact page
     if (typeof window !== 'undefined') {
       sessionStorage.setItem('userIndustry', value);
+    }
+
+    // Also set server-side cookie for admin utility bar
+    try {
+      await fetch('/api/personalization/set-industry', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ industry: value }),
+      });
+    } catch (error) {
+      console.error('Failed to set industry cookie:', error);
     }
   };
 

@@ -28,6 +28,11 @@ export default function AdminUtilityBar({ industry, tool, goal }: AdminUtilityBa
       const result = await clearIndustry();
       setMessage(result.message);
 
+      // Also clear sessionStorage to keep in sync
+      if (typeof window !== 'undefined') {
+        sessionStorage.removeItem('userIndustry');
+      }
+
       // Clear message after 3 seconds
       setTimeout(() => setMessage(""), 3000);
     });
@@ -37,6 +42,11 @@ export default function AdminUtilityBar({ industry, tool, goal }: AdminUtilityBa
     startTransition(async () => {
       const result = await clearAllPersonalization();
       setMessage(result.message);
+
+      // Also clear sessionStorage to keep in sync
+      if (typeof window !== 'undefined') {
+        sessionStorage.removeItem('userIndustry');
+      }
 
       // Clear message after 3 seconds
       setTimeout(() => setMessage(""), 3000);

@@ -8,10 +8,27 @@ export default function Home() {
   const [userIndustry, setUserIndustry] = useState<string>("");
 
   useEffect(() => {
-    // Get stored industry from sessionStorage
+    // Get stored industry from sessionStorage first
     if (typeof window !== 'undefined') {
-      const storedIndustry = sessionStorage.getItem('userIndustry') || "";
-      setUserIndustry(storedIndustry);
+      const storedIndustry = sessionStorage.getItem('userIndustry');
+
+      if (storedIndustry) {
+        setUserIndustry(storedIndustry);
+      } else {
+        // If sessionStorage is empty, check server-side cookie
+        fetch('/api/personalization/get-state')
+          .then(res => res.json())
+          .then(data => {
+            if (data.success && data.data.industry) {
+              setUserIndustry(data.data.industry);
+              // Sync to sessionStorage for faster subsequent reads
+              sessionStorage.setItem('userIndustry', data.data.industry);
+            }
+          })
+          .catch(error => {
+            console.error('Failed to fetch personalization state:', error);
+          });
+      }
     }
   }, []);
 
@@ -218,7 +235,7 @@ export default function Home() {
           AI Strategist for Personalization & Experimentation
         </h1>
         <h2 className="text-xl md:text-2xl text-gray-600 dark:text-gray-400 mb-8 max-w-3xl mx-auto">
-          Discover your ideal personas, journeys, and build an actionable roadmap in minutes.
+          Discover your ideal personas, journeys, and build an actionable roadmap {userIndustry ? `for ${userIndustry} use cases ` : ''}in minutes.
         </h2>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link href="/start" className="px-8 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors">
