@@ -1,14 +1,12 @@
-import ContentEditor from "../components/ContentEditor";
+"use client";
 
-type SearchParams = {
-  type?: string;
-};
+import { useSearchParams } from "next/navigation";
+import ContentEditorWrapper from "../components/ContentEditorWrapper";
 
-export default function NewContentPage({
-  searchParams,
-}: {
-  searchParams: SearchParams;
-}) {
+export default function NewContentPage() {
+  const searchParams = useSearchParams();
+  const contentType = searchParams.get("type") || undefined;
+
   return (
     <div className="space-y-6">
       <div>
@@ -18,7 +16,7 @@ export default function NewContentPage({
         </p>
       </div>
 
-      <ContentEditor defaultType={searchParams.type} />
+      <ContentEditorWrapper defaultType={contentType} />
     </div>
   );
 }

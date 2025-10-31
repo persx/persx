@@ -1,11 +1,11 @@
 "use client";
 
-import { useEditor, EditorContent } from "@tiptap/react";
+import { EditorContent, Editor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Link from "@tiptap/extension-link";
 import Image from "@tiptap/extension-image";
 import Placeholder from "@tiptap/extension-placeholder";
-import { useCallback } from "react";
+import { useCallback, useState, useEffect, useRef } from "react";
 
 interface RichTextEditorProps {
   content: string;
@@ -18,40 +18,60 @@ export default function RichTextEditor({
   onChange,
   placeholder = "Start writing your content...",
 }: RichTextEditorProps) {
-  const editor = useEditor({
-    extensions: [
-      StarterKit.configure({
-        heading: {
-          levels: [2, 3, 4],
-        },
-      }),
-      Link.configure({
-        openOnClick: false,
-        HTMLAttributes: {
-          class: "text-blue-600 hover:text-blue-700 underline",
-        },
-      }),
-      Image.configure({
-        HTMLAttributes: {
-          class: "max-w-full h-auto rounded-lg",
-        },
-      }),
-      Placeholder.configure({
-        placeholder,
-      }),
-    ],
-    content,
-    immediatelyRender: false,
-    onUpdate: ({ editor }) => {
-      onChange(editor.getHTML());
-    },
-    editorProps: {
-      attributes: {
-        class:
-          "prose prose-lg dark:prose-invert max-w-none focus:outline-none min-h-[400px] px-4 py-3",
+  const [editor, setEditor] = useState<Editor | null>(null);
+  const contentRef = useRef(content);
+
+  // Update content ref when content prop changes
+  useEffect(() => {
+    contentRef.current = content;
+  }, [content]);
+
+  // Initialize editor only on client-side after mount
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const editorInstance = new Editor({
+      extensions: [
+        StarterKit.configure({
+          heading: {
+            levels: [2, 3, 4],
+          },
+        }),
+        Link.configure({
+          openOnClick: false,
+          HTMLAttributes: {
+            class: "text-blue-600 hover:text-blue-700 underline",
+          },
+        }),
+        Image.configure({
+          HTMLAttributes: {
+            class: "max-w-full h-auto rounded-lg",
+          },
+        }),
+        Placeholder.configure({
+          placeholder,
+        }),
+      ],
+      content: contentRef.current,
+      immediatelyRender: false,
+      shouldRerenderOnTransaction: false,
+      onUpdate: ({ editor }) => {
+        onChange(editor.getHTML());
       },
-    },
-  });
+      editorProps: {
+        attributes: {
+          class:
+            "prose prose-lg dark:prose-invert max-w-none focus:outline-none min-h-[400px] px-4 py-3",
+        },
+      },
+    });
+
+    setEditor(editorInstance);
+
+    return () => {
+      editorInstance.destroy();
+    };
+  }, []); // Only run once on mount
 
   const setLink = useCallback(() => {
     if (!editor) return;
@@ -79,8 +99,26 @@ export default function RichTextEditor({
     }
   }, [editor]);
 
+  // Show loading skeleton until editor is ready
   if (!editor) {
-    return null;
+    return (
+      <div className="border border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden bg-white dark:bg-gray-800">
+        <div className="border-b border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 p-2 h-[52px]">
+          <div className="animate-pulse flex gap-2">
+            <div className="h-8 w-32 bg-gray-200 dark:bg-gray-700 rounded"></div>
+            <div className="h-8 w-8 bg-gray-200 dark:bg-gray-700 rounded"></div>
+            <div className="h-8 w-8 bg-gray-200 dark:bg-gray-700 rounded"></div>
+          </div>
+        </div>
+        <div className="p-4 min-h-[400px]">
+          <div className="animate-pulse space-y-3">
+            <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
+            <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-full"></div>
+            <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-5/6"></div>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (

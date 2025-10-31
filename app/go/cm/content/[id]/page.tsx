@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase-server";
 import { notFound } from "next/navigation";
-import ContentEditor from "../components/ContentEditor";
+import ContentEditorWrapper from "../components/ContentEditorWrapper";
 
 export default async function EditContentPage({
   params,
@@ -28,7 +28,7 @@ export default async function EditContentPage({
         </p>
       </div>
 
-      <ContentEditor initialData={content} contentId={params.id} />
+      <ContentEditorWrapper initialData={content} contentId={params.id} />
     </div>
   );
 }
