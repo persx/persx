@@ -1,6 +1,14 @@
 import { createClient } from "@/lib/supabase-server";
 import Link from "next/link";
 
+// Truncate text to a maximum number of words
+function truncateToWords(text: string, maxWords: number): string {
+  if (!text) return "";
+  const words = text.split(/\s+/);
+  if (words.length <= maxWords) return text;
+  return words.slice(0, maxWords).join(" ") + "...";
+}
+
 export default async function News() {
   const supabase = createClient();
 
@@ -65,7 +73,7 @@ export default async function News() {
                       </h2>
                     </Link>
                     <p className="text-gray-600 dark:text-gray-400 leading-relaxed mb-4">
-                      {item.overall_summary}
+                      {truncateToWords(item.overall_summary, 200)}
                     </p>
                     <Link
                       href={`/news/${item.slug}`}
