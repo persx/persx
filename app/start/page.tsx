@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 
 interface FormData {
@@ -15,10 +15,15 @@ interface FormData {
   email?: string;
 }
 
+const STORAGE_KEY = "persx_roadmap_progress";
+
 export default function StartPage() {
   const [currentStep, setCurrentStep] = useState(1);
   const [showPreview, setShowPreview] = useState(false);
   const [showEmailCapture, setShowEmailCapture] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isEmailSubmitting, setIsEmailSubmitting] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     industry: "",
     industryOther: "",
@@ -29,6 +34,48 @@ export default function StartPage() {
     martechToolNames: {},
     additionalDetails: "",
   });
+
+  // Load saved progress from localStorage on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          const { formData: savedData, currentStep: savedStep, timestamp } = JSON.parse(saved);
+
+          // Only restore if saved within last 7 days
+          const sevenDaysAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
+          if (timestamp && timestamp > sevenDaysAgo) {
+            setFormData(savedData);
+            setCurrentStep(savedStep);
+          } else {
+            // Clear old data
+            localStorage.removeItem(STORAGE_KEY);
+          }
+        }
+      } catch (error) {
+        console.error("Failed to load saved progress:", error);
+        localStorage.removeItem(STORAGE_KEY);
+      }
+      setIsLoaded(true);
+    }
+  }, []);
+
+  // Save progress to localStorage whenever form data or step changes
+  useEffect(() => {
+    if (isLoaded && typeof window !== 'undefined') {
+      try {
+        const dataToSave = {
+          formData,
+          currentStep,
+          timestamp: Date.now(),
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
+      } catch (error) {
+        console.error("Failed to save progress:", error);
+      }
+    }
+  }, [formData, currentStep, isLoaded]);
 
   const industries = [
     "eCommerce",
@@ -154,6 +201,7 @@ export default function StartPage() {
   };
 
   const handleSubmitForm = async () => {
+    setIsSubmitting(true);
     try {
       // Send form data to API
       const response = await fetch("/api/submit-roadmap", {
@@ -171,26 +219,70 @@ export default function StartPage() {
       }
 
       console.log("Form submitted successfully:", result);
+
+      // Clear saved progress after successful submission
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem(STORAGE_KEY);
+      }
     } catch (error) {
       console.error("Error submitting form:", error);
       alert("Network error: Could not submit form. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsEmailSubmitting(true);
     try {
       // Submit email for full roadmap
-      await fetch("/api/submit-roadmap", {
+      const response = await fetch("/api/submit-roadmap", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...formData, requestFullRoadmap: true }),
       });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        alert(`Submission failed: ${result.message || "Please try again."}`);
+        return;
+      }
+
       alert("Thank you! We'll send your full 90-day roadmap to your email shortly.");
       setShowEmailCapture(false);
+
+      // Clear saved progress after email submission
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem(STORAGE_KEY);
+      }
     } catch (error) {
       console.error("Error submitting email:", error);
+      alert("Network error: Could not submit. Please try again.");
+    } finally {
+      setIsEmailSubmitting(false);
     }
+  };
+
+  const clearSavedProgress = () => {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem(STORAGE_KEY);
+    }
+    // Reset form
+    setFormData({
+      industry: "",
+      industryOther: "",
+      goals: [],
+      goalOther: "",
+      martechStack: [],
+      martechOther: "",
+      martechToolNames: {},
+      additionalDetails: "",
+    });
+    setCurrentStep(1);
+    setShowPreview(false);
+    setShowEmailCapture(false);
   };
 
   // Industry-specific personas
@@ -783,16 +875,24 @@ export default function StartPage() {
                   <input
                     type="email"
                     required
+                    disabled={isEmailSubmitting}
                     placeholder="your.email@company.com"
                     value={formData.email || ""}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="flex-1 px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="flex-1 px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
                   />
                   <button
                     type="submit"
-                    className="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+                    disabled={isEmailSubmitting}
+                    className="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                   >
-                    Send Roadmap
+                    {isEmailSubmitting && (
+                      <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                    )}
+                    {isEmailSubmitting ? "Sending..." : "Send Roadmap"}
                   </button>
                 </div>
               </form>
@@ -830,9 +930,31 @@ export default function StartPage() {
             BETA
           </span>
         </div>
-        <p className="text-center text-gray-600 dark:text-gray-400 mb-8">
-          Answer a few questions to get your personalized 90-day experience optimization roadmap
-        </p>
+        <div className="flex items-center justify-center gap-2 mb-8">
+          <p className="text-center text-gray-600 dark:text-gray-400">
+            Answer a few questions to get your personalized 90-day experience optimization roadmap
+          </p>
+        </div>
+
+        {/* Saved Progress Indicator */}
+        {isLoaded && currentStep > 1 && (
+          <div className="mb-4 flex items-center justify-between px-4 py-2 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+            <div className="flex items-center gap-2">
+              <svg className="w-4 h-4 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+              <span className="text-sm text-green-700 dark:text-green-400">
+                Progress saved automatically
+              </span>
+            </div>
+            <button
+              onClick={clearSavedProgress}
+              className="text-xs text-green-700 dark:text-green-400 hover:text-green-900 dark:hover:text-green-300 underline"
+            >
+              Start Over
+            </button>
+          </div>
+        )}
 
         {/* Progress Indicator */}
         <div className="mb-8">
@@ -1029,20 +1151,46 @@ export default function StartPage() {
           <div className="flex justify-between mt-8">
             <button
               onClick={() => setCurrentStep(Math.max(1, currentStep - 1))}
-              disabled={currentStep === 1}
+              disabled={currentStep === 1 || isSubmitting}
               className="px-6 py-3 border border-gray-300 dark:border-gray-700 rounded-lg font-semibold hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Back
             </button>
             <button
               onClick={handleNext}
-              disabled={!canProceed()}
-              className="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={!canProceed() || isSubmitting}
+              className="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
-              {currentStep === 4 ? "See Your Sample Output" : "Next"}
+              {isSubmitting && currentStep === 4 && (
+                <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+              )}
+              {isSubmitting && currentStep === 4 ? "Generating..." : (currentStep === 4 ? "See Your Sample Output" : "Next")}
             </button>
           </div>
         </div>
+
+        {/* Loading Overlay */}
+        {isSubmitting && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+            <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-xl max-w-md mx-4">
+              <div className="flex flex-col items-center">
+                <svg className="animate-spin h-12 w-12 text-blue-600 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                  Generating Your Roadmap
+                </h3>
+                <p className="text-gray-600 dark:text-gray-400 text-center">
+                  Analyzing your inputs and creating a personalized strategy...
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
