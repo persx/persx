@@ -13,7 +13,8 @@ const CONVERTKIT_NEWSLETTER_FORM_ID = process.env.CONVERTKIT_NEWSLETTER_FORM_ID;
 const CONVERTKIT_ROADMAP_FORM_ID = process.env.CONVERTKIT_ROADMAP_FORM_ID;
 
 // Tag IDs (optional - use for segmentation)
-const CONVERTKIT_NEWSLETTER_TAG_ID = process.env.CONVERTKIT_NEWSLETTER_TAG_ID;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const _CONVERTKIT_NEWSLETTER_TAG_ID = process.env.CONVERTKIT_NEWSLETTER_TAG_ID;
 const CONVERTKIT_ROADMAP_TAG_ID = process.env.CONVERTKIT_ROADMAP_TAG_ID;
 
 interface ConvertKitSubscriber {
