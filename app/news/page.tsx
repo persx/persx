@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase-server";
 import Link from "next/link";
+import NewsletterSubscription from "@/components/NewsletterSubscription";
 
 // Truncate text to a maximum number of words
 function truncateToWords(text: string, maxWords: number): string {
@@ -92,24 +93,7 @@ export default async function News() {
           )}
         </div>
 
-        <div className="mt-12 p-6 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
-          <h3 className="text-lg font-semibold mb-2 text-blue-900 dark:text-blue-200">
-            Stay Updated
-          </h3>
-          <p className="text-gray-700 dark:text-gray-300 mb-4">
-            Subscribe to our newsletter to receive the latest news and updates directly in your inbox.
-          </p>
-          <div className="flex gap-2">
-            <input
-              type="email"
-              placeholder="Enter your email"
-              className="flex-1 px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <button className="px-6 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors">
-              Subscribe
-            </button>
-          </div>
-        </div>
+        <NewsletterSubscription />
       </div>
     </div>
   );
