@@ -4,6 +4,21 @@ import type { RoadmapSubmission } from "@/lib/supabase";
 import { checkRateLimit, getClientIdentifier, RATE_LIMITS } from "@/lib/rate-limiter";
 
 export async function POST(request: NextRequest) {
+  // CSRF Protection - validate request origin
+  const { validateRequestOrigin } = await import("@/lib/csrf-protection");
+  const originValidation = validateRequestOrigin(request);
+
+  if (!originValidation.valid) {
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Request origin not allowed",
+        error: "Forbidden",
+      },
+      { status: 403 }
+    );
+  }
+
   // Rate limiting
   const identifier = getClientIdentifier(request);
   const rateLimit = checkRateLimit(identifier, RATE_LIMITS.FORM_SUBMISSION);
@@ -27,7 +42,22 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const data = await request.json();
+    // Validate request body with Zod
+    const { validateRequest, roadmapSubmissionSchema } = await import("@/lib/validation-schemas");
+    const validation = await validateRequest(request, roadmapSubmissionSchema);
+
+    if (!validation.success) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: validation.error,
+          error: "Validation failed",
+        },
+        { status: 400 }
+      );
+    }
+
+    const data = validation.data;
 
     // Get IP address and location from headers (Vercel provides these)
     const ip = request.headers.get("x-forwarded-for")?.split(",")[0] ||
@@ -160,15 +190,22 @@ export async function PATCH(request: NextRequest) {
   }
 
   try {
-    const data = await request.json();
-    const { id, email, requestFullRoadmap } = data;
+    // Validate request body with Zod
+    const { validateRequest, roadmapUpdateSchema } = await import("@/lib/validation-schemas");
+    const validation = await validateRequest(request, roadmapUpdateSchema);
 
-    if (!id) {
+    if (!validation.success) {
       return NextResponse.json(
-        { success: false, message: "Submission ID is required" },
+        {
+          success: false,
+          message: validation.error,
+          error: "Validation failed",
+        },
         { status: 400 }
       );
     }
+
+    const { id, email, requestFullRoadmap } = validation.data;
 
     console.log("=== Updating Roadmap Submission ===");
     console.log("Timestamp:", new Date().toISOString());

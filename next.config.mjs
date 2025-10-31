@@ -1,5 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Enable instrumentation for startup environment validation
+  experimental: {
+    instrumentationHook: true,
+  },
+
   async headers() {
     return [
       {

@@ -42,14 +42,18 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { contentId } = await request.json();
+    // Validate request body with Zod
+    const { validateRequest, previewTokenRequestSchema } = await import("@/lib/validation-schemas");
+    const validation = await validateRequest(request, previewTokenRequestSchema);
 
-    if (!contentId) {
+    if (!validation.success) {
       return NextResponse.json(
-        { error: "Content ID is required" },
+        { error: validation.error },
         { status: 400 }
       );
     }
+
+    const { contentId } = validation.data;
 
     const supabase = createClient();
 

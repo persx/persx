@@ -6,6 +6,20 @@ import { checkRateLimit, getClientIdentifier, RATE_LIMITS } from "@/lib/rate-lim
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(request: NextRequest) {
+  // CSRF Protection - validate request origin
+  const { validateRequestOrigin } = await import("@/lib/csrf-protection");
+  const originValidation = validateRequestOrigin(request);
+
+  if (!originValidation.valid) {
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Request origin not allowed",
+      },
+      { status: 403 }
+    );
+  }
+
   // Rate limiting - strict limits for contact form to prevent spam
   const identifier = getClientIdentifier(request);
   const rateLimit = checkRateLimit(identifier, RATE_LIMITS.CONTACT);
@@ -28,16 +42,18 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const data = await request.json();
-    const { name, email, message, industry } = data;
+    // Validate request body with Zod
+    const { validateRequest, contactFormSchema } = await import("@/lib/validation-schemas");
+    const validation = await validateRequest(request, contactFormSchema);
 
-    // Validate required fields
-    if (!email || !message) {
+    if (!validation.success) {
       return NextResponse.json(
-        { success: false, message: "Email and message are required" },
+        { success: false, message: validation.error },
         { status: 400 }
       );
     }
+
+    const { name, email, message, industry } = validation.data;
 
     // Log the contact form submission
     console.log("=== New Contact Form Submission ===");
@@ -48,6 +64,13 @@ export async function POST(request: NextRequest) {
     console.log("Message:", message);
     console.log("===================================\n");
 
+    // Sanitize user input for email
+    const { sanitizeTextForEmail } = await import("@/lib/sanitization");
+    const sanitizedName = name ? sanitizeTextForEmail(name) : "Not provided";
+    const sanitizedEmail = sanitizeTextForEmail(email);
+    const sanitizedIndustry = industry ? sanitizeTextForEmail(industry) : "Not provided";
+    const sanitizedMessage = sanitizeTextForEmail(message);
+
     // Send email using Resend
     const emailResult = await resend.emails.send({
       from: "PersX.ai Contact Form <onboarding@resend.dev>", // This will be replaced with your domain
@@ -55,11 +78,11 @@ export async function POST(request: NextRequest) {
       subject: `New Contact Form Submission from ${name || email}`,
       html: `
         <h2>New Contact Form Submission</h2>
-        <p><strong>Name:</strong> ${name || "Not provided"}</p>
-        <p><strong>Email:</strong> ${email}</p>
-        <p><strong>Industry:</strong> ${industry}</p>
+        <p><strong>Name:</strong> ${sanitizedName}</p>
+        <p><strong>Email:</strong> ${sanitizedEmail}</p>
+        <p><strong>Industry:</strong> ${sanitizedIndustry}</p>
         <p><strong>Message:</strong></p>
-        <p>${message.replace(/\n/g, "<br>")}</p>
+        <p>${sanitizedMessage}</p>
         <hr>
         <p style="color: #666; font-size: 12px;">Submitted on ${new Date().toLocaleString()}</p>
       `,

@@ -11,22 +11,47 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { url } = await request.json();
+    // Validate request body with Zod
+    const { validateRequest, fetchMetadataSchema } = await import("@/lib/validation-schemas");
+    const validation = await validateRequest(request, fetchMetadataSchema);
 
-    if (!url) {
+    if (!validation.success) {
       return NextResponse.json(
-        { error: "URL is required" },
+        { error: validation.error },
         { status: 400 }
       );
     }
 
-    // Validate URL format
-    let parsedUrl: URL;
-    try {
-      parsedUrl = new URL(url);
-    } catch {
+    const { url } = validation.data;
+
+    // SSRF Protection: Validate URL is not pointing to internal resources
+    const parsedUrl = new URL(url);
+    const hostname = parsedUrl.hostname.toLowerCase();
+
+    // Block localhost, private IPs, and internal networks
+    const blockedPatterns = [
+      /^localhost$/i,
+      /^127\./,
+      /^10\./,
+      /^172\.(1[6-9]|2[0-9]|3[01])\./,
+      /^192\.168\./,
+      /^169\.254\./, // Link-local
+      /^::1$/, // IPv6 localhost
+      /^fc00:/i, // IPv6 private
+      /^fe80:/i, // IPv6 link-local
+    ];
+
+    if (blockedPatterns.some(pattern => pattern.test(hostname))) {
       return NextResponse.json(
-        { error: "Invalid URL format" },
+        { error: "Access to internal resources is not allowed" },
+        { status: 403 }
+      );
+    }
+
+    // Only allow HTTP and HTTPS protocols
+    if (!['http:', 'https:'].includes(parsedUrl.protocol)) {
+      return NextResponse.json(
+        { error: "Only HTTP and HTTPS protocols are allowed" },
         { status: 400 }
       );
     }
