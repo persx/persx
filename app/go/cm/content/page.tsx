@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase-server";
 import Link from "next/link";
 import ContentFilter from "./components/ContentFilter";
+import DeleteContentButton from "./components/DeleteContentButton";
 
 type SearchParams = {
   type?: string;
@@ -170,12 +171,19 @@ export default async function ContentListPage({
                       {formatDate(item.created_at)}
                     </td>
                     <td className="px-6 py-4">
-                      <Link
-                        href={`/go/cm/content/${item.id}`}
-                        className="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 font-medium"
-                      >
-                        Edit →
-                      </Link>
+                      <div className="flex items-center gap-4">
+                        <Link
+                          href={`/go/cm/content/${item.id}`}
+                          className="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 font-medium"
+                        >
+                          Edit →
+                        </Link>
+                        <DeleteContentButton
+                          contentId={item.id}
+                          contentTitle={item.title}
+                          variant="link"
+                        />
+                      </div>
                     </td>
                   </tr>
                 ))}

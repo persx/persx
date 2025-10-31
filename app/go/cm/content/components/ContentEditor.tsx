@@ -6,6 +6,7 @@ import ContentEditorToolbar from "./ContentEditorToolbar";
 import { ContentPreviewModal } from "@/app/components/content";
 import RichTextEditor from "./RichTextEditor";
 import { sanitizeContentForSave } from "@/lib/content-utils";
+import DeleteContentButton from "./DeleteContentButton";
 
 const contentTypes = [
   { value: "blog", label: "Blog Post" },
@@ -705,13 +706,22 @@ export default function ContentEditor({
 
       {/* Actions */}
       <div className="flex items-center justify-between">
-        <button
-          type="button"
-          onClick={() => router.back()}
-          className="px-6 py-3 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-lg font-semibold hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-        >
-          Cancel
-        </button>
+        <div className="flex items-center gap-4">
+          <button
+            type="button"
+            onClick={() => router.back()}
+            className="px-6 py-3 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-lg font-semibold hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+          >
+            Cancel
+          </button>
+          {contentId && (
+            <DeleteContentButton
+              contentId={contentId}
+              contentTitle={formData.title || "this content"}
+              variant="button"
+            />
+          )}
+        </div>
         <button
           type="submit"
           disabled={isLoading}
