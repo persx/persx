@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 type Industry =
   | "eCommerce"
   | "Healthcare"

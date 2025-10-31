@@ -28,11 +28,11 @@ const rateLimitStore = new Map<string, RateLimitEntry>();
 // Cleanup old entries every 5 minutes
 setInterval(() => {
   const now = Date.now();
-  for (const [key, entry] of rateLimitStore.entries()) {
+  Array.from(rateLimitStore.entries()).forEach(([key, entry]) => {
     if (entry.resetTime < now) {
       rateLimitStore.delete(key);
     }
-  }
+  });
 }, 5 * 60 * 1000);
 
 /**
@@ -85,7 +85,7 @@ export function getClientIdentifier(request: Request): string {
   // Try various IP headers (Vercel provides x-forwarded-for)
   const forwardedFor = headers.get("x-forwarded-for");
   if (forwardedFor) {
-    return forwardedFor.split(",")[0].trim();
+    return forwardedFor.split(",")[0]?.trim() || "unknown";
   }
 
   const realIp = headers.get("x-real-ip");

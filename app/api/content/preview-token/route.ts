@@ -89,7 +89,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Insert new token
-    const { data: tokenData, error: tokenError } = await supabase
+    const { error: tokenError } = await supabase
       .from("content_preview_tokens")
       .insert({
         content_id: contentId,

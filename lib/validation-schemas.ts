@@ -29,7 +29,7 @@ export const roadmapSubmissionSchema = z.object({
   goalOther: z.string().max(200, "Goal other is too long").optional(),
   martechStack: z.array(z.string().max(100)).max(50, "Too many martech tools"),
   martechOther: z.string().max(200, "Martech other is too long").optional(),
-  martechToolNames: z.record(z.string().max(100)).optional(),
+  martechToolNames: z.record(z.string(), z.string().max(100)).optional(),
   additionalDetails: z.string().max(5000, "Additional details is too long").optional(),
   email: z.string().email("Invalid email address").max(255, "Email is too long").optional(),
   requestFullRoadmap: z.boolean().optional(),
@@ -130,7 +130,7 @@ export async function validateRequest<T>(
     if (!result.success) {
       return {
         success: false,
-        error: result.error.errors[0]?.message || "Validation failed",
+        error: result.error.issues[0]?.message || "Validation failed",
         details: result.error,
       };
     }

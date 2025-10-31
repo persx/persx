@@ -131,7 +131,7 @@ export async function createPasswordResetToken(email: string) {
   const expiresAt = new Date();
   expiresAt.setHours(expiresAt.getHours() + 1); // 1 hour expiry
 
-  const { data, error } = await supabaseAdmin
+  const { error } = await supabaseAdmin
     .from("password_reset_tokens")
     .insert([
       {

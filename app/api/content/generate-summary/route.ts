@@ -75,7 +75,7 @@ async function generateTitle(sources: any[]): Promise<string> {
       max_tokens: 100,
     });
 
-    return completion.choices[0].message.content || "Industry Insights";
+    return completion.choices[0]?.message.content || "Industry Insights";
   } catch (error: any) {
     console.warn("OpenAI API error, using fallback title:", error.message);
     // Fallback to simple title generation
@@ -106,7 +106,7 @@ async function generateSummary(sources: any[]): Promise<string> {
       max_tokens: 500,
     });
 
-    return completion.choices[0].message.content || "";
+    return completion.choices[0]?.message.content || "";
   } catch (error: any) {
     console.warn("OpenAI API error, using fallback summary:", error.message);
     // Fallback to simple summary generation
@@ -141,7 +141,7 @@ async function generatePerspective(source: any): Promise<string> {
       max_tokens: 800,
     });
 
-    return completion.choices[0].message.content || "";
+    return completion.choices[0]?.message.content || "";
   } catch (error: any) {
     console.warn("OpenAI API error, using fallback perspective:", error.message);
     // Fallback to placeholder perspective
@@ -169,7 +169,7 @@ async function generateTags(sources: any[], title: string, summary: string): Pro
       max_tokens: 100,
     });
 
-    const tagsString = completion.choices[0].message.content || "";
+    const tagsString = completion.choices[0]?.message.content || "";
     return tagsString.split(",").map(tag => tag.trim()).filter(Boolean).slice(0, 5);
   } catch (error: any) {
     console.warn("OpenAI API error, using fallback tags:", error.message);

@@ -14,7 +14,8 @@
       "Bash(xargs kill:*)",
       "Bash(mkdir:*)",
       "Bash(npx supabase db push:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(chmod:*)"
     ],
     "deny": [],
     "ask": []
