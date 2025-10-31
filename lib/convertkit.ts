@@ -15,13 +15,6 @@ const CONVERTKIT_ROADMAP_FORM_ID = process.env.CONVERTKIT_ROADMAP_FORM_ID;
 // Tag IDs (optional - use for segmentation)
 const CONVERTKIT_ROADMAP_TAG_ID = process.env.CONVERTKIT_ROADMAP_TAG_ID;
 
-interface ConvertKitSubscriber {
-  email: string;
-  first_name?: string;
-  fields?: Record<string, string>;
-  tags?: number[];
-}
-
 interface ConvertKitResponse {
   subscription?: {
     id: number;
