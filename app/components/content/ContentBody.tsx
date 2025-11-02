@@ -95,10 +95,37 @@ export default function ContentBody({
             const strongText = firstStrong?.children?.find((c: any) => c.tagName === 'strong')?.children?.[0]?.value || '';
 
             // Determine blockquote type
+            const isTldr = strongText.includes('TLDR') || strongText.includes('TL;DR');
             const isQuickWin = strongText.includes('Quick Win');
             const isPerspective = strongText.includes('PersX.ai Perspective') || strongText.includes("Here's PersX.ai Perspective");
             const isQuote = strongText.includes('Quote');
             const isCallout = strongText.includes('Callout');
+
+            // TLDR - Cyan/Teal left border
+            if (isTldr) {
+              return (
+                <blockquote
+                  style={{
+                    borderLeft: '4px solid #06b6d4',
+                    paddingLeft: '1.25rem',
+                    paddingRight: '1.25rem',
+                    paddingTop: '0.75rem',
+                    paddingBottom: '0.75rem',
+                    marginTop: '1rem',
+                    marginBottom: '1rem',
+                    borderRadius: '0 0.5rem 0.5rem 0',
+                    backgroundColor: '#ecfeff',
+                  }}
+                  className="dark:bg-cyan-900/20"
+                  {...props}
+                >
+                  <div style={{ fontWeight: 'bold', fontSize: '1.1rem', marginBottom: '0.5rem', color: '#06b6d4' }}>
+                    TL;DR
+                  </div>
+                  {children}
+                </blockquote>
+              );
+            }
 
             // Quick Win - Green left border
             if (isQuickWin) {
