@@ -123,11 +123,16 @@ export default function RichTextEditor({
             "prose-em:italic " +
             "prose-code:text-pink-600 dark:prose-code:text-pink-400 prose-code:bg-gray-100 dark:prose-code:bg-gray-800 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm " +
             "prose-pre:bg-gray-900 dark:prose-pre:bg-gray-950 prose-pre:p-4 prose-pre:rounded-lg prose-pre:overflow-x-auto prose-pre:my-6 " +
-            "prose-blockquote:border-l-4 prose-blockquote:border-cyan-500 prose-blockquote:pl-5 prose-blockquote:pr-5 prose-blockquote:not-italic prose-blockquote:text-gray-700 dark:prose-blockquote:text-gray-300 prose-blockquote:my-4 prose-blockquote:py-3 prose-blockquote:rounded-r " +
-            "prose-ul:list-disc prose-ul:pl-6 prose-ul:mb-6 prose-ul:mt-2 " +
-            "prose-ol:list-decimal prose-ol:pl-6 prose-ol:mb-6 prose-ol:mt-2 " +
-            "prose-li:text-gray-700 dark:prose-li:text-gray-300 prose-li:text-sm md:prose-li:text-base prose-li:leading-relaxed prose-li:mb-2 " +
+            "prose-blockquote:!border-l-4 prose-blockquote:!pl-5 prose-blockquote:!pr-5 prose-blockquote:!py-3 prose-blockquote:!my-4 prose-blockquote:!rounded-r prose-blockquote:!not-italic prose-blockquote:text-gray-700 dark:prose-blockquote:text-gray-300 " +
+            "[&_blockquote]:!border-l-4 [&_blockquote]:!pl-5 [&_blockquote]:!pr-5 [&_blockquote]:!py-3 [&_blockquote]:!my-4 [&_blockquote]:!rounded-r [&_blockquote]:!not-italic [&_blockquote]:!border-blue-500 " +
+            "prose-ul:!list-disc prose-ul:!pl-6 prose-ul:!mb-4 prose-ul:!mt-2 " +
+            "[&_ul]:!list-disc [&_ul]:!pl-6 [&_ul]:!mb-4 [&_ul]:!mt-2 [&_ul]:!block " +
+            "prose-ol:!list-decimal prose-ol:!pl-6 prose-ol:!mb-4 prose-ol:!mt-2 " +
+            "[&_ol]:!list-decimal [&_ol]:!pl-6 [&_ol]:!mb-4 [&_ol]:!mt-2 [&_ol]:!block " +
+            "prose-li:text-gray-700 dark:prose-li:text-gray-300 prose-li:text-sm md:prose-li:text-base prose-li:!leading-relaxed prose-li:!mb-2 " +
+            "[&_li]:text-gray-700 dark:[&_li]:text-gray-300 [&_li]:!leading-relaxed [&_li]:!mb-2 [&_li]:!block " +
             "prose-li::marker:text-gray-500 dark:prose-li::marker:text-gray-400 " +
+            "[&_li::marker]:!text-gray-500 dark:[&_li::marker]:!text-gray-400 " +
             "prose-table:border-collapse prose-table:w-full prose-table:mb-5 " +
             "prose-th:border prose-th:border-gray-300 dark:prose-th:border-gray-700 prose-th:bg-gray-100 dark:prose-th:bg-gray-800 prose-th:p-3 prose-th:text-left prose-th:font-semibold " +
             "prose-td:border prose-td:border-gray-300 dark:prose-td:border-gray-700 prose-td:p-3 " +
@@ -607,6 +612,65 @@ export default function RichTextEditor({
       <div className={showMarkdownPreview ? "grid grid-cols-2 gap-4 p-4" : ""}>
         <div className={showMarkdownPreview ? "" : "w-full"}>
           <EditorContent editor={editor} />
+
+          {/* Custom CSS to force editor formatting to match live site */}
+          <style jsx global>{`
+            /* Force blockquote styling */
+            .ProseMirror blockquote {
+              border-left: 4px solid #3b82f6 !important;
+              padding-left: 1.25rem !important;
+              padding-right: 1.25rem !important;
+              padding-top: 0.75rem !important;
+              padding-bottom: 0.75rem !important;
+              margin-top: 1rem !important;
+              margin-bottom: 1rem !important;
+              border-radius: 0 0.5rem 0.5rem 0 !important;
+              font-style: normal !important;
+            }
+
+            /* Force paragraph spacing */
+            .ProseMirror p {
+              margin-top: 1.5rem !important;
+              margin-bottom: 1.5rem !important;
+              line-height: 1.75 !important;
+            }
+
+            /* Force list styling - unordered */
+            .ProseMirror ul {
+              display: block !important;
+              list-style-type: disc !important;
+              padding-left: 1.5rem !important;
+              margin-bottom: 1rem !important;
+              margin-top: 0.5rem !important;
+            }
+
+            /* Force list styling - ordered */
+            .ProseMirror ol {
+              display: block !important;
+              list-style-type: decimal !important;
+              padding-left: 1.5rem !important;
+              margin-bottom: 1rem !important;
+              margin-top: 0.5rem !important;
+            }
+
+            /* Force list item styling */
+            .ProseMirror li {
+              display: list-item !important;
+              margin-bottom: 0.5rem !important;
+              line-height: 1.75 !important;
+            }
+
+            .ProseMirror ul li {
+              list-style-type: disc !important;
+            }
+
+            .ProseMirror ol li {
+              list-style-type: decimal !important;
+            }
+
+            /* Note: Special blockquote types (TLDR, Quick Win, Perspective) will show
+               with correct colors when published. In editor, they show with blue border. */
+          `}</style>
         </div>
 
         {showMarkdownPreview && (
