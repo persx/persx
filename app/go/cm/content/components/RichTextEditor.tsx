@@ -184,7 +184,48 @@ export default function RichTextEditor({
             } else if (value.startsWith("h")) {
               const level = parseInt(value.substring(1)) as 2 | 3 | 4;
               editor.chain().focus().toggleHeading({ level }).run();
+            } else if (value === "blockquote") {
+              // Insert Quote blockquote with strong prefix
+              editor.chain().focus().clearNodes().insertContent({
+                type: 'blockquote',
+                content: [{
+                  type: 'paragraph',
+                  content: [
+                    { type: 'text', marks: [{ type: 'bold' }], text: 'Quote' },
+                    { type: 'hardBreak' },
+                    { type: 'text', text: 'Enter your quote here...' }
+                  ]
+                }]
+              }).run();
+            } else if (value === "perspective") {
+              // Insert PersX.ai Perspective blockquote with strong prefix
+              editor.chain().focus().clearNodes().insertContent({
+                type: 'blockquote',
+                content: [{
+                  type: 'paragraph',
+                  content: [
+                    { type: 'text', marks: [{ type: 'bold' }], text: 'PersX.ai Perspective' },
+                    { type: 'hardBreak' },
+                    { type: 'text', text: 'Enter your perspective here...' }
+                  ]
+                }]
+              }).run();
+            } else if (value === "callout") {
+              // Insert Quick Win Recommendations blockquote with strong prefix
+              editor.chain().focus().clearNodes().insertContent({
+                type: 'blockquote',
+                content: [{
+                  type: 'paragraph',
+                  content: [
+                    { type: 'text', marks: [{ type: 'bold' }], text: 'Quick Win Recommendations' },
+                    { type: 'hardBreak' },
+                    { type: 'text', text: 'Enter your recommendations here...' }
+                  ]
+                }]
+              }).run();
             }
+            // Reset dropdown to paragraph after selection
+            e.target.value = "p";
           }}
           className="px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
         >
@@ -192,6 +233,9 @@ export default function RichTextEditor({
           <option value="h2">Heading 2</option>
           <option value="h3">Heading 3</option>
           <option value="h4">Heading 4</option>
+          <option value="blockquote">Quote</option>
+          <option value="perspective">PersX.ai Perspective</option>
+          <option value="callout">Quick Win</option>
         </select>
 
         <div className="w-px h-6 bg-gray-300 dark:bg-gray-600 mx-1" />

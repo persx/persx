@@ -114,9 +114,20 @@ export default function ContentHeader({
 
       {/* Excerpt */}
       {excerpt && (
-        <p className="text-xl text-gray-600 dark:text-gray-400 leading-relaxed mb-6">
+        <blockquote
+          style={{
+            borderLeft: '4px solid #06b6d4',
+            paddingLeft: '1.25rem',
+            paddingRight: '1.25rem',
+            paddingTop: '0.75rem',
+            paddingBottom: '0.75rem',
+            marginBottom: '1.5rem',
+            borderRadius: '0 0.5rem 0.5rem 0',
+          }}
+          className="text-gray-700 dark:text-gray-300 leading-relaxed"
+        >
           {excerpt}
-        </p>
+        </blockquote>
       )}
     </header>
   );
