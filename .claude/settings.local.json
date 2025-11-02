@@ -24,7 +24,11 @@
       "Bash(open \"https://supabase.com/dashboard/project/lzpbpymjejwqutfpfwwu/sql/new\")",
       "Bash(cat:*)",
       "Bash(pkill:*)",
-      "Bash(npm i:*)"
+      "Bash(npm i:*)",
+      "Bash(node -e:*)",
+      "Bash(NEXT_PUBLIC_SUPABASE_URL=https://lzpbpymjejwqutfpfwwu.supabase.co SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx6cGJweW1qZWp3cXV0ZnBmd3d1Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MTczMjcxOCwiZXhwIjoyMDc3MzA4NzE4fQ.ymG2zCWzwpuCHIbs14ptFWcbnXSaCBG21L35CqK9-tQ npx tsx:*)",
+      "Bash(node scripts/add-content-tldr.js:*)",
+      "Bash(DR\" header text\n- Keep only cyan/teal left border for minimal styling\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")"
     ],
     "deny": [],
     "ask": []

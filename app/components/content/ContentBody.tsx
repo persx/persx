@@ -114,14 +114,9 @@ export default function ContentBody({
                     marginTop: '1rem',
                     marginBottom: '1rem',
                     borderRadius: '0 0.5rem 0.5rem 0',
-                    backgroundColor: '#ecfeff',
                   }}
-                  className="dark:bg-cyan-900/20"
                   {...props}
                 >
-                  <div style={{ fontWeight: 'bold', fontSize: '1.1rem', marginBottom: '0.5rem', color: '#06b6d4' }}>
-                    TL;DR
-                  </div>
                   {children}
                 </blockquote>
               );
