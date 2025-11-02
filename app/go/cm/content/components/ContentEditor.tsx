@@ -1198,8 +1198,8 @@ export default function ContentEditor({
                         type="button"
                         onClick={() => {
                           const updatedItems = (formData.breadcrumb_schema?.itemListElement || [])
-                            .filter((_, i) => i !== index)
-                            .map((item, i) => ({ ...item, position: i + 1 }));
+                            .filter((_: any, i: number) => i !== index)
+                            .map((item: any, i: number) => ({ ...item, position: i + 1 }));
                           setFormData({
                             ...formData,
                             breadcrumb_schema: {
