@@ -1,34 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git add:*)",
-      "Bash(git commit:*)",
-      "Bash(git branch:*)",
-      "Bash(git remote add:*)",
-      "Bash(npm run build:*)",
-      "Bash(npm install:*)",
-      "Bash(npm run dev:*)",
-      "Bash(git push:*)",
-      "Bash(vercel:*)",
-      "Bash(lsof:*)",
-      "Bash(xargs kill:*)",
-      "Bash(mkdir:*)",
-      "Bash(npx supabase db push:*)",
-      "Bash(curl:*)",
-      "Bash(chmod:*)",
-      "Bash(node scripts/fetch-article.js:*)",
-      "Bash(node scripts/update-article.js:*)",
-      "Bash(node scripts/apply-detailed-format.js:*)",
-      "Bash(node scripts/apply-google-doc-format.js:*)",
-      "Bash(echo:*)",
-      "Bash(open \"https://supabase.com/dashboard/project/lzpbpymjejwqutfpfwwu/sql/new\")",
-      "Bash(cat:*)",
-      "Bash(pkill:*)",
-      "Bash(npm i:*)",
-      "Bash(node -e:*)",
-      "Bash(NEXT_PUBLIC_SUPABASE_URL=https://lzpbpymjejwqutfpfwwu.supabase.co SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx6cGJweW1qZWp3cXV0ZnBmd3d1Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MTczMjcxOCwiZXhwIjoyMDc3MzA4NzE4fQ.ymG2zCWzwpuCHIbs14ptFWcbnXSaCBG21L35CqK9-tQ npx tsx:*)",
-      "Bash(node scripts/add-content-tldr.js:*)",
-      "Bash(DR\" header text\n- Keep only cyan/teal left border for minimal styling\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")"
+      "Bash(node update-article.js:*)",
+      "Bash(node verify-article.js:*)"
     ],
     "deny": [],
     "ask": []
