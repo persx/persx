@@ -32,16 +32,6 @@ export default function ContentLayout({
   return (
     <div className="container mx-auto px-4 md:px-6 py-12 md:py-20">
       <div className={`${maxWidthClasses[maxWidth]} mx-auto ${className}`}>
-        {/* Back link */}
-        {backLink && (
-          <Link
-            href={backLink.href}
-            className="inline-flex items-center text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 mb-8 transition-colors"
-          >
-            ← {backLink.label}
-          </Link>
-        )}
-
         {/* Main content */}
         <article>{children}</article>
       </div>
