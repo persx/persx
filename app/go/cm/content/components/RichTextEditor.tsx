@@ -5,7 +5,7 @@ import StarterKit from "@tiptap/starter-kit";
 import Link from "@tiptap/extension-link";
 import Image from "@tiptap/extension-image";
 import Placeholder from "@tiptap/extension-placeholder";
-import { useCallback, useState, useEffect, useRef } from "react";
+import { useCallback, useState, useEffect, useRef, useMemo } from "react";
 import { marked } from "marked";
 import TurndownService from "turndown";
 
@@ -21,8 +21,11 @@ export default function RichTextEditor({
   placeholder = "Start writing your content...",
 }: RichTextEditorProps) {
   const [editor, setEditor] = useState<Editor | null>(null);
+  const [isSticky, setIsSticky] = useState(false);
   const contentRef = useRef(content);
   const turndownService = useRef<TurndownService | null>(null);
+  const toolbarRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // Initialize turndown service immediately
   if (typeof window !== "undefined" && !turndownService.current) {
@@ -96,15 +99,15 @@ export default function RichTextEditor({
             "prose-h2:text-xl md:prose-h2:text-2xl prose-h2:mb-4 prose-h2:mt-8 prose-h2:font-bold " +
             "prose-h3:text-lg md:prose-h3:text-xl prose-h3:mb-3 prose-h3:mt-6 prose-h3:font-bold " +
             "prose-h4:text-xl md:prose-h4:text-2xl prose-h4:mb-4 prose-h4:mt-8 prose-h4:font-bold " +
-            "prose-p:text-gray-700 dark:prose-p:text-gray-300 prose-p:leading-relaxed prose-p:mb-4 prose-p:text-sm md:prose-p:text-base " +
+            "prose-p:text-gray-700 dark:prose-p:text-gray-300 prose-p:leading-relaxed prose-p:mb-6 prose-p:mt-2 prose-p:text-sm md:prose-p:text-base " +
             "prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-a:no-underline hover:prose-a:underline " +
             "prose-strong:text-gray-900 dark:prose-strong:text-white prose-strong:font-bold " +
             "prose-em:italic " +
             "prose-code:text-pink-600 dark:prose-code:text-pink-400 prose-code:bg-gray-100 dark:prose-code:bg-gray-800 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm " +
-            "prose-pre:bg-gray-900 dark:prose-pre:bg-gray-950 prose-pre:p-4 prose-pre:rounded-lg prose-pre:overflow-x-auto " +
-            "prose-blockquote:border-l-4 prose-blockquote:border-blue-500 prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:text-gray-700 dark:prose-blockquote:text-gray-300 prose-blockquote:my-4 prose-blockquote:bg-gray-50 dark:prose-blockquote:bg-gray-800/30 prose-blockquote:py-2 prose-blockquote:rounded-r " +
-            "prose-ul:list-disc prose-ul:pl-6 prose-ul:mb-4 prose-ul:mt-2 " +
-            "prose-ol:list-decimal prose-ol:pl-6 prose-ol:mb-4 prose-ol:mt-2 " +
+            "prose-pre:bg-gray-900 dark:prose-pre:bg-gray-950 prose-pre:p-4 prose-pre:rounded-lg prose-pre:overflow-x-auto prose-pre:my-6 " +
+            "prose-blockquote:border-l-4 prose-blockquote:border-cyan-500 prose-blockquote:pl-5 prose-blockquote:pr-5 prose-blockquote:not-italic prose-blockquote:text-gray-700 dark:prose-blockquote:text-gray-300 prose-blockquote:my-4 prose-blockquote:py-3 prose-blockquote:rounded-r " +
+            "prose-ul:list-disc prose-ul:pl-6 prose-ul:mb-6 prose-ul:mt-2 " +
+            "prose-ol:list-decimal prose-ol:pl-6 prose-ol:mb-6 prose-ol:mt-2 " +
             "prose-li:text-gray-700 dark:prose-li:text-gray-300 prose-li:text-sm md:prose-li:text-base prose-li:leading-relaxed prose-li:mb-2 " +
             "prose-li::marker:text-gray-500 dark:prose-li::marker:text-gray-400 " +
             "prose-table:border-collapse prose-table:w-full prose-table:mb-5 " +
@@ -122,6 +125,30 @@ export default function RichTextEditor({
       editorInstance.destroy();
     };
   }, []); // Only run once on mount
+
+  // Sticky toolbar effect
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const handleScroll = () => {
+      if (containerRef.current && toolbarRef.current) {
+        const rect = containerRef.current.getBoundingClientRect();
+        setIsSticky(rect.top < 0 && rect.bottom > toolbarRef.current.offsetHeight);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Calculate word and character count
+  const stats = useMemo(() => {
+    if (!editor) return { words: 0, characters: 0 };
+    const text = editor.getText();
+    const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+    const characters = text.length;
+    return { words, characters };
+  }, [editor?.state.doc]);
 
   const setLink = useCallback(() => {
     if (!editor) return;
@@ -142,11 +169,46 @@ export default function RichTextEditor({
   const addImage = useCallback(() => {
     if (!editor) return;
 
-    const url = window.prompt("Enter image URL:");
+    // Create hidden file input
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/*";
+    input.onchange = async (e) => {
+      const target = e.target as HTMLInputElement;
+      const file = target.files?.[0];
 
-    if (url) {
-      editor.chain().focus().setImage({ src: url }).run();
-    }
+      if (!file) return;
+
+      try {
+        // Upload file
+        const formData = new FormData();
+        formData.append("file", file);
+
+        const response = await fetch("/api/upload/image", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.error || "Upload failed");
+        }
+
+        const data = await response.json();
+
+        // Replace loading image with actual image
+        editor
+          .chain()
+          .focus()
+          .setImage({ src: data.url, alt: data.alt })
+          .run();
+      } catch (error) {
+        console.error("Error uploading image:", error);
+        alert("Failed to upload image. Please try again.");
+      }
+    };
+
+    input.click();
   }, [editor]);
 
   // Show loading skeleton until editor is ready
@@ -172,9 +234,16 @@ export default function RichTextEditor({
   }
 
   return (
-    <div className="border border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden bg-white dark:bg-gray-800">
+    <div ref={containerRef} className="border border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden bg-white dark:bg-gray-800">
       {/* Toolbar */}
-      <div className="border-b border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 p-2 flex flex-wrap gap-1">
+      <div
+        ref={toolbarRef}
+        className={`
+          border-b border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 p-2 flex flex-wrap gap-1
+          transition-all duration-200 z-50
+          ${isSticky ? 'fixed top-0 left-0 right-0 shadow-lg' : 'relative'}
+        `}
+      >
         {/* Text Type Dropdown */}
         <select
           onChange={(e) => {
@@ -296,7 +365,12 @@ export default function RichTextEditor({
           title="Bullet List"
         >
           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" />
+            <circle cx="3" cy="4" r="1.5"/>
+            <circle cx="3" cy="10" r="1.5"/>
+            <circle cx="3" cy="16" r="1.5"/>
+            <rect x="7" y="3" width="11" height="2" rx="1"/>
+            <rect x="7" y="9" width="11" height="2" rx="1"/>
+            <rect x="7" y="15" width="11" height="2" rx="1"/>
           </svg>
         </button>
 
@@ -312,7 +386,12 @@ export default function RichTextEditor({
           title="Numbered List"
         >
           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" />
+            <text x="1" y="5" fontSize="5" fontWeight="bold">1</text>
+            <text x="1" y="11" fontSize="5" fontWeight="bold">2</text>
+            <text x="1" y="17" fontSize="5" fontWeight="bold">3</text>
+            <rect x="7" y="3" width="11" height="2" rx="1"/>
+            <rect x="7" y="9" width="11" height="2" rx="1"/>
+            <rect x="7" y="15" width="11" height="2" rx="1"/>
           </svg>
         </button>
 
@@ -395,41 +474,12 @@ export default function RichTextEditor({
           </svg>
         </button>
 
-        <div className="w-px h-6 bg-gray-300 dark:bg-gray-600 mx-1" />
-
-        {/* Undo */}
-        <button
-          type="button"
-          onClick={() => editor.chain().focus().undo().run()}
-          disabled={!editor.can().undo()}
-          className="px-3 py-1 text-sm rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors bg-white dark:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
-          title="Undo"
-        >
-          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-            <path
-              fillRule="evenodd"
-              d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
-              clipRule="evenodd"
-            />
-          </svg>
-        </button>
-
-        {/* Redo */}
-        <button
-          type="button"
-          onClick={() => editor.chain().focus().redo().run()}
-          disabled={!editor.can().redo()}
-          className="px-3 py-1 text-sm rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors bg-white dark:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
-          title="Redo"
-        >
-          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-            <path
-              fillRule="evenodd"
-              d="M10.293 16.707a1 1 0 001.414 0l6-6a1 1 0 000-1.414l-6-6a1 1 0 00-1.414 1.414L14.586 9H3a1 1 0 100 2h11.586l-4.293 4.293a1 1 0 000 1.414z"
-              clipRule="evenodd"
-            />
-          </svg>
-        </button>
+        {/* Word Count */}
+        <div className="ml-auto flex items-center gap-2 px-3 py-1 text-xs text-gray-600 dark:text-gray-400">
+          <span title="Word count">📝 {stats.words} words</span>
+          <span className="text-gray-400 dark:text-gray-600">|</span>
+          <span title="Character count">{stats.characters.toLocaleString()} chars</span>
+        </div>
       </div>
 
       {/* Editor */}
