@@ -9,7 +9,7 @@ import { sanitizeContentForSave } from "@/lib/content-utils";
 import DeleteContentButton from "./DeleteContentButton";
 import CollapsibleSection from "@/app/components/CollapsibleSection";
 import TagSelector from "@/app/components/TagSelector";
-import { BreadcrumbSchema, BreadcrumbItem } from "@/types/knowledge-base";
+import { BreadcrumbItem } from "@/types/knowledge-base";
 
 const contentTypes = [
   { value: "blog", label: "Blog Post" },
