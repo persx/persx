@@ -35,12 +35,7 @@ export default async function NewsArticlePage({ params }: PageProps) {
   }
 
   return (
-    <ContentLayout
-      backLink={{
-        href: "/news",
-        label: "Back to News",
-      }}
-    >
+    <ContentLayout>
       <NewsTemplate content={article} />
 
       {/* Newsletter Subscription */}

@@ -30,12 +30,7 @@ export default async function ToolGuidePage({ params }: PageProps) {
   }
 
   return (
-    <ContentLayout
-      backLink={{
-        href: "/tools",
-        label: "Back to Tool Guides",
-      }}
-    >
+    <ContentLayout>
       <ToolGuideTemplate content={article} />
     </ContentLayout>
   );

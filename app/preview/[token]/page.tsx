@@ -131,7 +131,7 @@ export default async function PreviewPage({ params }: PageProps) {
       </div>
 
       {/* Content */}
-      <ContentLayout backLink={backLink}>
+      <ContentLayout>
         <ContentRenderer content={content} contentType={content.content_type} />
       </ContentLayout>
     </>

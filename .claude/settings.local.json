@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(node update-article.js:*)",
-      "Bash(node verify-article.js:*)"
+      "Bash(node verify-article.js:*)",
+      "Bash(xargs sed:*)"
     ],
     "deny": [],
     "ask": []

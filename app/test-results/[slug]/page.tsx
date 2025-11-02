@@ -30,12 +30,7 @@ export default async function TestResultPage({ params }: PageProps) {
   }
 
   return (
-    <ContentLayout
-      backLink={{
-        href: "/test-results",
-        label: "Back to Test Results",
-      }}
-    >
+    <ContentLayout>
       <TestResultTemplate content={article} />
     </ContentLayout>
   );

@@ -30,12 +30,7 @@ export default async function BestPracticePage({ params }: PageProps) {
   }
 
   return (
-    <ContentLayout
-      backLink={{
-        href: "/best-practices",
-        label: "Back to Best Practices",
-      }}
-    >
+    <ContentLayout>
       <BestPracticeTemplate content={article} />
     </ContentLayout>
   );

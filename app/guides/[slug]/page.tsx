@@ -31,10 +31,6 @@ export default async function GuidePage({ params }: PageProps) {
 
   return (
     <ContentLayout
-      backLink={{
-        href: "/guides",
-        label: "Back to Guides",
-      }}
       maxWidth="5xl"
     >
       <ImplementationGuideTemplate content={article} />

@@ -1,23 +1,17 @@
-import Link from "next/link";
 import { ReactNode } from "react";
 
 interface ContentLayoutProps {
   children: ReactNode;
-  backLink?: {
-    href: string;
-    label: string;
-  };
   maxWidth?: "2xl" | "3xl" | "4xl" | "5xl" | "full";
   className?: string;
 }
 
 /**
  * ContentLayout - Unified wrapper for all content display pages
- * Provides consistent container, spacing, and back navigation
+ * Provides consistent container and spacing
  */
 export default function ContentLayout({
   children,
-  backLink,
   maxWidth = "4xl",
   className = "",
 }: ContentLayoutProps) {

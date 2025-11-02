@@ -30,12 +30,7 @@ export default async function BlogArticlePage({ params }: PageProps) {
   }
 
   return (
-    <ContentLayout
-      backLink={{
-        href: "/blog",
-        label: "Back to Blog",
-      }}
-    >
+    <ContentLayout>
       <BlogTemplate content={article} />
     </ContentLayout>
   );

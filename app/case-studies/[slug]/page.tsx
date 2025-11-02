@@ -30,12 +30,7 @@ export default async function CaseStudyPage({ params }: PageProps) {
   }
 
   return (
-    <ContentLayout
-      backLink={{
-        href: "/case-studies",
-        label: "Back to Case Studies",
-      }}
-    >
+    <ContentLayout>
       <CaseStudyTemplate content={article} />
     </ContentLayout>
   );
