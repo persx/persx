@@ -123,16 +123,12 @@ export default function ContentBody({
             const strongText = firstStrong?.children?.find((c: any) => c.tagName === 'strong')?.children?.[0]?.value || '';
 
             // Determine blockquote type and assign appropriate class
-            const isTldr = strongText.includes('TLDR') || strongText.includes('TL;DR');
             const isQuickWin = strongText.includes('Quick Win');
             const isPerspective = strongText.includes('PersX.ai Perspective') || strongText.includes("Here's PersX.ai Perspective");
             const isQuote = strongText.includes('Quote');
             const isCallout = strongText.includes('Callout');
 
             // Return blockquote with appropriate CSS class
-            if (isTldr) {
-              return <blockquote className="blockquote-tldr" {...props}>{children}</blockquote>;
-            }
             if (isQuickWin) {
               return <blockquote className="blockquote-quickwin" {...props}>{children}</blockquote>;
             }
