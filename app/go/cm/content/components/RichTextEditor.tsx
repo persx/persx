@@ -51,13 +51,41 @@ export default function RichTextEditor({
   // Convert markdown to HTML
   const markdownToHtml = (markdown: string): string => {
     if (!markdown) return "";
-    return marked.parse(markdown, { async: false }) as string;
+
+    // First, escape any text that looks like HTML tags (e.g., <Optimizely>, <VWO>)
+    // but is actually meant to be displayed as text
+    const escapedMarkdown = markdown.replace(/<([A-Z][a-zA-Z0-9\s]*?)>/g, (match, tagName) => {
+      // Check if this is a known HTML tag - if not, escape it
+      const knownHtmlTags = ['p', 'div', 'span', 'a', 'img', 'strong', 'em', 'b', 'i', 'u',
+                             'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li',
+                             'blockquote', 'code', 'pre', 'br', 'hr', 'table', 'tr', 'td', 'th'];
+      const isKnownTag = knownHtmlTags.includes(tagName.toLowerCase().trim());
+
+      if (!isKnownTag && tagName.match(/^[A-Z]/)) {
+        // This looks like a vendor name (starts with capital letter), escape it
+        return `&lt;${tagName}&gt;`;
+      }
+      return match;
+    });
+
+    // Configure marked to preserve content
+    return marked.parse(escapedMarkdown, {
+      async: false,
+      breaks: true,
+      gfm: true,
+    }) as string;
   };
 
   // Convert HTML to markdown
   const htmlToMarkdown = (html: string): string => {
     if (!html || !turndownService.current) return "";
-    return turndownService.current.turndown(html);
+    const markdown = turndownService.current.turndown(html);
+
+    // Unescape vendor names that were escaped (e.g., &lt;Optimizely&gt; → <Optimizely>)
+    const unescapedMarkdown = markdown
+      .replace(/&lt;([A-Z][a-zA-Z0-9\s]*?)&gt;/g, '<$1>');
+
+    return unescapedMarkdown;
   };
 
   // Initialize editor only on client-side after mount
