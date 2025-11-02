@@ -12,6 +12,7 @@ import { TableHeader } from "@tiptap/extension-table-header";
 import { useCallback, useState, useEffect, useRef, useMemo } from "react";
 import { marked } from "marked";
 import TurndownService from "turndown";
+import { contentTemplates, ContentTemplate } from "../lib/contentTemplates";
 
 interface RichTextEditorProps {
   content: string;
@@ -27,6 +28,8 @@ export default function RichTextEditor({
   const [editor, setEditor] = useState<Editor | null>(null);
   const [isSticky, setIsSticky] = useState(false);
   const [showShortcuts, setShowShortcuts] = useState(false);
+  const [showMarkdownPreview, setShowMarkdownPreview] = useState(false);
+  const [showTemplates, setShowTemplates] = useState(false);
   const contentRef = useRef(content);
   const turndownService = useRef<TurndownService | null>(null);
   const toolbarRef = useRef<HTMLDivElement>(null);
@@ -176,6 +179,13 @@ export default function RichTextEditor({
     return { words, characters };
   }, [editor?.state.doc]);
 
+  // Get current markdown content for preview
+  const currentMarkdown = useMemo(() => {
+    if (!editor) return "";
+    const html = editor.getHTML();
+    return htmlToMarkdown(html);
+  }, [editor?.state.doc]);
+
   const setLink = useCallback(() => {
     if (!editor) return;
 
@@ -190,6 +200,19 @@ export default function RichTextEditor({
     }
 
     editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
+  }, [editor]);
+
+  const applyTemplate = useCallback((template: ContentTemplate) => {
+    if (!editor) return;
+
+    // Convert markdown template to HTML
+    const htmlContent = markdownToHtml(template.content);
+
+    // Set the content
+    editor.commands.setContent(htmlContent);
+
+    // Close the modal
+    setShowTemplates(false);
   }, [editor]);
 
   const addImage = useCallback(() => {
@@ -530,6 +553,35 @@ export default function RichTextEditor({
 
         <div className="w-px h-6 bg-gray-300 dark:bg-gray-600 mx-1" />
 
+        {/* Templates */}
+        <button
+          type="button"
+          onClick={() => setShowTemplates(true)}
+          className="px-3 py-1 text-sm rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors bg-white dark:bg-gray-800"
+          title="Insert Template"
+        >
+          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
+          </svg>
+        </button>
+
+        {/* Markdown Preview Toggle */}
+        <button
+          type="button"
+          onClick={() => setShowMarkdownPreview(!showMarkdownPreview)}
+          className={`px-3 py-1 text-sm rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors ${
+            showMarkdownPreview
+              ? "bg-gray-300 dark:bg-gray-600"
+              : "bg-white dark:bg-gray-800"
+          }`}
+          title={showMarkdownPreview ? "Hide Markdown" : "Show Markdown"}
+        >
+          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M3 5a2 2 0 012-2h10a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V5zm11 1H6v8h8V6z" clipRule="evenodd"/>
+            <path d="M7 8h1v4H7V8zm2 0h1v4H9V8zm2 0h1v4h-1V8z"/>
+          </svg>
+        </button>
+
         {/* Keyboard Shortcuts Help */}
         <button
           type="button"
@@ -551,7 +603,24 @@ export default function RichTextEditor({
       </div>
 
       {/* Editor */}
-      <EditorContent editor={editor} />
+      <div className={showMarkdownPreview ? "grid grid-cols-2 gap-4 p-4" : ""}>
+        <div className={showMarkdownPreview ? "" : "w-full"}>
+          <EditorContent editor={editor} />
+        </div>
+
+        {showMarkdownPreview && (
+          <div className="border-l border-gray-300 dark:border-gray-700 pl-4">
+            <div className="mb-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
+              Markdown Preview
+            </div>
+            <div className="bg-gray-50 dark:bg-gray-900 rounded p-4 font-mono text-xs overflow-auto max-h-[600px]">
+              <pre className="whitespace-pre-wrap text-gray-800 dark:text-gray-200">
+                {currentMarkdown}
+              </pre>
+            </div>
+          </div>
+        )}
+      </div>
 
       {/* Keyboard Shortcuts Modal */}
       {showShortcuts && (
@@ -659,6 +728,65 @@ export default function RichTextEditor({
               <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
                 <p className="text-sm text-gray-600 dark:text-gray-400">
                   💡 Tip: Press <kbd className="px-2 py-1 text-xs font-semibold bg-gray-100 dark:bg-gray-700 rounded">Esc</kbd> to close this dialog
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Content Templates Modal */}
+      {showTemplates && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+          onClick={() => setShowTemplates(false)}
+        >
+          <div
+            className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[80vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                  Content Templates
+                </h2>
+                <button
+                  onClick={() => setShowTemplates(false)}
+                  className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                >
+                  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd"/>
+                  </svg>
+                </button>
+              </div>
+
+              <p className="text-gray-600 dark:text-gray-400 mb-6">
+                Choose a template to start with. This will replace your current content.
+              </p>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {contentTemplates.map((template) => (
+                  <button
+                    key={template.id}
+                    onClick={() => applyTemplate(template)}
+                    className="text-left p-4 border-2 border-gray-200 dark:border-gray-700 rounded-lg hover:border-blue-500 dark:hover:border-blue-400 transition-colors"
+                  >
+                    <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">
+                      {template.name}
+                    </h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                      {template.description}
+                    </p>
+                    <span className="inline-block px-2 py-1 text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded">
+                      {template.contentType}
+                    </span>
+                  </button>
+                ))}
+              </div>
+
+              <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  💡 Tip: Templates provide a starting structure. Customize them to fit your needs.
                 </p>
               </div>
             </div>
