@@ -210,11 +210,11 @@ export default function RichTextEditor({
             "[&_blockquote.blockquote-perspective]:!border-0 [&_blockquote.blockquote-perspective]:!border-l-4 [&_blockquote.blockquote-perspective]:!border-purple-500 [&_blockquote.blockquote-perspective]:!text-white [&_blockquote.blockquote-perspective]:!rounded-r-lg [&_blockquote.blockquote-perspective]:!bg-transparent " +
             "[&_blockquote.blockquote-perspective_*]:!text-white " +
             "prose-ul:!list-disc prose-ul:!pl-6 prose-ul:!mb-4 prose-ul:!mt-2 " +
-            "[&_ul]:!list-disc [&_ul]:!pl-6 [&_ul]:!mb-4 [&_ul]:!mt-2 [&_ul]:!block " +
+            "[&_ul]:!list-disc [&_ul]:!pl-6 [&_ul]:!mb-4 [&_ul]:!mt-2 " +
             "prose-ol:!list-decimal prose-ol:!pl-6 prose-ol:!mb-4 prose-ol:!mt-2 " +
-            "[&_ol]:!list-decimal [&_ol]:!pl-6 [&_ol]:!mb-4 [&_ol]:!mt-2 [&_ol]:!block " +
+            "[&_ol]:!list-decimal [&_ol]:!pl-6 [&_ol]:!mb-4 [&_ol]:!mt-2 " +
             "prose-li:text-gray-700 dark:prose-li:text-gray-300 prose-li:text-sm md:prose-li:text-base prose-li:!leading-relaxed prose-li:!mb-2 " +
-            "[&_li]:text-gray-700 dark:[&_li]:text-gray-300 [&_li]:!leading-relaxed [&_li]:!mb-2 [&_li]:!block " +
+            "[&_li]:text-gray-700 dark:[&_li]:text-gray-300 [&_li]:!leading-relaxed [&_li]:!mb-2 [&_li]:!list-item " +
             "prose-li::marker:text-gray-500 dark:prose-li::marker:text-gray-400 " +
             "[&_li::marker]:!text-gray-500 dark:[&_li::marker]:!text-gray-400 " +
             "prose-table:border-collapse prose-table:w-full prose-table:mb-5 " +
