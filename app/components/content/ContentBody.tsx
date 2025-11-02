@@ -141,69 +141,91 @@ export default function ContentBody({
             // Quick Win - Green left border with white text
             if (isQuickWin) {
               return (
-                <blockquote
-                  style={{
-                    borderLeft: '4px solid #10b981',
-                    paddingLeft: '1.25rem',
-                    paddingRight: '1.25rem',
-                    paddingTop: '0.75rem',
-                    paddingBottom: '0.75rem',
-                    marginTop: '1rem',
-                    marginBottom: '1rem',
-                    borderRadius: '0 0.5rem 0.5rem 0',
-                    color: '#ffffff',
-                  }}
-                  {...props}
-                >
-                  <div style={{ fontWeight: 'bold', fontSize: '1.1rem', marginBottom: '0.5rem', color: '#10b981' }}>
-                    Quick Wins Recommendations
-                  </div>
-                  {children}
-                </blockquote>
+                <>
+                  <style>{`
+                    #quick-win-blockquote {
+                      border-left: 4px solid #10b981 !important;
+                      padding-left: 1.25rem !important;
+                      padding-right: 1.25rem !important;
+                      padding-top: 0.75rem !important;
+                      padding-bottom: 0.75rem !important;
+                      margin-top: 1rem !important;
+                      margin-bottom: 1rem !important;
+                      border-radius: 0 0.5rem 0.5rem 0 !important;
+                      color: #ffffff !important;
+                      border-top: none !important;
+                      border-right: none !important;
+                      border-bottom: none !important;
+                    }
+                    #quick-win-blockquote * {
+                      color: #ffffff !important;
+                    }
+                  `}</style>
+                  <blockquote id="quick-win-blockquote" {...props}>
+                    <div style={{ fontWeight: 'bold', fontSize: '1.1rem', marginBottom: '0.5rem', color: '#10b981' }}>
+                      Quick Wins Recommendations
+                    </div>
+                    {children}
+                  </blockquote>
+                </>
               );
             }
 
             // PersX.ai Perspective - Purple left border with white text
             if (isPerspective) {
               return (
-                <blockquote
-                  style={{
-                    borderLeft: '4px solid #a855f7',
-                    paddingLeft: '1.25rem',
-                    paddingRight: '1.25rem',
-                    paddingTop: '0.75rem',
-                    paddingBottom: '0.75rem',
-                    marginTop: '1rem',
-                    marginBottom: '1rem',
-                    borderRadius: '0 0.5rem 0.5rem 0',
-                    color: '#ffffff',
-                  }}
-                  {...props}
-                >
-                  <div style={{ fontWeight: 'bold', fontSize: '1.1rem', marginBottom: '0.5rem', color: '#a855f7' }}>
-                    Your PersX.ai Perspective
-                  </div>
-                  {children}
-                </blockquote>
+                <>
+                  <style>{`
+                    #perspective-blockquote {
+                      border-left: 4px solid #a855f7 !important;
+                      padding-left: 1.25rem !important;
+                      padding-right: 1.25rem !important;
+                      padding-top: 0.75rem !important;
+                      padding-bottom: 0.75rem !important;
+                      margin-top: 1rem !important;
+                      margin-bottom: 1rem !important;
+                      border-radius: 0 0.5rem 0.5rem 0 !important;
+                      color: #ffffff !important;
+                      border-top: none !important;
+                      border-right: none !important;
+                      border-bottom: none !important;
+                    }
+                    #perspective-blockquote * {
+                      color: #ffffff !important;
+                    }
+                  `}</style>
+                  <blockquote id="perspective-blockquote" {...props}>
+                    <div style={{ fontWeight: 'bold', fontSize: '1.1rem', marginBottom: '0.5rem', color: '#a855f7' }}>
+                      Your PersX.ai Perspective
+                    </div>
+                    {children}
+                  </blockquote>
+                </>
               );
             }
 
             // Highlighted Quote - Dark gray background, no border, 6px radius, white text
             if (isQuote) {
               return (
-                <blockquote
-                  style={{
-                    borderRadius: '6px',
-                    padding: '1.25rem',
-                    marginTop: '1rem',
-                    marginBottom: '1rem',
-                    backgroundColor: '#1f2937',
-                    color: '#ffffff',
-                  }}
-                  {...props}
-                >
-                  {children}
-                </blockquote>
+                <>
+                  <style>{`
+                    #quote-blockquote {
+                      border: none !important;
+                      border-radius: 6px !important;
+                      padding: 1.25rem !important;
+                      margin-top: 1rem !important;
+                      margin-bottom: 1rem !important;
+                      background-color: #1f2937 !important;
+                      color: #ffffff !important;
+                    }
+                    #quote-blockquote * {
+                      color: #ffffff !important;
+                    }
+                  `}</style>
+                  <blockquote id="quote-blockquote" {...props}>
+                    {children}
+                  </blockquote>
+                </>
               );
             }
 
