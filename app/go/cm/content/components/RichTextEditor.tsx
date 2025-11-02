@@ -116,7 +116,8 @@ export default function RichTextEditor({
             "prose-h2:text-xl md:prose-h2:text-2xl prose-h2:mb-4 prose-h2:mt-8 prose-h2:font-bold " +
             "prose-h3:text-lg md:prose-h3:text-xl prose-h3:mb-3 prose-h3:mt-6 prose-h3:font-bold " +
             "prose-h4:text-xl md:prose-h4:text-2xl prose-h4:mb-4 prose-h4:mt-8 prose-h4:font-bold " +
-            "prose-p:text-gray-700 dark:prose-p:text-gray-300 prose-p:leading-relaxed prose-p:mb-8 prose-p:text-sm md:prose-p:text-base " +
+            "prose-p:text-gray-700 dark:prose-p:text-gray-300 prose-p:leading-relaxed prose-p:!my-6 prose-p:text-sm md:prose-p:text-base prose-p:min-h-[1.5rem] " +
+            "[&_p]:!my-6 [&_p]:leading-relaxed [&_p]:min-h-[1.5rem] [&_p]:block " +
             "prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-a:no-underline hover:prose-a:underline " +
             "prose-strong:text-gray-900 dark:prose-strong:text-white prose-strong:font-bold " +
             "prose-em:italic " +
