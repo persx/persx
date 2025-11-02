@@ -93,7 +93,7 @@ export async function PUT(
  * Delete a tag (admin only)
  */
 export async function DELETE(
-  request: Request,
+  _request: Request,
   { params }: { params: { id: string } }
 ) {
   try {
