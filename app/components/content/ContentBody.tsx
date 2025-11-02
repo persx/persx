@@ -88,8 +88,7 @@ export default function ContentBody({
           },
           hr: ({ node, ...props }) => <hr style={{ marginTop: '2rem', marginBottom: '2rem', borderTop: '1px solid #e5e7eb' }} {...props} />,
           blockquote: ({ node, children, ...props }) => {
-            // Get the text content to determine the type of blockquote
-            const textContent = node?.children?.[0]?.children?.[0]?.value || '';
+            // Get the first strong tag to determine the type of blockquote
             const firstStrong = node?.children?.find((child: any) =>
               child.children?.some((c: any) => c.tagName === 'strong')
             );
