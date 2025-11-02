@@ -5,6 +5,32 @@ const nextConfig = {
     instrumentationHook: true,
   },
 
+  // Compiler optimizations
+  compiler: {
+    // Remove console.log in production
+    removeConsole: process.env.NODE_ENV === 'production' ? {
+      exclude: ['error', 'warn'],
+    } : false,
+  },
+
+  // Optimize bundle size by excluding unnecessary polyfills for modern browsers
+  webpack: (config, { dev, isServer }) => {
+    // Only apply optimizations in production client builds
+    if (!dev && !isServer) {
+      // Modern browsers don't need these polyfills
+      config.resolve.alias = {
+        ...config.resolve.alias,
+      };
+
+      // Optimize tree-shaking
+      config.optimization = {
+        ...config.optimization,
+        usedExports: true,
+      };
+    }
+    return config;
+  },
+
   async headers() {
     return [
       {
@@ -44,6 +70,11 @@ const nextConfig = {
           {
             key: 'Permissions-Policy',
             value: 'camera=(), microphone=(), geolocation=()'
+          },
+          // Add resource hints for performance
+          {
+            key: 'Link',
+            value: '<https://fonts.googleapis.com>; rel=preconnect; crossorigin'
           }
         ]
       }

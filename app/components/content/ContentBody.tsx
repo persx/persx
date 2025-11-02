@@ -4,7 +4,6 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
 import rehypeRaw from "rehype-raw";
-import "highlight.js/styles/github-dark.css";
 
 interface ContentBodyProps {
   content: string;
@@ -49,7 +48,7 @@ export default function ContentBody({
         prose-em:italic
         prose-code:text-pink-600 dark:prose-code:text-pink-400 prose-code:bg-gray-100 dark:prose-code:bg-gray-800 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm
         prose-pre:bg-gray-900 dark:prose-pre:bg-gray-950 prose-pre:p-4 prose-pre:rounded-lg prose-pre:overflow-x-auto
-        prose-blockquote:border-l-4 prose-blockquote:border-blue-500 prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:text-gray-700 dark:prose-blockquote:text-gray-300 prose-blockquote:my-4 prose-blockquote:bg-gray-50 dark:prose-blockquote:bg-gray-800/30 prose-blockquote:py-2 prose-blockquote:rounded-r
+        prose-blockquote:border-l-4 prose-blockquote:border-blue-500 prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:my-4 prose-blockquote:bg-gray-50 dark:prose-blockquote:bg-gray-800/30 prose-blockquote:py-2 prose-blockquote:rounded-r
         prose-ul:list-disc prose-ul:pl-6 prose-ul:mb-4 prose-ul:mt-2
         prose-ol:list-decimal prose-ol:pl-6 prose-ol:mb-4 prose-ol:mt-2
         prose-li:text-gray-700 dark:prose-li:text-gray-300 prose-li:text-sm md:prose-li:text-base prose-li:leading-relaxed prose-li:mb-2
@@ -104,173 +103,51 @@ export default function ContentBody({
           },
           hr: ({ node, ...props }) => <hr style={{ marginTop: '2rem', marginBottom: '2rem', borderTop: '1px solid #e5e7eb' }} {...props} />,
           blockquote: ({ node, children, ...props }: any) => {
+            // Check if blockquote already has a class attribute (from HTML in markdown)
+            const existingClass = props?.className || node?.properties?.className?.[0];
+
+            // If class exists, use it directly - styles are now in CSS file
+            if (existingClass) {
+              return (
+                <blockquote className={existingClass} {...props}>
+                  {children}
+                </blockquote>
+              );
+            }
+
+            // Fall back to text-based detection for backward compatibility
             // Get the first strong tag to determine the type of blockquote
             const firstStrong = node?.children?.find((child: any) =>
               child.children?.some((c: any) => c.tagName === 'strong')
             );
             const strongText = firstStrong?.children?.find((c: any) => c.tagName === 'strong')?.children?.[0]?.value || '';
 
-            // Determine blockquote type
+            // Determine blockquote type and assign appropriate class
             const isTldr = strongText.includes('TLDR') || strongText.includes('TL;DR');
             const isQuickWin = strongText.includes('Quick Win');
             const isPerspective = strongText.includes('PersX.ai Perspective') || strongText.includes("Here's PersX.ai Perspective");
             const isQuote = strongText.includes('Quote');
             const isCallout = strongText.includes('Callout');
 
-            // TLDR - Cyan/Teal left border
+            // Return blockquote with appropriate CSS class
             if (isTldr) {
-              return (
-                <blockquote
-                  style={{
-                    borderLeft: '4px solid #06b6d4',
-                    paddingLeft: '1.25rem',
-                    paddingRight: '1.25rem',
-                    paddingTop: '0.75rem',
-                    paddingBottom: '0.75rem',
-                    marginTop: '1rem',
-                    marginBottom: '1rem',
-                    borderRadius: '0 0.5rem 0.5rem 0',
-                  }}
-                  {...props}
-                >
-                  {children}
-                </blockquote>
-              );
+              return <blockquote className="blockquote-tldr" {...props}>{children}</blockquote>;
             }
-
-            // Quick Win - Green left border with white text
             if (isQuickWin) {
-              return (
-                <>
-                  <style>{`
-                    .blockquote-quickwin {
-                      border-left: 4px solid #10b981 !important;
-                      padding-left: 1.25rem !important;
-                      padding-right: 1.25rem !important;
-                      padding-top: 0.75rem !important;
-                      padding-bottom: 0.75rem !important;
-                      margin-top: 1rem !important;
-                      margin-bottom: 1rem !important;
-                      border-radius: 0 0.5rem 0.5rem 0 !important;
-                      color: #ffffff !important;
-                      border-top: none !important;
-                      border-right: none !important;
-                      border-bottom: none !important;
-                    }
-                    .blockquote-quickwin * {
-                      color: #ffffff !important;
-                    }
-                  `}</style>
-                  <blockquote className="blockquote-quickwin" {...props}>
-                    <div style={{ fontWeight: 'bold', fontSize: '1.1rem', marginBottom: '0.5rem', color: '#10b981' }}>
-                      Quick Wins Recommendations
-                    </div>
-                    {children}
-                  </blockquote>
-                </>
-              );
+              return <blockquote className="blockquote-quickwin" {...props}>{children}</blockquote>;
             }
-
-            // PersX.ai Perspective - Purple left border with white text
             if (isPerspective) {
-              return (
-                <>
-                  <style>{`
-                    .blockquote-perspective {
-                      border-left: 4px solid #a855f7 !important;
-                      padding-left: 1.25rem !important;
-                      padding-right: 1.25rem !important;
-                      padding-top: 0.75rem !important;
-                      padding-bottom: 0.75rem !important;
-                      margin-top: 1rem !important;
-                      margin-bottom: 1rem !important;
-                      border-radius: 0 0.5rem 0.5rem 0 !important;
-                      color: #ffffff !important;
-                      border-top: none !important;
-                      border-right: none !important;
-                      border-bottom: none !important;
-                    }
-                    .blockquote-perspective * {
-                      color: #ffffff !important;
-                    }
-                  `}</style>
-                  <blockquote className="blockquote-perspective" {...props}>
-                    <div style={{ fontWeight: 'bold', fontSize: '1.1rem', marginBottom: '0.5rem', color: '#a855f7' }}>
-                      Your PersX.ai Perspective
-                    </div>
-                    {children}
-                  </blockquote>
-                </>
-              );
+              return <blockquote className="blockquote-perspective" {...props}>{children}</blockquote>;
             }
-
-            // Highlighted Quote - Dark gray background, no border, 6px radius, white text
             if (isQuote) {
-              return (
-                <>
-                  <style>{`
-                    .blockquote-quote {
-                      border: none !important;
-                      border-radius: 6px !important;
-                      padding: 1.25rem !important;
-                      margin-top: 1rem !important;
-                      margin-bottom: 1rem !important;
-                      background-color: #1f2937 !important;
-                      color: #ffffff !important;
-                    }
-                    .blockquote-quote * {
-                      color: #ffffff !important;
-                    }
-                  `}</style>
-                  <blockquote className="blockquote-quote" {...props}>
-                    {children}
-                  </blockquote>
-                </>
-              );
+              return <blockquote className="blockquote-quote" {...props}>{children}</blockquote>;
             }
-
-            // Callout - Orange/Yellow left border
             if (isCallout) {
-              return (
-                <blockquote
-                  style={{
-                    borderLeft: '4px solid #f59e0b',
-                    paddingLeft: '1.25rem',
-                    paddingRight: '1.25rem',
-                    paddingTop: '0.75rem',
-                    paddingBottom: '0.75rem',
-                    marginTop: '1rem',
-                    marginBottom: '1rem',
-                    borderRadius: '0 0.5rem 0.5rem 0',
-                  }}
-                  {...props}
-                >
-                  {children}
-                </blockquote>
-              );
+              return <blockquote className="blockquote-callout" {...props}>{children}</blockquote>;
             }
 
-            // Default blockquote style (blue - existing)
-            return (
-              <>
-                <style>{`
-                  #default-blockquote {
-                    border-left: 4px solid #3b82f6 !important;
-                    padding-left: 1rem !important;
-                    font-style: italic !important;
-                    color: #ffffff !important;
-                    margin-top: 1rem !important;
-                    margin-bottom: 1rem !important;
-                  }
-                  #default-blockquote * {
-                    color: #ffffff !important;
-                  }
-                `}</style>
-                <blockquote id="default-blockquote" {...props}>
-                  {children}
-                </blockquote>
-              </>
-            );
+            // Default blockquote
+            return <blockquote className="blockquote-default" {...props}>{children}</blockquote>;
           },
         }}
       >

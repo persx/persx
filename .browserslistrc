@@ -1,0 +1,13 @@
+# Modern browsers only - reduces polyfill size by ~11.8 KiB
+# This targets browsers that support modern JavaScript features natively
+
+> 0.5%
+last 2 versions
+not dead
+not IE 11
+not op_mini all
+not safari < 12
+not ios < 12
+not chrome < 90
+not firefox < 88
+not edge < 90

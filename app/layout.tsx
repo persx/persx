@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import ConditionalFooter from "@/components/ConditionalFooter";
@@ -7,6 +8,14 @@ import RootErrorBoundary from "@/components/RootErrorBoundary";
 import AdminUtilityBar from "@/components/AdminUtilityBar";
 import { getAdminSessionState, shouldShowUtilityBar } from "@/lib/admin-session";
 import { headers } from "next/headers";
+
+// Optimize font loading with Next.js font optimization
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  preload: true,
+  variable: "--font-inter",
+});
 
 export const metadata: Metadata = {
   title: {
@@ -98,8 +107,8 @@ export default async function RootLayout({
   const showAdminBar = showUtilityBar && adminState && adminState.industry;
 
   return (
-    <html lang="en">
-      <body className="min-h-screen flex flex-col">
+    <html lang="en" className={inter.variable}>
+      <body className="min-h-screen flex flex-col font-sans">
         {/* Admin Utility Bar - only visible in admin sessions and not on /go pages */}
         {showUtilityBar && adminState && (
           <AdminUtilityBar

@@ -1,0 +1,39 @@
+/**
+ * CSS Custom Properties (Variables)
+ * Centralized design tokens for colors, spacing, and other design values
+ */
+
+:root {
+  /* Brand Colors */
+  --color-light-blue: #60a5fa;
+  --color-blue: #3b82f6;
+  --color-dark-blue: #2563eb;
+  --color-light-purple: #a855f7;
+  --color-purple: #9333ea;
+  --color-pink: #db2777;
+  --color-green: #10b981;
+  --color-cyan: #06b6d4;
+  --color-orange: #f59e0b;
+
+  /* Tag Category Colors */
+  --tag-tactic-color: #3b82f6;
+  --tag-tool-color: #8b5cf6;
+  --tag-industry-color: #10b981;
+  --tag-topic-color: #f59e0b;
+  --tag-content-type-color: #ec4899;
+  --tag-uncategorized-color: #6b7280;
+
+  /* Blockquote Styles */
+  --blockquote-quote-bg: #1f2937;
+  --blockquote-quote-radius: 6px;
+  --blockquote-quickwin-border: #10b981;
+  --blockquote-perspective-border: #a855f7;
+  --blockquote-tldr-border: #06b6d4;
+  --blockquote-default-border: #3b82f6;
+
+  /* Semantic Colors */
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  --color-info: #3b82f6;
+}

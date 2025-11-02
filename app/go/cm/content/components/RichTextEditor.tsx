@@ -6,6 +6,7 @@ import Link from "@tiptap/extension-link";
 import Image from "@tiptap/extension-image";
 import Placeholder from "@tiptap/extension-placeholder";
 import Blockquote from "@tiptap/extension-blockquote";
+import { TextStyle, Color } from "@tiptap/extension-text-style";
 import { Table } from "@tiptap/extension-table";
 import { TableRow } from "@tiptap/extension-table-row";
 import { TableCell } from "@tiptap/extension-table-cell";
@@ -14,12 +15,12 @@ import { useCallback, useState, useEffect, useRef, useMemo } from "react";
 import { marked } from "marked";
 import TurndownService from "turndown";
 import { contentTemplates, ContentTemplate } from "../lib/contentTemplates";
+import "@/app/styles/components/rich-text-editor.css";
 
 // Custom Blockquote extension that supports classes
 const CustomBlockquote = Blockquote.extend({
   addAttributes() {
     return {
-      ...this.parent?.(),
       class: {
         default: null,
         parseHTML: element => element.getAttribute('class'),
@@ -52,6 +53,7 @@ export default function RichTextEditor({
   const [showShortcuts, setShowShortcuts] = useState(false);
   const [showMarkdownPreview, setShowMarkdownPreview] = useState(false);
   const [showTemplates, setShowTemplates] = useState(false);
+  const [showColorPicker, setShowColorPicker] = useState(false);
   const contentRef = useRef(content);
   const turndownService = useRef<TurndownService | null>(null);
   const toolbarRef = useRef<HTMLDivElement>(null);
@@ -59,10 +61,23 @@ export default function RichTextEditor({
 
   // Initialize turndown service immediately
   if (typeof window !== "undefined" && !turndownService.current) {
-    turndownService.current = new TurndownService({
+    const service = new TurndownService({
       headingStyle: "atx",
       codeBlockStyle: "fenced",
     });
+
+    // Keep blockquotes with classes as HTML to preserve the class attribute
+    service.addRule('blockquoteWithClass', {
+      filter: (node) => {
+        return node.nodeName === 'BLOCKQUOTE' && !!node.getAttribute('class');
+      },
+      replacement: (content, node) => {
+        const className = (node as HTMLElement).getAttribute('class');
+        return `<blockquote class="${className}">\n${content}\n</blockquote>\n\n`;
+      }
+    });
+
+    turndownService.current = service;
   }
 
   // Update content ref when content prop changes
@@ -90,7 +105,7 @@ export default function RichTextEditor({
       return match;
     });
 
-    // Configure marked to preserve content
+    // Configure marked to preserve content and HTML
     return marked.parse(escapedMarkdown, {
       async: false,
       breaks: true,
@@ -102,6 +117,14 @@ export default function RichTextEditor({
   const htmlToMarkdown = (html: string): string => {
     if (!html || !turndownService.current) return "";
     const markdown = turndownService.current.turndown(html);
+
+    // Debug: Log conversion to help identify issues
+    if (markdown.includes('blockquote')) {
+      console.log('[RichTextEditor] HTML to Markdown conversion:', {
+        hasBlockquote: true,
+        markdownSample: markdown.substring(0, 500)
+      });
+    }
 
     // Unescape vendor names that were escaped (e.g., &lt;Optimizely&gt; → <Optimizely>)
     const unescapedMarkdown = markdown
@@ -129,6 +152,8 @@ export default function RichTextEditor({
           blockquote: false,
         }),
         CustomBlockquote,
+        TextStyle,
+        Color,
         Link.configure({
           openOnClick: false,
           HTMLAttributes: {
@@ -176,13 +201,13 @@ export default function RichTextEditor({
             "prose-em:italic " +
             "prose-code:text-pink-600 dark:prose-code:text-pink-400 prose-code:bg-gray-100 dark:prose-code:bg-gray-800 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm " +
             "prose-pre:bg-gray-900 dark:prose-pre:bg-gray-950 prose-pre:p-4 prose-pre:rounded-lg prose-pre:overflow-x-auto prose-pre:my-6 " +
-            "prose-blockquote:!border-l-4 prose-blockquote:!pl-5 prose-blockquote:!pr-5 prose-blockquote:!py-3 prose-blockquote:!my-4 prose-blockquote:!rounded-r prose-blockquote:!not-italic prose-blockquote:text-gray-700 dark:prose-blockquote:text-gray-300 " +
+            "prose-blockquote:!border-l-4 prose-blockquote:!pl-5 prose-blockquote:!pr-5 prose-blockquote:!py-3 prose-blockquote:!my-4 prose-blockquote:!rounded-r prose-blockquote:!not-italic " +
             "[&_blockquote]:!border-l-4 [&_blockquote]:!pl-5 [&_blockquote]:!pr-5 [&_blockquote]:!py-3 [&_blockquote]:!my-4 [&_blockquote]:!rounded-r [&_blockquote]:!not-italic [&_blockquote]:!border-blue-500 " +
-            "[&_blockquote.blockquote-quote]:!border-none [&_blockquote.blockquote-quote]:!rounded-md [&_blockquote.blockquote-quote]:!bg-gray-800 [&_blockquote.blockquote-quote]:!text-white [&_blockquote.blockquote-quote]:!p-5 " +
+            "[&_blockquote.blockquote-quote]:!border-0 [&_blockquote.blockquote-quote]:!border-none [&_blockquote.blockquote-quote]:!rounded-md [&_blockquote.blockquote-quote]:!bg-gray-800 [&_blockquote.blockquote-quote]:!text-white [&_blockquote.blockquote-quote]:!p-5 " +
             "[&_blockquote.blockquote-quote_*]:!text-white " +
-            "[&_blockquote.blockquote-quickwin]:!border-l-4 [&_blockquote.blockquote-quickwin]:!border-green-500 [&_blockquote.blockquote-quickwin]:!text-white [&_blockquote.blockquote-quickwin]:!rounded-r-lg " +
+            "[&_blockquote.blockquote-quickwin]:!border-0 [&_blockquote.blockquote-quickwin]:!border-l-4 [&_blockquote.blockquote-quickwin]:!border-green-500 [&_blockquote.blockquote-quickwin]:!text-white [&_blockquote.blockquote-quickwin]:!rounded-r-lg [&_blockquote.blockquote-quickwin]:!bg-transparent " +
             "[&_blockquote.blockquote-quickwin_*]:!text-white " +
-            "[&_blockquote.blockquote-perspective]:!border-l-4 [&_blockquote.blockquote-perspective]:!border-purple-500 [&_blockquote.blockquote-perspective]:!text-white [&_blockquote.blockquote-perspective]:!rounded-r-lg " +
+            "[&_blockquote.blockquote-perspective]:!border-0 [&_blockquote.blockquote-perspective]:!border-l-4 [&_blockquote.blockquote-perspective]:!border-purple-500 [&_blockquote.blockquote-perspective]:!text-white [&_blockquote.blockquote-perspective]:!rounded-r-lg [&_blockquote.blockquote-perspective]:!bg-transparent " +
             "[&_blockquote.blockquote-perspective_*]:!text-white " +
             "prose-ul:!list-disc prose-ul:!pl-6 prose-ul:!mb-4 prose-ul:!mt-2 " +
             "[&_ul]:!list-disc [&_ul]:!pl-6 [&_ul]:!mb-4 [&_ul]:!mt-2 [&_ul]:!block " +
@@ -226,14 +251,15 @@ export default function RichTextEditor({
   // Handle escape key for shortcuts modal
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && showShortcuts) {
-        setShowShortcuts(false);
+      if (e.key === "Escape") {
+        if (showShortcuts) setShowShortcuts(false);
+        if (showColorPicker) setShowColorPicker(false);
       }
     };
 
     document.addEventListener("keydown", handleEscape);
     return () => document.removeEventListener("keydown", handleEscape);
-  }, [showShortcuts]);
+  }, [showShortcuts, showColorPicker]);
 
   // Calculate word and character count
   const stats = useMemo(() => {
@@ -369,7 +395,7 @@ export default function RichTextEditor({
               editor.chain().focus().toggleHeading({ level }).run();
             } else if (value === "blockquote") {
               // Insert Quote blockquote with strong prefix and blockquote-quote class
-              editor.chain().focus().clearNodes().insertContent({
+              editor.chain().focus().insertContent({
                 type: 'blockquote',
                 attrs: { class: 'blockquote-quote' },
                 content: [{
@@ -383,7 +409,7 @@ export default function RichTextEditor({
               }).run();
             } else if (value === "perspective") {
               // Insert PersX.ai Perspective blockquote with strong prefix and blockquote-perspective class
-              editor.chain().focus().clearNodes().insertContent({
+              editor.chain().focus().insertContent({
                 type: 'blockquote',
                 attrs: { class: 'blockquote-perspective' },
                 content: [{
@@ -397,7 +423,7 @@ export default function RichTextEditor({
               }).run();
             } else if (value === "callout") {
               // Insert Quick Win Recommendations blockquote with strong prefix and blockquote-quickwin class
-              editor.chain().focus().clearNodes().insertContent({
+              editor.chain().focus().insertContent({
                 type: 'blockquote',
                 attrs: { class: 'blockquote-quickwin' },
                 content: [{
@@ -467,6 +493,121 @@ export default function RichTextEditor({
         >
           S
         </button>
+
+        {/* Text Color */}
+        <div className="relative">
+          <button
+            type="button"
+            onClick={() => setShowColorPicker(!showColorPicker)}
+            className={`px-3 py-1 text-sm rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors ${
+              showColorPicker
+                ? "bg-gray-300 dark:bg-gray-600"
+                : "bg-white dark:bg-gray-800"
+            }`}
+            title="Text Color"
+          >
+            <span className="flex items-center gap-1">
+              A
+              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+              </svg>
+            </span>
+          </button>
+          {showColorPicker && (
+            <div className="absolute top-full mt-1 left-0 z-50 p-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg">
+              <div className="grid grid-cols-4 gap-2 w-32">
+                {/* Brand Blues */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    editor.chain().focus().setColor('#60a5fa').run();
+                    setShowColorPicker(false);
+                  }}
+                  className="w-6 h-6 rounded border border-gray-300 dark:border-gray-600 hover:scale-110 transition-transform"
+                  style={{ backgroundColor: '#60a5fa' }}
+                  title="Light Blue"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    editor.chain().focus().setColor('#3b82f6').run();
+                    setShowColorPicker(false);
+                  }}
+                  className="w-6 h-6 rounded border border-gray-300 dark:border-gray-600 hover:scale-110 transition-transform"
+                  style={{ backgroundColor: '#3b82f6' }}
+                  title="Blue"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    editor.chain().focus().setColor('#2563eb').run();
+                    setShowColorPicker(false);
+                  }}
+                  className="w-6 h-6 rounded border border-gray-300 dark:border-gray-600 hover:scale-110 transition-transform"
+                  style={{ backgroundColor: '#2563eb' }}
+                  title="Dark Blue"
+                />
+                {/* Brand Purples */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    editor.chain().focus().setColor('#a855f7').run();
+                    setShowColorPicker(false);
+                  }}
+                  className="w-6 h-6 rounded border border-gray-300 dark:border-gray-600 hover:scale-110 transition-transform"
+                  style={{ backgroundColor: '#a855f7' }}
+                  title="Light Purple"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    editor.chain().focus().setColor('#9333ea').run();
+                    setShowColorPicker(false);
+                  }}
+                  className="w-6 h-6 rounded border border-gray-300 dark:border-gray-600 hover:scale-110 transition-transform"
+                  style={{ backgroundColor: '#9333ea' }}
+                  title="Purple"
+                />
+                {/* Pink */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    editor.chain().focus().setColor('#db2777').run();
+                    setShowColorPicker(false);
+                  }}
+                  className="w-6 h-6 rounded border border-gray-300 dark:border-gray-600 hover:scale-110 transition-transform"
+                  style={{ backgroundColor: '#db2777' }}
+                  title="Pink"
+                />
+                {/* Green */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    editor.chain().focus().setColor('#10b981').run();
+                    setShowColorPicker(false);
+                  }}
+                  className="w-6 h-6 rounded border border-gray-300 dark:border-gray-600 hover:scale-110 transition-transform"
+                  style={{ backgroundColor: '#10b981' }}
+                  title="Green"
+                />
+                {/* Default/Reset */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    editor.chain().focus().unsetColor().run();
+                    setShowColorPicker(false);
+                  }}
+                  className="w-6 h-6 rounded border border-gray-300 dark:border-gray-600 hover:scale-110 transition-transform bg-white dark:bg-gray-700"
+                  title="Reset Color"
+                >
+                  <svg className="w-full h-full p-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
 
         <div className="w-px h-6 bg-gray-300 dark:bg-gray-600 mx-1" />
 
@@ -674,65 +815,6 @@ export default function RichTextEditor({
       <div className={showMarkdownPreview ? "grid grid-cols-2 gap-4 p-4" : ""}>
         <div className={showMarkdownPreview ? "" : "w-full"}>
           <EditorContent editor={editor} />
-
-          {/* Custom CSS to force editor formatting to match live site */}
-          <style jsx global>{`
-            /* Force blockquote styling */
-            .ProseMirror blockquote {
-              border-left: 4px solid #3b82f6 !important;
-              padding-left: 1.25rem !important;
-              padding-right: 1.25rem !important;
-              padding-top: 0.75rem !important;
-              padding-bottom: 0.75rem !important;
-              margin-top: 1rem !important;
-              margin-bottom: 1rem !important;
-              border-radius: 0 0.5rem 0.5rem 0 !important;
-              font-style: normal !important;
-            }
-
-            /* Force paragraph spacing */
-            .ProseMirror p {
-              margin-top: 1.5rem !important;
-              margin-bottom: 1.5rem !important;
-              line-height: 1.75 !important;
-            }
-
-            /* Force list styling - unordered */
-            .ProseMirror ul {
-              display: block !important;
-              list-style-type: disc !important;
-              padding-left: 1.5rem !important;
-              margin-bottom: 1rem !important;
-              margin-top: 0.5rem !important;
-            }
-
-            /* Force list styling - ordered */
-            .ProseMirror ol {
-              display: block !important;
-              list-style-type: decimal !important;
-              padding-left: 1.5rem !important;
-              margin-bottom: 1rem !important;
-              margin-top: 0.5rem !important;
-            }
-
-            /* Force list item styling */
-            .ProseMirror li {
-              display: list-item !important;
-              margin-bottom: 0.5rem !important;
-              line-height: 1.75 !important;
-            }
-
-            .ProseMirror ul li {
-              list-style-type: disc !important;
-            }
-
-            .ProseMirror ol li {
-              list-style-type: decimal !important;
-            }
-
-            /* Note: Special blockquote types (TLDR, Quick Win, Perspective) will show
-               with correct colors when published. In editor, they show with blue border. */
-          `}</style>
         </div>
 
         {showMarkdownPreview && (
@@ -920,6 +1002,6 @@ export default function RichTextEditor({
           </div>
         </div>
       )}
-    </div>
+      </div>
   );
 }

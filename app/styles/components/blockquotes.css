@@ -1,0 +1,109 @@
+/**
+ * Blockquote Styles
+ * Extracted from inline styles in ContentBody.tsx
+ * Supports multiple blockquote types: default, quote, quick win, perspective, TLDR
+ */
+
+/* Base blockquote styling */
+.blockquote-base {
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 0 0.5rem 0.5rem 0;
+}
+
+/* Default blockquote - Blue left border */
+.blockquote-default {
+  border-left: 4px solid var(--blockquote-default-border) !important;
+  padding-left: 1rem !important;
+  font-style: italic !important;
+  color: #ffffff !important;
+  margin-top: 1rem !important;
+  margin-bottom: 1rem !important;
+}
+
+.blockquote-default * {
+  color: #ffffff !important;
+}
+
+/* Highlighted Quote - Dark gray background, no border, rounded */
+.blockquote-quote {
+  border: none !important;
+  border-radius: var(--blockquote-quote-radius) !important;
+  padding: 1.25rem !important;
+  margin-top: 1rem !important;
+  margin-bottom: 1rem !important;
+  background-color: var(--blockquote-quote-bg) !important;
+  color: #ffffff !important;
+}
+
+.blockquote-quote * {
+  color: #ffffff !important;
+}
+
+/* Quick Win - Green left border with white text */
+.blockquote-quickwin {
+  border-left: 4px solid var(--blockquote-quickwin-border) !important;
+  padding-left: 1.25rem !important;
+  padding-right: 1.25rem !important;
+  padding-top: 0.75rem !important;
+  padding-bottom: 0.75rem !important;
+  margin-top: 1rem !important;
+  margin-bottom: 1rem !important;
+  border-radius: 0 0.5rem 0.5rem 0 !important;
+  color: #ffffff !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+}
+
+.blockquote-quickwin * {
+  color: #ffffff !important;
+}
+
+/* PersX.ai Perspective - Purple left border with white text */
+.blockquote-perspective {
+  border-left: 4px solid var(--blockquote-perspective-border) !important;
+  padding-left: 1.25rem !important;
+  padding-right: 1.25rem !important;
+  padding-top: 0.75rem !important;
+  padding-bottom: 0.75rem !important;
+  margin-top: 1rem !important;
+  margin-bottom: 1rem !important;
+  border-radius: 0 0.5rem 0.5rem 0 !important;
+  color: #ffffff !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+}
+
+.blockquote-perspective * {
+  color: #ffffff !important;
+}
+
+/* TLDR - Cyan/Teal left border */
+.blockquote-tldr {
+  border-left: 4px solid var(--blockquote-tldr-border);
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 0 0.5rem 0.5rem 0;
+}
+
+/* Callout - Orange/Yellow left border */
+.blockquote-callout {
+  border-left: 4px solid #f59e0b;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 0 0.5rem 0.5rem 0;
+}
