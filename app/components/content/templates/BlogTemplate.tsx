@@ -1,6 +1,5 @@
 import ContentHeader from "../ContentHeader";
 import ContentBody from "../ContentBody";
-import ContentMeta from "../ContentMeta";
 import ContentSources from "../ContentSources";
 
 interface BlogTemplateProps {

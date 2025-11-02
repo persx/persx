@@ -74,22 +74,6 @@ export default async function PreviewPage({ params }: PageProps) {
     })
     .eq("id", tokenData.id);
 
-  // Get content type label for back link
-  const contentTypeLabels: Record<string, string> = {
-    blog: "Blog Post",
-    case_study: "Case Study",
-    implementation_guide: "Implementation Guide",
-    test_result: "Test Result",
-    best_practice: "Best Practice",
-    tool_guide: "Tool Guide",
-    news: "News",
-  };
-
-  const backLink = {
-    href: "#",
-    label: `Back to ${contentTypeLabels[content.content_type] || "Content"} List`,
-  };
-
   return (
     <>
       {/* Preview Banner */}
