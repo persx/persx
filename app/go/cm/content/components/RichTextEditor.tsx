@@ -15,7 +15,6 @@ import { useCallback, useState, useEffect, useRef, useMemo } from "react";
 import { marked } from "marked";
 import TurndownService from "turndown";
 import { contentTemplates, ContentTemplate } from "../lib/contentTemplates";
-import "@/app/styles/components/rich-text-editor.css";
 
 // Custom Blockquote extension that supports classes
 const CustomBlockquote = Blockquote.extend({

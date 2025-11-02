@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase-server";
 import { notFound } from "next/navigation";
 import ContentEditorWrapper from "../components/ContentEditorWrapper";
+import "@/app/styles/components/rich-text-editor.css";
 
 export default async function EditContentPage({
   params,
