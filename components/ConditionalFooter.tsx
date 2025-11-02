@@ -108,9 +108,17 @@ export default function ConditionalFooter() {
             >
               PersX.ai
             </Link>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              © {new Date().getFullYear()} PersX.ai. All rights reserved.
-            </p>
+            <div className="flex items-center gap-4">
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                © {new Date().getFullYear()} PersX.ai. All rights reserved.
+              </p>
+              <Link
+                href="/privacy"
+                className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+              >
+                Privacy Policy
+              </Link>
+            </div>
           </div>
         </div>
       </div>
