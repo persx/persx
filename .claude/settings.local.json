@@ -15,7 +15,16 @@
       "Bash(mkdir:*)",
       "Bash(npx supabase db push:*)",
       "Bash(curl:*)",
-      "Bash(chmod:*)"
+      "Bash(chmod:*)",
+      "Bash(node scripts/fetch-article.js:*)",
+      "Bash(node scripts/update-article.js:*)",
+      "Bash(node scripts/apply-detailed-format.js:*)",
+      "Bash(node scripts/apply-google-doc-format.js:*)",
+      "Bash(echo:*)",
+      "Bash(open \"https://supabase.com/dashboard/project/lzpbpymjejwqutfpfwwu/sql/new\")",
+      "Bash(cat:*)",
+      "Bash(pkill:*)",
+      "Bash(npm i:*)"
     ],
     "deny": [],
     "ask": []

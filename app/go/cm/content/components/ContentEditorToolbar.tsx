@@ -1,54 +1,24 @@
 "use client";
 
-import { useState, useEffect } from "react";
-
 interface ContentEditorToolbarProps {
-  onPreview: () => void;
   onSaveDraft: () => Promise<void>;
   onPublish: () => Promise<void>;
-  onGetPreviewLink: () => Promise<void>;
-  contentId?: string;
   currentStatus: "draft" | "published" | "archived";
   hasUnsavedChanges: boolean;
   isSaving: boolean;
-  lastSaved?: Date | null;
-  previewUrl?: string | null;
 }
 
 /**
  * ContentEditorToolbar - Action buttons and status indicators for content editor
- * Provides Preview, Save Draft, Publish, and Get Preview Link functionality
+ * Provides Save Draft and Publish functionality
  */
 export default function ContentEditorToolbar({
-  onPreview,
   onSaveDraft,
   onPublish,
-  onGetPreviewLink,
-  contentId,
   currentStatus,
   hasUnsavedChanges,
   isSaving,
-  lastSaved,
-  previewUrl,
 }: ContentEditorToolbarProps) {
-  const [showPreviewUrl, setShowPreviewUrl] = useState(false);
-  const [copySuccess, setCopySuccess] = useState(false);
-
-  // Show preview URL when it's generated
-  useEffect(() => {
-    if (previewUrl) {
-      setShowPreviewUrl(true);
-    }
-  }, [previewUrl]);
-
-  const copyPreviewUrl = () => {
-    if (previewUrl) {
-      navigator.clipboard.writeText(previewUrl);
-      setCopySuccess(true);
-      setTimeout(() => setCopySuccess(false), 2000);
-    }
-  };
-
   const getStatusBadge = () => {
     const badges = {
       draft: "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400",
@@ -164,54 +134,7 @@ export default function ContentEditorToolbar({
             </button>
           </div>
         </div>
-
-        {/* Preview URL Row (when generated) */}
-        {showPreviewUrl && previewUrl && (
-          <div className="flex items-center gap-3 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-            <svg className="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-blue-900 dark:text-blue-200 mb-1">
-                Preview link generated (expires in 24 hours)
-              </p>
-              <code className="text-xs text-blue-700 dark:text-blue-300 break-all">
-                {previewUrl}
-              </code>
-            </div>
-            <button
-              type="button"
-              onClick={copyPreviewUrl}
-              className="flex-shrink-0 px-3 py-1.5 text-sm font-medium text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/40 rounded transition-colors"
-            >
-              {copySuccess ? "Copied!" : "Copy"}
-            </button>
-            <button
-              type="button"
-              onClick={() => setShowPreviewUrl(false)}
-              className="flex-shrink-0 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/40 rounded p-1 transition-colors"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
-        )}
       </div>
     </div>
   );
-}
-
-// Helper function to get relative time
-function getRelativeTime(date: Date): string {
-  const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
-  const diffSec = Math.floor(diffMs / 1000);
-  const diffMin = Math.floor(diffSec / 60);
-  const diffHour = Math.floor(diffMin / 60);
-
-  if (diffSec < 60) return "just now";
-  if (diffMin < 60) return `${diffMin} min ago`;
-  if (diffHour < 24) return `${diffHour} hour${diffHour > 1 ? "s" : ""} ago`;
-  return date.toLocaleDateString();
 }

@@ -47,9 +47,7 @@ export default function ContentEditor({
 
   // Preview and toolbar state
   const [showPreviewModal, setShowPreviewModal] = useState(false);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
-  const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [initialFormData, setInitialFormData] = useState<any>(null);
 
   // Get first external source URL if exists (for multi-source content from Quick Add)
@@ -224,9 +222,6 @@ export default function ContentEditor({
   useEffect(() => {
     if (!initialFormData && formData.title) {
       setInitialFormData(JSON.stringify(formData));
-      if (contentId) {
-        setLastSaved(new Date());
-      }
     }
   }, [formData, initialFormData, contentId]);
 
@@ -302,7 +297,6 @@ export default function ContentEditor({
       const data = await response.json();
 
       if (response.ok) {
-        setLastSaved(new Date());
         setInitialFormData(JSON.stringify(formData));
         setHasUnsavedChanges(false);
         // Don't redirect, stay on page
@@ -375,37 +369,6 @@ export default function ContentEditor({
     }
   }, [formData, contentId, router]);
 
-  // Get preview link handler
-  const handleGetPreviewLink = useCallback(async () => {
-    if (!contentId) {
-      setError("Please save the content first before generating a preview link");
-      return;
-    }
-
-    setIsLoading(true);
-    setError("");
-
-    try {
-      const response = await fetch("/api/content/preview-token", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ contentId }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setPreviewUrl(data.previewUrl);
-      } else {
-        setError(data.error || "Failed to generate preview link");
-      }
-    } catch (err) {
-      setError("An error occurred while generating preview link");
-    } finally {
-      setIsLoading(false);
-    }
-  }, [contentId]);
-
   if (success) {
     return (
       <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-8 text-center">
@@ -432,16 +395,11 @@ export default function ContentEditor({
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Toolbar */}
         <ContentEditorToolbar
-          onPreview={handlePreview}
           onSaveDraft={handleSaveDraft}
           onPublish={handlePublish}
-          onGetPreviewLink={handleGetPreviewLink}
-          contentId={contentId}
           currentStatus={formData.status as "draft" | "published" | "archived"}
           hasUnsavedChanges={hasUnsavedChanges}
           isSaving={isLoading}
-          lastSaved={lastSaved}
-          previewUrl={previewUrl}
         />
 
         <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">

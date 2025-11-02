@@ -22,6 +22,7 @@ export default function middleware(req: NextRequest) {
 
   // For protected /go/cm routes, use auth middleware
   if (req.nextUrl.pathname.startsWith("/go/cm")) {
+    // @ts-expect-error - withAuth middleware signature compatibility
     return authMiddleware(req as any);
   }
 
