@@ -2,21 +2,13 @@ import { createClient } from "@/lib/supabase-server";
 import Link from "next/link";
 import NewsletterSubscription from "@/components/NewsletterSubscription";
 
-// Truncate text to a maximum number of words
-function truncateToWords(text: string, maxWords: number): string {
-  if (!text) return "";
-  const words = text.split(/\s+/);
-  if (words.length <= maxWords) return text;
-  return words.slice(0, maxWords).join(" ") + "...";
-}
-
 export default async function News() {
   const supabase = createClient();
 
   // Fetch news content from database
   const { data: newsItems, error } = await supabase
     .from("knowledge_base_content")
-    .select("id, title, slug, overall_summary, created_at, status, tags")
+    .select("id, title, slug, excerpt, created_at, status, tags")
     .eq("content_type", "news")
     .eq("status", "published")
     .order("created_at", { ascending: false });
@@ -73,9 +65,11 @@ export default async function News() {
                         {item.title}
                       </h2>
                     </Link>
-                    <p className="text-gray-600 dark:text-gray-400 leading-relaxed mb-4">
-                      {truncateToWords(item.overall_summary, 100)}
-                    </p>
+                    {item.excerpt && (
+                      <p className="text-gray-600 dark:text-gray-400 leading-relaxed mb-4">
+                        {item.excerpt}
+                      </p>
+                    )}
                     <Link
                       href={`/news/${item.slug}`}
                       className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-semibold text-sm"
