@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase-server";
+import { createAdminClient } from "@/lib/supabase-server";
 
 export async function POST(request: NextRequest) {
   try {
@@ -48,8 +48,8 @@ export async function POST(request: NextRequest) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // Upload to Supabase Storage
-    const supabase = createClient();
+    // Upload to Supabase Storage using admin client to bypass RLS
+    const supabase = createAdminClient();
     const { error: uploadError } = await supabase.storage
       .from('content-images')
       .upload(uniqueFilename, buffer, {
