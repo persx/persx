@@ -138,7 +138,7 @@ export default function ContentBody({
               );
             }
 
-            // Quick Win - Green left border
+            // Quick Win - Green left border with white text
             if (isQuickWin) {
               return (
                 <blockquote
@@ -151,6 +151,7 @@ export default function ContentBody({
                     marginTop: '1rem',
                     marginBottom: '1rem',
                     borderRadius: '0 0.5rem 0.5rem 0',
+                    color: '#ffffff',
                   }}
                   {...props}
                 >
@@ -162,7 +163,7 @@ export default function ContentBody({
               );
             }
 
-            // PersX.ai Perspective - Purple left border
+            // PersX.ai Perspective - Purple left border with white text
             if (isPerspective) {
               return (
                 <blockquote
@@ -175,6 +176,7 @@ export default function ContentBody({
                     marginTop: '1rem',
                     marginBottom: '1rem',
                     borderRadius: '0 0.5rem 0.5rem 0',
+                    color: '#ffffff',
                   }}
                   {...props}
                 >
@@ -186,20 +188,18 @@ export default function ContentBody({
               );
             }
 
-            // Highlighted Quote - Dark gray background with border
+            // Highlighted Quote - Dark gray background, no border, 6px radius, white text
             if (isQuote) {
               return (
                 <blockquote
                   style={{
-                    border: '2px solid #374151',
-                    borderRadius: '0.375rem',
+                    borderRadius: '6px',
                     padding: '1.25rem',
                     marginTop: '1rem',
                     marginBottom: '1rem',
                     backgroundColor: '#1f2937',
-                    color: '#f3f4f6',
+                    color: '#ffffff',
                   }}
-                  className="dark:bg-gray-800 dark:border-gray-700"
                   {...props}
                 >
                   {children}
