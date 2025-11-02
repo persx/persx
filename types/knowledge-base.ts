@@ -50,6 +50,22 @@ export interface KnowledgeBaseContent {
   // SEO
   meta_title: string | null;
   meta_description: string | null;
+  focus_keyword: string | null;
+  canonical_url: string | null;
+
+  // Open Graph (Social Media)
+  og_title: string | null;
+  og_description: string | null;
+  og_image_url: string | null;
+
+  // Twitter Card
+  twitter_title: string | null;
+  twitter_description: string | null;
+  twitter_image_url: string | null;
+
+  // Structured Data
+  article_schema: ArticleSchema | null;
+  breadcrumb_schema: BreadcrumbSchema | null;
 
   // Multi-source news support
   external_sources?: ExternalSource[] | null;
@@ -84,7 +100,46 @@ export interface Tag {
   name: string;
   category: string | null; // 'tactic', 'tool', 'industry', 'goal', 'channel', etc.
   description: string | null;
+  usage_count: number;
+  color: string | null; // Hex color for visual categorization
   created_at: string;
+}
+
+// Article Schema structure for structured data (Schema.org)
+export interface ArticleSchema {
+  headline?: string;
+  alternativeHeadline?: string;
+  author?: {
+    type: 'Person' | 'Organization';
+    name: string;
+    url?: string;
+  };
+  publisher?: {
+    type: 'Organization';
+    name: string;
+    logo?: string;
+    url?: string;
+  };
+  datePublished?: string;
+  dateModified?: string;
+  image?: string;
+  articleSection?: string;
+  keywords?: string[];
+  wordCount?: number;
+  description?: string;
+}
+
+// BreadcrumbList Schema for navigation hierarchy (Schema.org)
+export interface BreadcrumbItem {
+  position: number;
+  name: string;
+  item: string;
+}
+
+export interface BreadcrumbSchema {
+  '@context'?: string;
+  '@type'?: string;
+  itemListElement?: BreadcrumbItem[];
 }
 
 export interface ContentAnalytics {

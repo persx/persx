@@ -6,6 +6,7 @@ import ConditionalAnalytics from "@/components/ConditionalAnalytics";
 import RootErrorBoundary from "@/components/RootErrorBoundary";
 import AdminUtilityBar from "@/components/AdminUtilityBar";
 import { getAdminSessionState, shouldShowUtilityBar } from "@/lib/admin-session";
+import { headers } from "next/headers";
 
 export const metadata: Metadata = {
   title: {
@@ -84,8 +85,13 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Check if admin utility bar should be shown
-  const showUtilityBar = await shouldShowUtilityBar();
+  // Get the current pathname to check if we're on a /go page
+  const headersList = headers();
+  const pathname = headersList.get("x-pathname") || "";
+  const isGoPage = pathname.startsWith("/go");
+
+  // Check if admin utility bar should be shown (but hide it on /go pages)
+  const showUtilityBar = !isGoPage && await shouldShowUtilityBar();
   const adminState = showUtilityBar ? await getAdminSessionState() : null;
 
   // Only add padding if the bar will actually render (has an industry)
@@ -94,7 +100,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className="min-h-screen flex flex-col">
-        {/* Admin Utility Bar - only visible in admin sessions */}
+        {/* Admin Utility Bar - only visible in admin sessions and not on /go pages */}
         {showUtilityBar && adminState && (
           <AdminUtilityBar
             industry={adminState.industry}
