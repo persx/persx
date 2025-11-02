@@ -201,14 +201,6 @@ export default function RichTextEditor({
             "prose-em:italic " +
             "prose-code:text-pink-600 dark:prose-code:text-pink-400 prose-code:bg-gray-100 dark:prose-code:bg-gray-800 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm " +
             "prose-pre:bg-gray-900 dark:prose-pre:bg-gray-950 prose-pre:p-4 prose-pre:rounded-lg prose-pre:overflow-x-auto prose-pre:my-6 " +
-            "prose-blockquote:!border-l-4 prose-blockquote:!pl-5 prose-blockquote:!pr-5 prose-blockquote:!py-3 prose-blockquote:!my-4 prose-blockquote:!rounded-r prose-blockquote:!not-italic " +
-            "[&_blockquote]:!border-l-4 [&_blockquote]:!pl-5 [&_blockquote]:!pr-5 [&_blockquote]:!py-3 [&_blockquote]:!my-4 [&_blockquote]:!rounded-r [&_blockquote]:!not-italic [&_blockquote]:!border-blue-500 " +
-            "[&_blockquote.blockquote-quote]:!border-0 [&_blockquote.blockquote-quote]:!border-none [&_blockquote.blockquote-quote]:!rounded-md [&_blockquote.blockquote-quote]:!bg-gray-800 [&_blockquote.blockquote-quote]:!text-white [&_blockquote.blockquote-quote]:!p-5 " +
-            "[&_blockquote.blockquote-quote_*]:!text-white " +
-            "[&_blockquote.blockquote-quickwin]:!border-0 [&_blockquote.blockquote-quickwin]:!border-l-4 [&_blockquote.blockquote-quickwin]:!border-green-500 [&_blockquote.blockquote-quickwin]:!text-white [&_blockquote.blockquote-quickwin]:!rounded-r-lg [&_blockquote.blockquote-quickwin]:!bg-transparent " +
-            "[&_blockquote.blockquote-quickwin_*]:!text-white " +
-            "[&_blockquote.blockquote-perspective]:!border-0 [&_blockquote.blockquote-perspective]:!border-l-4 [&_blockquote.blockquote-perspective]:!border-purple-500 [&_blockquote.blockquote-perspective]:!text-white [&_blockquote.blockquote-perspective]:!rounded-r-lg [&_blockquote.blockquote-perspective]:!bg-transparent " +
-            "[&_blockquote.blockquote-perspective_*]:!text-white " +
             "prose-ul:!list-disc prose-ul:!pl-6 prose-ul:!mb-4 prose-ul:!mt-2 " +
             "[&_ul]:!list-disc [&_ul]:!pl-6 [&_ul]:!mb-4 [&_ul]:!mt-2 " +
             "prose-ol:!list-decimal prose-ol:!pl-6 prose-ol:!mb-4 prose-ol:!mt-2 " +
