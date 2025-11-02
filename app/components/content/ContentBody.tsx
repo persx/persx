@@ -100,7 +100,7 @@ export default function ContentBody({
             }
 
             // Regular strong tag
-            return <strong style={{ fontWeight: 'bold' }} {...props} />;
+            return <strong style={{ fontWeight: 'bold' }} {...props}>{children}</strong>;
           },
           hr: ({ node, ...props }) => <hr style={{ marginTop: '2rem', marginBottom: '2rem', borderTop: '1px solid #e5e7eb' }} {...props} />,
           blockquote: ({ node, children, ...props }: any) => {
