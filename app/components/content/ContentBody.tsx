@@ -143,7 +143,7 @@ export default function ContentBody({
               return (
                 <>
                   <style>{`
-                    #quick-win-blockquote {
+                    .blockquote-quickwin {
                       border-left: 4px solid #10b981 !important;
                       padding-left: 1.25rem !important;
                       padding-right: 1.25rem !important;
@@ -157,11 +157,11 @@ export default function ContentBody({
                       border-right: none !important;
                       border-bottom: none !important;
                     }
-                    #quick-win-blockquote * {
+                    .blockquote-quickwin * {
                       color: #ffffff !important;
                     }
                   `}</style>
-                  <blockquote id="quick-win-blockquote" {...props}>
+                  <blockquote className="blockquote-quickwin" {...props}>
                     <div style={{ fontWeight: 'bold', fontSize: '1.1rem', marginBottom: '0.5rem', color: '#10b981' }}>
                       Quick Wins Recommendations
                     </div>
@@ -176,7 +176,7 @@ export default function ContentBody({
               return (
                 <>
                   <style>{`
-                    #perspective-blockquote {
+                    .blockquote-perspective {
                       border-left: 4px solid #a855f7 !important;
                       padding-left: 1.25rem !important;
                       padding-right: 1.25rem !important;
@@ -190,11 +190,11 @@ export default function ContentBody({
                       border-right: none !important;
                       border-bottom: none !important;
                     }
-                    #perspective-blockquote * {
+                    .blockquote-perspective * {
                       color: #ffffff !important;
                     }
                   `}</style>
-                  <blockquote id="perspective-blockquote" {...props}>
+                  <blockquote className="blockquote-perspective" {...props}>
                     <div style={{ fontWeight: 'bold', fontSize: '1.1rem', marginBottom: '0.5rem', color: '#a855f7' }}>
                       Your PersX.ai Perspective
                     </div>
@@ -209,7 +209,7 @@ export default function ContentBody({
               return (
                 <>
                   <style>{`
-                    #quote-blockquote {
+                    .blockquote-quote {
                       border: none !important;
                       border-radius: 6px !important;
                       padding: 1.25rem !important;
@@ -218,11 +218,11 @@ export default function ContentBody({
                       background-color: #1f2937 !important;
                       color: #ffffff !important;
                     }
-                    #quote-blockquote * {
+                    .blockquote-quote * {
                       color: #ffffff !important;
                     }
                   `}</style>
-                  <blockquote id="quote-blockquote" {...props}>
+                  <blockquote className="blockquote-quote" {...props}>
                     {children}
                   </blockquote>
                 </>
@@ -252,20 +252,24 @@ export default function ContentBody({
 
             // Default blockquote style (blue - existing)
             return (
-              <blockquote
-                style={{
-                  borderLeft: '4px solid #3b82f6',
-                  paddingLeft: '1rem',
-                  fontStyle: 'italic',
-                  color: '#374151',
-                  marginTop: '1rem',
-                  marginBottom: '1rem',
-                }}
-                className="dark:text-gray-300"
-                {...props}
-              >
-                {children}
-              </blockquote>
+              <>
+                <style>{`
+                  #default-blockquote {
+                    border-left: 4px solid #3b82f6 !important;
+                    padding-left: 1rem !important;
+                    font-style: italic !important;
+                    color: #ffffff !important;
+                    margin-top: 1rem !important;
+                    margin-bottom: 1rem !important;
+                  }
+                  #default-blockquote * {
+                    color: #ffffff !important;
+                  }
+                `}</style>
+                <blockquote id="default-blockquote" {...props}>
+                  {children}
+                </blockquote>
+              </>
             );
           },
         }}
