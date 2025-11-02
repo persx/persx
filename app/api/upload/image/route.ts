@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { writeFile, mkdir } from "fs/promises";
-import path from "path";
+import { createClient } from "@/lib/supabase-server";
 
 export async function POST(request: NextRequest) {
   try {
@@ -41,30 +40,43 @@ export async function POST(request: NextRequest) {
 
     // Generate unique filename with timestamp
     const timestamp = Date.now();
-    const ext = path.extname(sanitizedName);
-    const nameWithoutExt = path.basename(sanitizedName, ext);
+    const ext = sanitizedName.substring(sanitizedName.lastIndexOf('.'));
+    const nameWithoutExt = sanitizedName.substring(0, sanitizedName.lastIndexOf('.'));
     const uniqueFilename = `${nameWithoutExt}-${timestamp}${ext}`;
 
-    // Determine upload directory (default to uploads)
-    const uploadDir = path.join(process.cwd(), "public", "images", "uploads");
-
-    // Ensure directory exists
-    await mkdir(uploadDir, { recursive: true });
-
-    // Convert file to buffer and save
+    // Convert file to buffer
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
-    const filePath = path.join(uploadDir, uniqueFilename);
 
-    await writeFile(filePath, buffer);
+    // Upload to Supabase Storage
+    const supabase = createClient();
+    const { error: uploadError } = await supabase.storage
+      .from('content-images')
+      .upload(uniqueFilename, buffer, {
+        contentType: file.type,
+        upsert: false
+      });
+
+    if (uploadError) {
+      console.error("Supabase upload error:", uploadError);
+      return NextResponse.json(
+        {
+          error: "Failed to upload to storage",
+          details: uploadError.message
+        },
+        { status: 500 }
+      );
+    }
+
+    // Get public URL
+    const { data: { publicUrl } } = supabase.storage
+      .from('content-images')
+      .getPublicUrl(uniqueFilename);
 
     // Generate alt text from filename (remove extension and replace hyphens with spaces)
     const altText = nameWithoutExt
       .replace(/-/g, " ")
       .replace(/\b\w/g, (l) => l.toUpperCase()); // Capitalize first letter of each word
-
-    // Return public URL path
-    const publicUrl = `/images/uploads/${uniqueFilename}`;
 
     return NextResponse.json({
       url: publicUrl,
@@ -74,7 +86,10 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("Error uploading image:", error);
     return NextResponse.json(
-      { error: "Failed to upload image" },
+      {
+        error: "Failed to upload image",
+        details: error instanceof Error ? error.message : String(error)
+      },
       { status: 500 }
     );
   }
