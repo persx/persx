@@ -19,6 +19,22 @@ export default function ContentBody({
   content,
   className = "",
 }: ContentBodyProps) {
+  // Escape vendor names in angle brackets before rendering
+  // This prevents text like <Optimizely> from being interpreted as HTML tags
+  const processedContent = content.replace(/<([A-Z][a-zA-Z0-9\s]*?)>/g, (match, tagName) => {
+    // Check if this is a known HTML tag - if not, escape it
+    const knownHtmlTags = ['p', 'div', 'span', 'a', 'img', 'strong', 'em', 'b', 'i', 'u',
+                           'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li',
+                           'blockquote', 'code', 'pre', 'br', 'hr', 'table', 'tr', 'td', 'th'];
+    const isKnownTag = knownHtmlTags.includes(tagName.toLowerCase().trim());
+
+    if (!isKnownTag && tagName.match(/^[A-Z]/)) {
+      // This looks like a vendor name (starts with capital letter), escape it
+      return `&lt;${tagName}&gt;`;
+    }
+    return match;
+  });
+
   return (
     <div
       className={`prose prose-base md:prose-lg dark:prose-invert max-w-none
@@ -232,7 +248,7 @@ export default function ContentBody({
           },
         }}
       >
-        {content}
+        {processedContent}
       </ReactMarkdown>
     </div>
   );
