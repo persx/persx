@@ -24,29 +24,46 @@ export default function ContentBody({
       className={`prose prose-base md:prose-lg dark:prose-invert max-w-none
         prose-headings:font-bold prose-headings:text-gray-900 dark:prose-headings:text-white prose-headings:tracking-tight
         prose-h1:text-2xl md:prose-h1:text-4xl prose-h1:mb-5 md:prose-h1:mb-6 prose-h1:mt-8 md:prose-h1:mt-10 prose-h1:leading-tight
-        prose-h2:text-xl md:prose-h2:text-3xl prose-h2:mb-4 md:prose-h2:mb-5 prose-h2:mt-8 md:prose-h2:mt-10 prose-h2:pb-2 prose-h2:border-b prose-h2:border-gray-200 dark:prose-h2:border-gray-700
-        prose-h3:text-lg md:prose-h3:text-2xl prose-h3:mb-3 md:prose-h3:mb-4 prose-h3:mt-6 md:prose-h3:mt-7 prose-h3:text-blue-900 dark:prose-h3:text-blue-300
-        prose-h4:text-base md:prose-h4:text-xl prose-h4:mb-2 md:prose-h4:mb-3 prose-h4:mt-5 prose-h4:font-semibold
-        prose-p:text-gray-700 dark:prose-p:text-gray-300 prose-p:leading-relaxed prose-p:mb-4 md:prose-p:mb-5 prose-p:text-sm md:prose-p:text-base prose-p:max-w-prose
-        prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-a:no-underline prose-a:font-medium hover:prose-a:underline hover:prose-a:text-blue-700 dark:hover:prose-a:text-blue-300
-        prose-strong:text-gray-900 dark:prose-strong:text-white prose-strong:font-semibold
-        prose-code:text-pink-600 dark:prose-code:text-pink-400 prose-code:bg-gray-100 dark:prose-code:bg-gray-800 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-xs md:prose-code:text-sm prose-code:font-mono
-        prose-pre:bg-gray-900 dark:prose-pre:bg-gray-950 prose-pre:p-4 md:prose-pre:p-5 prose-pre:rounded-lg prose-pre:overflow-x-auto prose-pre:text-xs md:prose-pre:text-sm prose-pre:shadow-lg
-        prose-blockquote:border-l-4 prose-blockquote:border-blue-500 prose-blockquote:pl-4 md:prose-blockquote:pl-5 prose-blockquote:italic prose-blockquote:text-gray-700 dark:prose-blockquote:text-gray-300 prose-blockquote:text-sm md:prose-blockquote:text-base prose-blockquote:my-4
-        prose-ul:list-disc prose-ul:pl-6 md:prose-ul:pl-7 prose-ul:mb-4 md:prose-ul:mb-5 prose-ul:space-y-2
-        prose-ol:list-decimal prose-ol:pl-6 md:prose-ol:pl-7 prose-ol:mb-4 md:prose-ol:mb-5 prose-ol:space-y-2
-        prose-li:text-gray-700 dark:prose-li:text-gray-300 prose-li:text-sm md:prose-li:text-base prose-li:leading-relaxed
-        prose-li>p:my-1 prose-li>ul:mt-2 prose-li>ol:mt-2
-        prose-table:border-collapse prose-table:w-full prose-table:mb-5 prose-table:text-xs md:prose-table:text-sm prose-table:shadow-sm
+        prose-h2:text-xl md:prose-h2:text-2xl prose-h2:mb-4 prose-h2:mt-8 prose-h2:font-bold
+        prose-h3:text-lg md:prose-h3:text-xl prose-h3:mb-3 prose-h3:mt-6 prose-h3:font-bold
+        prose-h4:text-xl md:prose-h4:text-2xl prose-h4:mb-4 prose-h4:mt-8 prose-h4:font-bold
+        prose-p:text-gray-700 dark:prose-p:text-gray-300 prose-p:leading-relaxed prose-p:mb-4 prose-p:text-sm md:prose-p:text-base
+        prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-a:no-underline hover:prose-a:underline
+        prose-strong:text-gray-900 dark:prose-strong:text-white prose-strong:font-bold
+        prose-em:italic
+        prose-code:text-pink-600 dark:prose-code:text-pink-400 prose-code:bg-gray-100 dark:prose-code:bg-gray-800 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm
+        prose-pre:bg-gray-900 dark:prose-pre:bg-gray-950 prose-pre:p-4 prose-pre:rounded-lg prose-pre:overflow-x-auto
+        prose-blockquote:border-l-4 prose-blockquote:border-blue-500 prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:text-gray-700 dark:prose-blockquote:text-gray-300 prose-blockquote:my-4 prose-blockquote:bg-gray-50 dark:prose-blockquote:bg-gray-800/30 prose-blockquote:py-2 prose-blockquote:rounded-r
+        prose-ul:list-disc prose-ul:pl-6 prose-ul:mb-4 prose-ul:mt-2
+        prose-ol:list-decimal prose-ol:pl-6 prose-ol:mb-4 prose-ol:mt-2
+        prose-li:text-gray-700 dark:prose-li:text-gray-300 prose-li:text-sm md:prose-li:text-base prose-li:leading-relaxed prose-li:mb-2
+        prose-li::marker:text-gray-500 dark:prose-li::marker:text-gray-400
+        prose-table:border-collapse prose-table:w-full prose-table:mb-5
         prose-th:border prose-th:border-gray-300 dark:prose-th:border-gray-700 prose-th:bg-gray-100 dark:prose-th:bg-gray-800 prose-th:p-3 prose-th:text-left prose-th:font-semibold
         prose-td:border prose-td:border-gray-300 dark:prose-td:border-gray-700 prose-td:p-3
-        prose-img:rounded-lg prose-img:shadow-md prose-img:my-5 md:prose-img:my-6 prose-img:w-full
-        prose-hr:border-gray-300 dark:prose-hr:border-gray-700 prose-hr:my-8
+        prose-img:rounded-lg prose-img:shadow-md prose-img:my-5 prose-img:w-full
+        prose-hr:border-gray-300 dark:prose-hr:border-gray-700 prose-hr:my-6 prose-hr:border-t-2
         ${className}`}
+      style={{
+        // Ensure base styles are applied
+        lineHeight: '1.75',
+      }}
     >
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         rehypePlugins={[rehypeHighlight, rehypeRaw]}
+        components={{
+          // Ensure proper rendering of elements
+          p: ({ node, ...props }) => <p style={{ marginBottom: '1rem' }} {...props} />,
+          ul: ({ node, ...props }) => <ul style={{ listStyleType: 'disc', paddingLeft: '1.5rem', marginBottom: '1rem' }} {...props} />,
+          ol: ({ node, ...props }) => <ol style={{ listStyleType: 'decimal', paddingLeft: '1.5rem', marginBottom: '1rem' }} {...props} />,
+          li: ({ node, ...props }) => <li style={{ marginBottom: '0.5rem' }} {...props} />,
+          h2: ({ node, ...props }) => <h2 style={{ marginTop: '2rem', marginBottom: '1rem', fontSize: '1.5rem', fontWeight: 'bold' }} {...props} />,
+          h3: ({ node, ...props }) => <h3 style={{ marginTop: '1.5rem', marginBottom: '0.75rem', fontSize: '1.25rem', fontWeight: 'bold' }} {...props} />,
+          h4: ({ node, ...props }) => <h4 style={{ marginTop: '2rem', marginBottom: '1rem', fontSize: '1.5rem', fontWeight: 'bold' }} {...props} />,
+          strong: ({ node, ...props }) => <strong style={{ fontWeight: 'bold' }} {...props} />,
+          hr: ({ node, ...props }) => <hr style={{ marginTop: '2rem', marginBottom: '2rem', borderTop: '1px solid #e5e7eb' }} {...props} />,
+        }}
       >
         {content}
       </ReactMarkdown>

@@ -39,15 +39,12 @@ export default function NewsTemplate({ content }: NewsTemplateProps) {
         </div>
       )}
 
-      {/* TL;DR - Prominent one-sentence summary */}
+      {/* TL;DR - Prominent one-sentence summary as H2 */}
       {content.overall_summary && (
         <aside className="mb-8 md:mb-10 p-5 md:p-6 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-l-4 border-blue-600 dark:border-blue-400 rounded-r-lg">
-          <p className="text-sm uppercase tracking-wide font-semibold text-blue-700 dark:text-blue-300 mb-2">
-            TL;DR
-          </p>
-          <p className="text-base md:text-lg text-gray-800 dark:text-gray-200 leading-relaxed font-medium">
+          <h2 className="text-base md:text-lg text-gray-800 dark:text-gray-200 leading-relaxed font-medium">
             {content.overall_summary}
-          </p>
+          </h2>
         </aside>
       )}
 
