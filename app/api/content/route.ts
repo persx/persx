@@ -45,7 +45,24 @@ export async function POST(request: NextRequest) {
         excerpt: data.excerpt || null,
         content_type: data.content_type,
         status: data.status || "draft",
+        industry: data.industry || "General",
         tags: data.tags || [],
+        // SEO fields
+        meta_title: data.meta_title || null,
+        meta_description: data.meta_description || null,
+        focus_keyword: data.focus_keyword || null,
+        canonical_url: data.canonical_url || null,
+        // Open Graph
+        og_title: data.og_title || null,
+        og_description: data.og_description || null,
+        og_image_url: data.og_image_url || null,
+        // Twitter Card
+        twitter_title: data.twitter_title || null,
+        twitter_description: data.twitter_description || null,
+        twitter_image_url: data.twitter_image_url || null,
+        // Structured Data
+        article_schema: data.article_schema || null,
+        breadcrumb_schema: data.breadcrumb_schema || null,
         // External content fields (single source)
         source_type: data.source_type || "internal",
         source_name: data.source_name || null,
