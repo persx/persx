@@ -5,6 +5,10 @@ import StarterKit from "@tiptap/starter-kit";
 import Link from "@tiptap/extension-link";
 import Image from "@tiptap/extension-image";
 import Placeholder from "@tiptap/extension-placeholder";
+import { Table } from "@tiptap/extension-table";
+import { TableRow } from "@tiptap/extension-table-row";
+import { TableCell } from "@tiptap/extension-table-cell";
+import { TableHeader } from "@tiptap/extension-table-header";
 import { useCallback, useState, useEffect, useRef, useMemo } from "react";
 import { marked } from "marked";
 import TurndownService from "turndown";
@@ -22,6 +26,7 @@ export default function RichTextEditor({
 }: RichTextEditorProps) {
   const [editor, setEditor] = useState<Editor | null>(null);
   const [isSticky, setIsSticky] = useState(false);
+  const [showShortcuts, setShowShortcuts] = useState(false);
   const contentRef = useRef(content);
   const turndownService = useRef<TurndownService | null>(null);
   const toolbarRef = useRef<HTMLDivElement>(null);
@@ -79,6 +84,15 @@ export default function RichTextEditor({
             class: "rounded-lg shadow-md my-5 w-full",
           },
         }),
+        Table.configure({
+          resizable: true,
+          HTMLAttributes: {
+            class: "border-collapse w-full my-5",
+          },
+        }),
+        TableRow,
+        TableHeader,
+        TableCell,
         Placeholder.configure({
           placeholder,
         }),
@@ -140,6 +154,18 @@ export default function RichTextEditor({
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // Handle escape key for shortcuts modal
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && showShortcuts) {
+        setShowShortcuts(false);
+      }
+    };
+
+    document.addEventListener("keydown", handleEscape);
+    return () => document.removeEventListener("keydown", handleEscape);
+  }, [showShortcuts]);
 
   // Calculate word and character count
   const stats = useMemo(() => {
@@ -474,6 +500,48 @@ export default function RichTextEditor({
           </svg>
         </button>
 
+        {/* Table */}
+        <button
+          type="button"
+          onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()}
+          className="px-3 py-1 text-sm rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors bg-white dark:bg-gray-800"
+          title="Insert Table (3x3)"
+        >
+          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+            <rect x="2" y="2" width="16" height="16" rx="1" stroke="currentColor" fill="none" strokeWidth="1.5"/>
+            <line x1="2" y1="7" x2="18" y2="7" stroke="currentColor" strokeWidth="1.5"/>
+            <line x1="2" y1="12" x2="18" y2="12" stroke="currentColor" strokeWidth="1.5"/>
+            <line x1="7" y1="2" x2="7" y2="18" stroke="currentColor" strokeWidth="1.5"/>
+            <line x1="12" y1="2" x2="12" y2="18" stroke="currentColor" strokeWidth="1.5"/>
+          </svg>
+        </button>
+
+        {/* Horizontal Rule */}
+        <button
+          type="button"
+          onClick={() => editor.chain().focus().setHorizontalRule().run()}
+          className="px-3 py-1 text-sm rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors bg-white dark:bg-gray-800"
+          title="Insert Horizontal Line"
+        >
+          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+            <rect x="2" y="9" width="16" height="2" rx="1"/>
+          </svg>
+        </button>
+
+        <div className="w-px h-6 bg-gray-300 dark:bg-gray-600 mx-1" />
+
+        {/* Keyboard Shortcuts Help */}
+        <button
+          type="button"
+          onClick={() => setShowShortcuts(true)}
+          className="px-3 py-1 text-sm rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors bg-white dark:bg-gray-800"
+          title="Keyboard Shortcuts"
+        >
+          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd"/>
+          </svg>
+        </button>
+
         {/* Word Count */}
         <div className="ml-auto flex items-center gap-2 px-3 py-1 text-xs text-gray-600 dark:text-gray-400">
           <span title="Word count">📝 {stats.words} words</span>
@@ -484,6 +552,119 @@ export default function RichTextEditor({
 
       {/* Editor */}
       <EditorContent editor={editor} />
+
+      {/* Keyboard Shortcuts Modal */}
+      {showShortcuts && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+          onClick={() => setShowShortcuts(false)}
+        >
+          <div
+            className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[80vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                  Keyboard Shortcuts
+                </h2>
+                <button
+                  onClick={() => setShowShortcuts(false)}
+                  className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                >
+                  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd"/>
+                  </svg>
+                </button>
+              </div>
+
+              <div className="space-y-6">
+                {/* Text Formatting */}
+                <div>
+                  <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-white">Text Formatting</h3>
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center py-2 border-b border-gray-200 dark:border-gray-700">
+                      <span className="text-gray-700 dark:text-gray-300">Bold</span>
+                      <kbd className="px-2 py-1 text-xs font-semibold bg-gray-100 dark:bg-gray-700 rounded">Ctrl+B</kbd>
+                    </div>
+                    <div className="flex justify-between items-center py-2 border-b border-gray-200 dark:border-gray-700">
+                      <span className="text-gray-700 dark:text-gray-300">Italic</span>
+                      <kbd className="px-2 py-1 text-xs font-semibold bg-gray-100 dark:bg-gray-700 rounded">Ctrl+I</kbd>
+                    </div>
+                    <div className="flex justify-between items-center py-2 border-b border-gray-200 dark:border-gray-700">
+                      <span className="text-gray-700 dark:text-gray-300">Strikethrough</span>
+                      <kbd className="px-2 py-1 text-xs font-semibold bg-gray-100 dark:bg-gray-700 rounded">Ctrl+Shift+X</kbd>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Paragraph */}
+                <div>
+                  <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-white">Paragraph</h3>
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center py-2 border-b border-gray-200 dark:border-gray-700">
+                      <span className="text-gray-700 dark:text-gray-300">Heading 2</span>
+                      <kbd className="px-2 py-1 text-xs font-semibold bg-gray-100 dark:bg-gray-700 rounded">Ctrl+Alt+2</kbd>
+                    </div>
+                    <div className="flex justify-between items-center py-2 border-b border-gray-200 dark:border-gray-700">
+                      <span className="text-gray-700 dark:text-gray-300">Heading 3</span>
+                      <kbd className="px-2 py-1 text-xs font-semibold bg-gray-100 dark:bg-gray-700 rounded">Ctrl+Alt+3</kbd>
+                    </div>
+                    <div className="flex justify-between items-center py-2 border-b border-gray-200 dark:border-gray-700">
+                      <span className="text-gray-700 dark:text-gray-300">Paragraph</span>
+                      <kbd className="px-2 py-1 text-xs font-semibold bg-gray-100 dark:bg-gray-700 rounded">Ctrl+Alt+0</kbd>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Lists */}
+                <div>
+                  <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-white">Lists</h3>
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center py-2 border-b border-gray-200 dark:border-gray-700">
+                      <span className="text-gray-700 dark:text-gray-300">Bullet List</span>
+                      <kbd className="px-2 py-1 text-xs font-semibold bg-gray-100 dark:bg-gray-700 rounded">Ctrl+Shift+8</kbd>
+                    </div>
+                    <div className="flex justify-between items-center py-2 border-b border-gray-200 dark:border-gray-700">
+                      <span className="text-gray-700 dark:text-gray-300">Numbered List</span>
+                      <kbd className="px-2 py-1 text-xs font-semibold bg-gray-100 dark:bg-gray-700 rounded">Ctrl+Shift+7</kbd>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Other */}
+                <div>
+                  <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-white">Other</h3>
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center py-2 border-b border-gray-200 dark:border-gray-700">
+                      <span className="text-gray-700 dark:text-gray-300">Undo</span>
+                      <kbd className="px-2 py-1 text-xs font-semibold bg-gray-100 dark:bg-gray-700 rounded">Ctrl+Z</kbd>
+                    </div>
+                    <div className="flex justify-between items-center py-2 border-b border-gray-200 dark:border-gray-700">
+                      <span className="text-gray-700 dark:text-gray-300">Redo</span>
+                      <kbd className="px-2 py-1 text-xs font-semibold bg-gray-100 dark:bg-gray-700 rounded">Ctrl+Y</kbd>
+                    </div>
+                    <div className="flex justify-between items-center py-2 border-b border-gray-200 dark:border-gray-700">
+                      <span className="text-gray-700 dark:text-gray-300">Add Link</span>
+                      <kbd className="px-2 py-1 text-xs font-semibold bg-gray-100 dark:bg-gray-700 rounded">Ctrl+K</kbd>
+                    </div>
+                    <div className="flex justify-between items-center py-2">
+                      <span className="text-gray-700 dark:text-gray-300">Code Block</span>
+                      <kbd className="px-2 py-1 text-xs font-semibold bg-gray-100 dark:bg-gray-700 rounded">Ctrl+Alt+C</kbd>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  💡 Tip: Press <kbd className="px-2 py-1 text-xs font-semibold bg-gray-100 dark:bg-gray-700 rounded">Esc</kbd> to close this dialog
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
