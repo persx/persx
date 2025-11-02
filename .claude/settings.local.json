@@ -7,7 +7,9 @@
       "Bash(npx husky init)",
       "Bash(npm run type-check:*)",
       "Bash(git add:*)",
-      "Bash(git commit -m \"$(cat <<''EOF''\nAdd pre-commit TypeScript checking with Husky\n\n- Install husky and lint-staged\n- Add type-check script to package.json\n- Configure pre-commit hook to run TypeScript checks\n- Fix unused import in BlogTemplate\n- Fix unused backLink variable in preview page\n\nThis will prevent TypeScript errors from reaching production by\nblocking commits that have type errors.\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")"
+      "Bash(git commit -m \"$(cat <<''EOF''\nAdd pre-commit TypeScript checking with Husky\n\n- Install husky and lint-staged\n- Add type-check script to package.json\n- Configure pre-commit hook to run TypeScript checks\n- Fix unused import in BlogTemplate\n- Fix unused backLink variable in preview page\n\nThis will prevent TypeScript errors from reaching production by\nblocking commits that have type errors.\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git push:*)",
+      "Bash(git commit:*)"
     ],
     "deny": [],
     "ask": []
