@@ -48,22 +48,6 @@ export default function ContentPreviewModal({
 
   if (!isOpen) return null;
 
-  // Get the content type label for display
-  const contentTypeLabels: Record<string, string> = {
-    blog: "Blog Post",
-    case_study: "Case Study",
-    implementation_guide: "Implementation Guide",
-    test_result: "Test Result",
-    best_practice: "Best Practice",
-    tool_guide: "Tool Guide",
-    news: "News",
-  };
-
-  const backLink = {
-    href: "#",
-    label: `Back to ${contentTypeLabels[content.content_type] || "Content"} List`,
-  };
-
   return (
     <div
       className="fixed inset-0 z-50 overflow-hidden bg-black/50 backdrop-blur-sm"
@@ -108,7 +92,7 @@ export default function ContentPreviewModal({
         </div>
 
         {/* Content */}
-        <ContentLayout backLink={backLink}>
+        <ContentLayout>
           <ContentRenderer
             content={content}
             contentType={content.content_type}
