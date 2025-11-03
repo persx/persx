@@ -16,6 +16,51 @@ import { useCallback, useState, useEffect, useRef, useMemo } from "react";
 import { marked } from "marked";
 import TurndownService from "turndown";
 import { contentTemplates, ContentTemplate } from "../lib/contentTemplates";
+import { Extension } from '@tiptap/core';
+
+// Custom FontSize extension
+const FontSize = Extension.create({
+  name: 'fontSize',
+
+  addOptions() {
+    return {
+      types: ['textStyle'],
+    };
+  },
+
+  addGlobalAttributes() {
+    return [
+      {
+        types: this.options.types,
+        attributes: {
+          fontSize: {
+            default: null,
+            parseHTML: element => element.style.fontSize,
+            renderHTML: attributes => {
+              if (!attributes.fontSize) {
+                return {};
+              }
+              return {
+                style: `font-size: ${attributes.fontSize}`,
+              };
+            },
+          },
+        },
+      },
+    ];
+  },
+
+  addCommands() {
+    return {
+      setFontSize: (fontSize: string) => ({ chain }) => {
+        return chain().setMark('textStyle', { fontSize }).run();
+      },
+      unsetFontSize: () => ({ chain }) => {
+        return chain().setMark('textStyle', { fontSize: null }).updateAttributes('textStyle', { fontSize: null }).run();
+      },
+    };
+  },
+});
 
 // Custom Blockquote extension that supports classes
 const CustomBlockquote = Blockquote.extend({
@@ -198,6 +243,7 @@ export default function RichTextEditor({
         }),
         CustomBlockquote,
         TextStyle,
+        FontSize,
         Color,
         TextAlign.configure({
           types: ['heading', 'paragraph'],
@@ -453,12 +499,21 @@ export default function RichTextEditor({
           ${isSticky ? 'fixed top-0 left-0 right-0 shadow-lg' : 'relative'}
         `}
       >
-        {/* Text Type Dropdown */}
+        {/* Font Styles Dropdown */}
         <select
           onChange={(e) => {
             const value = e.target.value;
             if (value === "p") {
               editor.chain().focus().setParagraph().run();
+            } else if (value === "extra-large") {
+              // Set paragraph with extra large font size (1.75rem)
+              editor.chain().focus().setParagraph().setFontSize('1.75rem').run();
+            } else if (value === "large") {
+              // Set paragraph with large font size (1.375rem)
+              editor.chain().focus().setParagraph().setFontSize('1.375rem').run();
+            } else if (value === "medium") {
+              // Set paragraph with medium font size (1.125rem)
+              editor.chain().focus().setParagraph().setFontSize('1.125rem').run();
             } else if (value.startsWith("h")) {
               const level = parseInt(value.substring(1)) as 2 | 3 | 4;
               editor.chain().focus().toggleHeading({ level }).run();
@@ -505,11 +560,15 @@ export default function RichTextEditor({
                 }]
               }).run();
             }
-            // Reset dropdown to paragraph after selection
-            e.target.value = "p";
+            // Reset dropdown to font styles after selection
+            e.target.value = "font-styles";
           }}
           className="px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
         >
+          <option value="font-styles">Font Styles</option>
+          <option value="extra-large">Extra Large</option>
+          <option value="large">Large</option>
+          <option value="medium">Medium</option>
           <option value="p">Paragraph</option>
           <option value="h2">Heading 2</option>
           <option value="h3">Heading 3</option>
