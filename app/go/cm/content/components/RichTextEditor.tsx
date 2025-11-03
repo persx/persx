@@ -56,6 +56,7 @@ export default function RichTextEditor({
   const [showLinkMenu, setShowLinkMenu] = useState(false);
   const [linkUrl, setLinkUrl] = useState("");
   const contentRef = useRef(content);
+  const isUpdatingFromEditor = useRef(false);
   const turndownService = useRef<TurndownService | null>(null);
   const toolbarRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -107,15 +108,15 @@ export default function RichTextEditor({
     contentRef.current = content;
   }, [content]);
 
-  // Update editor content when content prop changes
+  // Update editor content when content prop changes (but not during user editing)
   useEffect(() => {
-    if (editor && content !== undefined) {
+    if (editor && content !== undefined && !isUpdatingFromEditor.current) {
       const currentHtml = editor.getHTML();
       const newHtml = markdownToHtml(content);
 
       // Only update if content actually changed to avoid cursor jumps
       if (currentHtml !== newHtml) {
-        console.log('[RichTextEditor] Content prop changed, updating editor');
+        console.log('[RichTextEditor] Content prop changed from external source, updating editor');
         editor.commands.setContent(newHtml);
       }
     }
@@ -223,6 +224,9 @@ export default function RichTextEditor({
       ],
       content: htmlContent,
       onUpdate: ({ editor }) => {
+        // Mark that we're updating from editor to prevent cursor jumps
+        isUpdatingFromEditor.current = true;
+
         // Convert HTML back to markdown before saving
         const html = editor.getHTML();
         const markdown = htmlToMarkdown(html);
@@ -237,6 +241,11 @@ export default function RichTextEditor({
         }
 
         onChange(markdown);
+
+        // Reset the flag after a short delay to allow external updates again
+        setTimeout(() => {
+          isUpdatingFromEditor.current = false;
+        }, 100);
       },
       editorProps: {
         attributes: {
