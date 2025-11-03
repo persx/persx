@@ -23,7 +23,30 @@ export default function middleware(req: NextRequest) {
   // For protected /go/cm routes, use auth middleware
   if (req.nextUrl.pathname.startsWith("/go/cm")) {
     // @ts-expect-error - withAuth middleware signature compatibility
-    return authMiddleware(req as any);
+    const response = authMiddleware(req as any);
+
+    // Add no-cache headers for all /go routes
+    if (response instanceof NextResponse) {
+      response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+      response.headers.set('Pragma', 'no-cache');
+      response.headers.set('Expires', '0');
+    }
+
+    return response;
+  }
+
+  // Add no-cache headers for all /go routes (including /go itself)
+  if (req.nextUrl.pathname.startsWith("/go")) {
+    return NextResponse.next({
+      request: {
+        headers: requestHeaders,
+      },
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+      },
+    });
   }
 
   // For all other routes, just pass through with the pathname header

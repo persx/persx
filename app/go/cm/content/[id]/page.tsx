@@ -3,6 +3,10 @@ import { notFound } from "next/navigation";
 import ContentEditorWrapper from "../components/ContentEditorWrapper";
 import "@/app/styles/components/rich-text-editor.css";
 
+// Force dynamic rendering - no caching for admin pages
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export default async function EditContentPage({
   params,
 }: {

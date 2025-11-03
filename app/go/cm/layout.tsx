@@ -8,6 +8,10 @@ export const metadata = {
   description: "Content Management System",
 };
 
+// Force dynamic rendering - no caching for admin pages
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export default async function AdminLayout({
   children,
 }: {
