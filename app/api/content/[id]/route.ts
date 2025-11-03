@@ -18,6 +18,16 @@ export async function PUT(
     const data = await request.json();
     const supabase = createAdminClient();
 
+    // Log what content is being saved (for debugging)
+    if (data.content && data.content.includes('blockquote')) {
+      console.log('[API /content/[id]] Saving content with blockquotes:', {
+        contentId: params.id,
+        hasBlockquoteClass: /blockquote class=/.test(data.content),
+        contentLength: data.content.length,
+        contentSample: data.content.substring(0, 600)
+      });
+    }
+
     // Update content
     const { data: content, error } = await supabase
       .from("knowledge_base_content")
@@ -66,10 +76,17 @@ export async function PUT(
     if (error) {
       console.error("Error updating content:", error);
       return NextResponse.json(
-        { error: "Failed to update content" },
+        { error: "Failed to update content", details: error.message },
         { status: 500 }
       );
     }
+
+    // Log successful update
+    console.log('[API /content/[id]] Content updated successfully:', {
+      contentId: content.id,
+      status: content.status,
+      slug: content.slug
+    });
 
     // Submit to IndexNow if published
     if (content.status === "published" && content.slug) {

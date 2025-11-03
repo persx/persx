@@ -342,6 +342,14 @@ export default function ContentEditor({
         status: "published",
       };
 
+      // Log what's being saved (for debugging blockquote issues)
+      if (payload.content.includes('blockquote')) {
+        console.log('[ContentEditor] Publishing content with blockquotes:', {
+          hasBlockquoteClass: /blockquote class=/.test(payload.content),
+          contentSample: payload.content.substring(0, 600)
+        });
+      }
+
       const url = contentId ? `/api/content/${contentId}` : "/api/content";
       const method = contentId ? "PUT" : "POST";
 
@@ -355,15 +363,27 @@ export default function ContentEditor({
 
       if (response.ok) {
         setSuccess(true);
+        setError("");
+        console.log('[ContentEditor] Content published successfully:', {
+          contentId: data.content?.id || contentId,
+          slug: data.content?.slug
+        });
         setTimeout(() => {
           router.push("/go/cm/content");
           router.refresh();
         }, 1500);
       } else {
-        setError(data.error || "Failed to publish content");
+        const errorMsg = data.error || data.details || "Failed to publish content";
+        console.error('[ContentEditor] Publish failed:', {
+          status: response.status,
+          error: errorMsg,
+          response: data
+        });
+        setError(errorMsg);
       }
     } catch (err) {
-      setError("An error occurred while publishing");
+      console.error('[ContentEditor] Publish error:', err);
+      setError(err instanceof Error ? err.message : "An error occurred while publishing");
     } finally {
       setIsLoading(false);
     }

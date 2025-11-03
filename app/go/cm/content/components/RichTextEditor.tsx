@@ -90,6 +90,7 @@ export default function RichTextEditor({
 
     // First, escape any text that looks like HTML tags (e.g., <Optimizely>, <VWO>)
     // but is actually meant to be displayed as text
+    // BUT preserve blockquote tags with classes
     const escapedMarkdown = markdown.replace(/<([A-Z][a-zA-Z0-9\s]*?)>/g, (match, tagName) => {
       // Check if this is a known HTML tag - if not, escape it
       const knownHtmlTags = ['p', 'div', 'span', 'a', 'img', 'strong', 'em', 'b', 'i', 'u',
@@ -104,7 +105,8 @@ export default function RichTextEditor({
       return match;
     });
 
-    // Configure marked to preserve content and HTML
+    // Configure marked to preserve HTML content (including blockquotes with classes)
+    // Note: marked already preserves HTML by default with gfm:true
     return marked.parse(escapedMarkdown, {
       async: false,
       breaks: true,
@@ -115,13 +117,16 @@ export default function RichTextEditor({
   // Convert HTML to markdown
   const htmlToMarkdown = (html: string): string => {
     if (!html || !turndownService.current) return "";
+
     const markdown = turndownService.current.turndown(html);
 
-    // Debug: Log conversion to help identify issues
-    if (markdown.includes('blockquote')) {
+    // Debug: Log conversion to help identify issues with blockquotes
+    if (markdown.includes('blockquote') || html.includes('blockquote')) {
       console.log('[RichTextEditor] HTML to Markdown conversion:', {
-        hasBlockquote: true,
-        markdownSample: markdown.substring(0, 500)
+        htmlHasBlockquote: html.includes('blockquote'),
+        markdownHasBlockquote: markdown.includes('blockquote'),
+        htmlSample: html.substring(0, 600),
+        markdownSample: markdown.substring(0, 600)
       });
     }
 
@@ -182,6 +187,16 @@ export default function RichTextEditor({
         // Convert HTML back to markdown before saving
         const html = editor.getHTML();
         const markdown = htmlToMarkdown(html);
+
+        // Log the final markdown being passed to onChange
+        if (markdown.includes('blockquote')) {
+          console.log('[RichTextEditor] onChange called with blockquote content:', {
+            markdownLength: markdown.length,
+            hasBlockquoteClass: /blockquote class=/.test(markdown),
+            sample: markdown.substring(0, 600)
+          });
+        }
+
         onChange(markdown);
       },
       editorProps: {
