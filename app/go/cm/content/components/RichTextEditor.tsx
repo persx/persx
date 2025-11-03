@@ -7,6 +7,7 @@ import Image from "@tiptap/extension-image";
 import Placeholder from "@tiptap/extension-placeholder";
 import Blockquote from "@tiptap/extension-blockquote";
 import { TextStyle, Color } from "@tiptap/extension-text-style";
+import TextAlign from "@tiptap/extension-text-align";
 import { Table } from "@tiptap/extension-table";
 import { TableRow } from "@tiptap/extension-table-row";
 import { TableCell } from "@tiptap/extension-table-cell";
@@ -198,6 +199,10 @@ export default function RichTextEditor({
         CustomBlockquote,
         TextStyle,
         Color,
+        TextAlign.configure({
+          types: ['heading', 'paragraph'],
+          alignments: ['left', 'center', 'right'],
+        }),
         Link.configure({
           openOnClick: false,
           HTMLAttributes: {
@@ -758,6 +763,92 @@ export default function RichTextEditor({
             <rect x="7" y="3" width="11" height="2" rx="1"/>
             <rect x="7" y="9" width="11" height="2" rx="1"/>
             <rect x="7" y="15" width="11" height="2" rx="1"/>
+          </svg>
+        </button>
+
+        {/* Indent */}
+        <button
+          type="button"
+          onClick={() => editor.chain().focus().sinkListItem('listItem').run()}
+          disabled={!editor.can().sinkListItem('listItem')}
+          className={`px-3 py-1 text-sm rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${
+            editor.can().sinkListItem('listItem')
+              ? "bg-white dark:bg-gray-800"
+              : "bg-gray-100 dark:bg-gray-900"
+          }`}
+          title="Indent"
+        >
+          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd"/>
+            <path fillRule="evenodd" d="M10.293 9.293a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 01-1.414-1.414L12.586 13l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd"/>
+          </svg>
+        </button>
+
+        {/* Outdent */}
+        <button
+          type="button"
+          onClick={() => editor.chain().focus().liftListItem('listItem').run()}
+          disabled={!editor.can().liftListItem('listItem')}
+          className={`px-3 py-1 text-sm rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${
+            editor.can().liftListItem('listItem')
+              ? "bg-white dark:bg-gray-800"
+              : "bg-gray-100 dark:bg-gray-900"
+          }`}
+          title="Outdent"
+        >
+          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd"/>
+            <path fillRule="evenodd" d="M12.707 9.293a1 1 0 00-1.414 0l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L10.414 13l2.293-2.293a1 1 0 000-1.414z" clipRule="evenodd"/>
+          </svg>
+        </button>
+
+        <div className="w-px h-6 bg-gray-300 dark:bg-gray-600 mx-1" />
+
+        {/* Align Left */}
+        <button
+          type="button"
+          onClick={() => editor.chain().focus().setTextAlign('left').run()}
+          className={`px-3 py-1 text-sm rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors ${
+            editor.isActive({ textAlign: 'left' })
+              ? "bg-gray-300 dark:bg-gray-600"
+              : "bg-white dark:bg-gray-800"
+          }`}
+          title="Align Left"
+        >
+          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h8a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h8a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd"/>
+          </svg>
+        </button>
+
+        {/* Align Center */}
+        <button
+          type="button"
+          onClick={() => editor.chain().focus().setTextAlign('center').run()}
+          className={`px-3 py-1 text-sm rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors ${
+            editor.isActive({ textAlign: 'center' })
+              ? "bg-gray-300 dark:bg-gray-600"
+              : "bg-white dark:bg-gray-800"
+          }`}
+          title="Align Center"
+        >
+          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm2 4a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1zm-2 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm2 4a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1z" clipRule="evenodd"/>
+          </svg>
+        </button>
+
+        {/* Align Right */}
+        <button
+          type="button"
+          onClick={() => editor.chain().focus().setTextAlign('right').run()}
+          className={`px-3 py-1 text-sm rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors ${
+            editor.isActive({ textAlign: 'right' })
+              ? "bg-gray-300 dark:bg-gray-600"
+              : "bg-white dark:bg-gray-800"
+          }`}
+          title="Align Right"
+        >
+          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm4 4a1 1 0 011-1h8a1 1 0 110 2H8a1 1 0 01-1-1zm-4 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm4 4a1 1 0 011-1h8a1 1 0 110 2H8a1 1 0 01-1-1z" clipRule="evenodd"/>
           </svg>
         </button>
 
