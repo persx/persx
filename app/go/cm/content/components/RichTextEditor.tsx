@@ -633,6 +633,50 @@ export default function RichTextEditor({
                   style={{ backgroundColor: '#10b981' }}
                   title="Green"
                 />
+                {/* Periwinkle */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    editor.chain().focus().setColor('#ccccff').run();
+                    setShowColorPicker(false);
+                  }}
+                  className="w-6 h-6 rounded border border-gray-300 dark:border-gray-600 hover:scale-110 transition-transform"
+                  style={{ backgroundColor: '#ccccff' }}
+                  title="Periwinkle"
+                />
+                {/* Cyan */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    editor.chain().focus().setColor('#06b6d4').run();
+                    setShowColorPicker(false);
+                  }}
+                  className="w-6 h-6 rounded border border-gray-300 dark:border-gray-600 hover:scale-110 transition-transform"
+                  style={{ backgroundColor: '#06b6d4' }}
+                  title="Cyan"
+                />
+                {/* Orange */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    editor.chain().focus().setColor('#f97316').run();
+                    setShowColorPicker(false);
+                  }}
+                  className="w-6 h-6 rounded border border-gray-300 dark:border-gray-600 hover:scale-110 transition-transform"
+                  style={{ backgroundColor: '#f97316' }}
+                  title="Orange"
+                />
+                {/* Gray */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    editor.chain().focus().setColor('#999999').run();
+                    setShowColorPicker(false);
+                  }}
+                  className="w-6 h-6 rounded border border-gray-300 dark:border-gray-600 hover:scale-110 transition-transform"
+                  style={{ backgroundColor: '#999999' }}
+                  title="Gray"
+                />
                 {/* Default/Reset */}
                 <button
                   type="button"

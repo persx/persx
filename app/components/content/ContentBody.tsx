@@ -70,6 +70,7 @@ export default function ContentBody({
         components={{
           // Ensure proper rendering of elements
           p: ({ node, ...props }) => <p style={{ marginBottom: '1rem' }} {...props} />,
+          a: ({ node, ...props }) => <a style={{ color: '#3b82f6', textDecoration: 'none' }} {...props} />,
           ul: ({ node, ...props }) => <ul style={{ listStyleType: 'disc', paddingLeft: '1.5rem', marginBottom: '1rem' }} {...props} />,
           ol: ({ node, ...props }) => <ol style={{ listStyleType: 'decimal', paddingLeft: '1.5rem', marginBottom: '1rem' }} {...props} />,
           li: ({ node, ...props }) => <li style={{ marginBottom: '0.5rem' }} {...props} />,
