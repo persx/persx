@@ -53,6 +53,8 @@ export default function RichTextEditor({
   const [showMarkdownPreview, setShowMarkdownPreview] = useState(false);
   const [showTemplates, setShowTemplates] = useState(false);
   const [showColorPicker, setShowColorPicker] = useState(false);
+  const [showLinkMenu, setShowLinkMenu] = useState(false);
+  const [linkUrl, setLinkUrl] = useState("");
   const contentRef = useRef(content);
   const turndownService = useRef<TurndownService | null>(null);
   const toolbarRef = useRef<HTMLDivElement>(null);
@@ -297,12 +299,13 @@ export default function RichTextEditor({
       if (e.key === "Escape") {
         if (showShortcuts) setShowShortcuts(false);
         if (showColorPicker) setShowColorPicker(false);
+        if (showLinkMenu) setShowLinkMenu(false);
       }
     };
 
     document.addEventListener("keydown", handleEscape);
     return () => document.removeEventListener("keydown", handleEscape);
-  }, [showShortcuts, showColorPicker]);
+  }, [showShortcuts, showColorPicker, showLinkMenu]);
 
   // Calculate word and character count
   const stats = useMemo(() => {
@@ -320,20 +323,29 @@ export default function RichTextEditor({
     return htmlToMarkdown(html);
   }, [editor?.state.doc]);
 
-  const setLink = useCallback(() => {
+  const toggleLinkMenu = useCallback(() => {
     if (!editor) return;
 
+    // Get current link URL if text is already linked
     const previousUrl = editor.getAttributes("link").href;
-    const url = window.prompt("Enter URL:", previousUrl);
+    setLinkUrl(previousUrl || "");
+    setShowLinkMenu(!showLinkMenu);
+  }, [editor, showLinkMenu]);
 
-    if (url === null) return;
+  const addOrUpdateLink = useCallback(() => {
+    if (!editor || !linkUrl.trim()) return;
 
-    if (url === "") {
-      editor.chain().focus().extendMarkRange("link").unsetLink().run();
-      return;
-    }
+    editor.chain().focus().extendMarkRange("link").setLink({ href: linkUrl }).run();
+    setShowLinkMenu(false);
+    setLinkUrl("");
+  }, [editor, linkUrl]);
 
-    editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
+  const removeLink = useCallback(() => {
+    if (!editor) return;
+
+    editor.chain().focus().extendMarkRange("link").unsetLink().run();
+    setShowLinkMenu(false);
+    setLinkUrl("");
   }, [editor]);
 
   const applyTemplate = useCallback((template: ContentTemplate) => {
@@ -784,24 +796,70 @@ export default function RichTextEditor({
         <div className="w-px h-6 bg-gray-300 dark:bg-gray-600 mx-1" />
 
         {/* Link */}
-        <button
-          type="button"
-          onClick={setLink}
-          className={`px-3 py-1 text-sm rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors ${
-            editor.isActive("link")
-              ? "bg-gray-300 dark:bg-gray-600"
-              : "bg-white dark:bg-gray-800"
-          }`}
-          title="Add Link"
-        >
-          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-            <path
-              fillRule="evenodd"
-              d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z"
-              clipRule="evenodd"
-            />
-          </svg>
-        </button>
+        <div className="relative">
+          <button
+            type="button"
+            onClick={toggleLinkMenu}
+            className={`px-3 py-1 text-sm rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors ${
+              showLinkMenu || editor.isActive("link")
+                ? "bg-gray-300 dark:bg-gray-600"
+                : "bg-white dark:bg-gray-800"
+            }`}
+            title="Link"
+          >
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path
+                fillRule="evenodd"
+                d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z"
+                clipRule="evenodd"
+              />
+            </svg>
+          </button>
+          {showLinkMenu && (
+            <div className="absolute top-full mt-1 left-0 z-50 p-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg w-72">
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    {editor.isActive("link") ? "Edit Link" : "Add Link"}
+                  </label>
+                  <input
+                    type="url"
+                    value={linkUrl}
+                    onChange={(e) => setLinkUrl(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        addOrUpdateLink();
+                      }
+                    }}
+                    placeholder="https://example.com"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    autoFocus
+                  />
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={addOrUpdateLink}
+                    disabled={!linkUrl.trim()}
+                    className="flex-1 px-3 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white rounded-md text-sm font-medium transition-colors"
+                  >
+                    {editor.isActive("link") ? "Update" : "Add"}
+                  </button>
+                  {editor.isActive("link") && (
+                    <button
+                      type="button"
+                      onClick={removeLink}
+                      className="px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md text-sm font-medium transition-colors"
+                    >
+                      Remove
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
 
         {/* Image */}
         <button
