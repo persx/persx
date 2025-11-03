@@ -73,9 +73,9 @@ export default function ContentBody({
           ul: ({ node, ...props }) => <ul style={{ listStyleType: 'disc', paddingLeft: '1.5rem', marginBottom: '1rem' }} {...props} />,
           ol: ({ node, ...props }) => <ol style={{ listStyleType: 'decimal', paddingLeft: '1.5rem', marginBottom: '1rem' }} {...props} />,
           li: ({ node, ...props }) => <li style={{ marginBottom: '0.5rem' }} {...props} />,
-          h2: ({ node, ...props }) => <h2 style={{ marginTop: '2rem', marginBottom: '1rem', fontSize: '1.5rem', fontWeight: 'bold' }} {...props} />,
-          h3: ({ node, ...props }) => <h3 style={{ marginTop: '1.5rem', marginBottom: '0.75rem', fontSize: '1.25rem', fontWeight: 'bold' }} {...props} />,
-          h4: ({ node, ...props }) => <h4 style={{ marginTop: '2rem', marginBottom: '1rem', fontSize: '1.5rem', fontWeight: 'bold' }} {...props} />,
+          h2: ({ node, style, ...props }) => <h2 style={{ marginTop: '2rem', marginBottom: '1rem', fontSize: '1.5rem', fontWeight: 'bold', ...style }} {...props} />,
+          h3: ({ node, style, ...props }) => <h3 style={{ marginTop: '1.5rem', marginBottom: '0.75rem', fontSize: '1.25rem', fontWeight: 'bold', ...style }} {...props} />,
+          h4: ({ node, style, ...props }) => <h4 style={{ marginTop: '2rem', marginBottom: '1rem', fontSize: '1.5rem', fontWeight: 'bold', ...style }} {...props} />,
           strong: ({ node, children, ...props }) => {
             // Check if this strong tag contains a link (vendor/source title)
             const hasLink = node?.children?.some((child: any) => child.tagName === 'a');

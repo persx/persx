@@ -76,6 +76,27 @@ export default function RichTextEditor({
       }
     });
 
+    // Preserve inline styles (especially color) as HTML spans
+    service.addRule('preserveInlineStyles', {
+      filter: (node) => {
+        // Preserve any element with a style attribute
+        return !!node.getAttribute && !!node.getAttribute('style');
+      },
+      replacement: (content, node) => {
+        const element = node as HTMLElement;
+        const style = element.getAttribute('style');
+        const tagName = element.nodeName.toLowerCase();
+
+        // For color styles, wrap in a span with style attribute
+        if (style && style.includes('color')) {
+          return `<span style="${style}">${content}</span>`;
+        }
+
+        // For other styles, preserve the original tag
+        return `<${tagName} style="${style}">${content}</${tagName}>`;
+      }
+    });
+
     turndownService.current = service;
   }
 
@@ -83,6 +104,20 @@ export default function RichTextEditor({
   useEffect(() => {
     contentRef.current = content;
   }, [content]);
+
+  // Update editor content when content prop changes
+  useEffect(() => {
+    if (editor && content !== undefined) {
+      const currentHtml = editor.getHTML();
+      const newHtml = markdownToHtml(content);
+
+      // Only update if content actually changed to avoid cursor jumps
+      if (currentHtml !== newHtml) {
+        console.log('[RichTextEditor] Content prop changed, updating editor');
+        editor.commands.setContent(newHtml);
+      }
+    }
+  }, [content, editor]);
 
   // Convert markdown to HTML
   const markdownToHtml = (markdown: string): string => {
@@ -120,11 +155,13 @@ export default function RichTextEditor({
 
     const markdown = turndownService.current.turndown(html);
 
-    // Debug: Log conversion to help identify issues with blockquotes
-    if (markdown.includes('blockquote') || html.includes('blockquote')) {
+    // Debug: Log conversion to help identify issues with blockquotes and styles
+    if (markdown.includes('blockquote') || html.includes('blockquote') || html.includes('style=')) {
       console.log('[RichTextEditor] HTML to Markdown conversion:', {
         htmlHasBlockquote: html.includes('blockquote'),
         markdownHasBlockquote: markdown.includes('blockquote'),
+        htmlHasStyles: html.includes('style='),
+        markdownHasStyles: markdown.includes('style='),
         htmlSample: html.substring(0, 600),
         markdownSample: markdown.substring(0, 600)
       });
