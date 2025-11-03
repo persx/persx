@@ -168,6 +168,19 @@ export default function RichTextEditor({
     }
   }, [content, editor]);
 
+  // Normalize text: replace smart quotes and em dashes with standard characters
+  const normalizeText = (text: string): string => {
+    if (!text) return text;
+
+    return text
+      // Replace smart single quotes (left and right) with straight apostrophe
+      .replace(/[\u2018\u2019]/g, "'")
+      // Replace em dashes with hyphens
+      .replace(/[\u2014]/g, "-")
+      // Also replace en dashes with hyphens for consistency
+      .replace(/[\u2013]/g, "-");
+  };
+
   // Convert markdown to HTML
   const markdownToHtml = (markdown: string): string => {
     if (!markdown) return "";
@@ -282,16 +295,19 @@ export default function RichTextEditor({
         const html = editor.getHTML();
         const markdown = htmlToMarkdown(html);
 
+        // Normalize text to replace smart quotes and em dashes
+        const normalizedMarkdown = normalizeText(markdown);
+
         // Log the final markdown being passed to onChange
-        if (markdown.includes('blockquote')) {
+        if (normalizedMarkdown.includes('blockquote')) {
           console.log('[RichTextEditor] onChange called with blockquote content:', {
-            markdownLength: markdown.length,
-            hasBlockquoteClass: /blockquote class=/.test(markdown),
-            sample: markdown.substring(0, 600)
+            markdownLength: normalizedMarkdown.length,
+            hasBlockquoteClass: /blockquote class=/.test(normalizedMarkdown),
+            sample: normalizedMarkdown.substring(0, 600)
           });
         }
 
-        onChange(markdown);
+        onChange(normalizedMarkdown);
 
         // Reset the flag after a short delay to allow external updates again
         setTimeout(() => {

@@ -29,6 +29,19 @@ const industries = [
   "Financial Services",
 ];
 
+// Normalize text: replace smart quotes and em dashes with standard characters
+const normalizeText = (text: string): string => {
+  if (!text) return text;
+
+  return text
+    // Replace smart single quotes (left and right) with straight apostrophe
+    .replace(/[\u2018\u2019]/g, "'")
+    // Replace em dashes with hyphens
+    .replace(/[\u2014]/g, "-")
+    // Also replace en dashes with hyphens for consistency
+    .replace(/[\u2013]/g, "-");
+};
+
 interface ContentEditorProps {
   defaultType?: string;
   initialData?: any;
@@ -455,7 +468,7 @@ export default function ContentEditor({
               id="title"
               type="text"
               value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+              onChange={(e) => setFormData({ ...formData, title: normalizeText(e.target.value) })}
               required
               className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter content title"
@@ -469,7 +482,7 @@ export default function ContentEditor({
             <textarea
               id="excerpt"
               value={formData.excerpt}
-              onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
+              onChange={(e) => setFormData({ ...formData, excerpt: normalizeText(e.target.value) })}
               rows={3}
               className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Brief summary of the content"
@@ -562,7 +575,7 @@ export default function ContentEditor({
                   id="source_url"
                   type="url"
                   value={formData.source_url}
-                  onChange={(e) => setFormData({ ...formData, source_url: e.target.value })}
+                  onChange={(e) => setFormData({ ...formData, source_url: normalizeText(e.target.value) })}
                   required={formData.source_type !== "internal"}
                   className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="https://example.com/article"
@@ -581,7 +594,7 @@ export default function ContentEditor({
                     id="source_name"
                     type="text"
                     value={formData.source_name}
-                    onChange={(e) => setFormData({ ...formData, source_name: e.target.value })}
+                    onChange={(e) => setFormData({ ...formData, source_name: normalizeText(e.target.value) })}
                     className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="MarketingDive, TechCrunch, etc."
                   />
@@ -595,7 +608,7 @@ export default function ContentEditor({
                     id="source_author"
                     type="text"
                     value={formData.source_author}
-                    onChange={(e) => setFormData({ ...formData, source_author: e.target.value })}
+                    onChange={(e) => setFormData({ ...formData, source_author: normalizeText(e.target.value) })}
                     className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="Original author name"
                   />
