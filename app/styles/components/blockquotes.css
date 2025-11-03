@@ -107,3 +107,28 @@
   margin-bottom: 1rem;
   border-radius: 0 0.5rem 0.5rem 0;
 }
+
+/* Headings inside blockquotes should be green */
+blockquote h2,
+blockquote h3,
+blockquote h4,
+.blockquote-default h2,
+.blockquote-default h3,
+.blockquote-default h4,
+.blockquote-quote h2,
+.blockquote-quote h3,
+.blockquote-quote h4,
+.blockquote-quickwin h2,
+.blockquote-quickwin h3,
+.blockquote-quickwin h4,
+.blockquote-perspective h2,
+.blockquote-perspective h3,
+.blockquote-perspective h4,
+.blockquote-tldr h2,
+.blockquote-tldr h3,
+.blockquote-tldr h4,
+.blockquote-callout h2,
+.blockquote-callout h3,
+.blockquote-callout h4 {
+  color: #10b981 !important;
+}
