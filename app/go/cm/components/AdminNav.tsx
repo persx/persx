@@ -9,9 +9,11 @@ import type { Session } from "next-auth";
 const navItems = [
   { href: "/go/cm", label: "Dashboard", icon: "📊" },
   { href: "/go/cm/content", label: "Content", icon: "📝" },
+  { href: "/go/cm/personalization", label: "Personalization", icon: "🎯" },
   { href: "/go/cm/rm", label: "Submissions", icon: "🗺️" },
   { href: "/go/cm/tags", label: "Tags", icon: "🏷️" },
   { href: "/go/cm/analytics", label: "Analytics", icon: "📈" },
+  { href: "/go/cm/design-system", label: "Design System", icon: "🎨" },
 ];
 
 interface AdminNavProps {

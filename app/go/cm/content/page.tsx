@@ -1,6 +1,5 @@
 import { createClient } from "@/lib/supabase-server";
 import Link from "next/link";
-import ContentFilter from "./components/ContentFilter";
 import DeleteContentButton from "./components/DeleteContentButton";
 
 type SearchParams = {
@@ -51,6 +50,7 @@ export default async function ContentListPage({
       test_result: "bg-pink-100 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400",
       best_practice: "bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400",
       tool_guide: "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400",
+      static_page: "bg-teal-100 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400",
     };
     return colors[type] || colors.blog;
   };
@@ -85,8 +85,6 @@ export default async function ContentListPage({
         </div>
       </div>
 
-      {/* Filters */}
-      <ContentFilter currentType={searchParams.type} currentStatus={searchParams.status} />
 
       {/* Content List */}
       <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">

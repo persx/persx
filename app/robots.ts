@@ -29,6 +29,6 @@ export default function robots(): MetadataRoute.Robots {
         allow: '/',
       },
     ],
-    sitemap: 'https://persx.ai/sitemap.xml',
+    sitemap: 'https://www.persx.ai/sitemap.xml',
   }
 }

@@ -104,7 +104,7 @@ export default function ConditionalFooter() {
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <Link
               href="/"
-              className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"
+              className="text-xl font-bold text-violet-600 dark:text-violet-400"
             >
               PersX.ai
             </Link>

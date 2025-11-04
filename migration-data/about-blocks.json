@@ -1,0 +1,142 @@
+[
+  {
+    "id": "callout-1",
+    "type": "callout",
+    "order": 1,
+    "data": {
+      "icon": "👋",
+      "title": "A Personal Note About This Project",
+      "content": "<p>PersX.ai is more than a recommendation engine—it's a learning laboratory where I'm pushing the boundaries of AI-driven personalization and experimentation strategy.</p><p>This project serves three purposes:</p><ul class=\"list-disc list-inside ml-4 space-y-1\"><li>Continuously improve my AI skills and stay on the cutting edge of experience optimization</li><li>Provide actionable personalization and experimentation recommendations drawn from 20+ years of hands-on expertise</li><li>Build a <strong>RAG (Retrieval Augmented Generation) system</strong> that learns from accumulated knowledge—blogs, case studies, implementation guides—to deliver increasingly sophisticated and contextual recommendations</li></ul><p>As I add more content about advanced tactics, tool integrations, and industry-specific strategies, the system gets smarter. Every blog post, case study, and test result feeds the engine, making your roadmap more precise and actionable.</p><p class=\"text-sm italic\">Think of it as an evolving brain for experience optimization—constantly learning, adapting, and improving with each new insight.</p>",
+      "variant": "warning",
+      "color": "amber"
+    }
+  },
+  {
+    "id": "hero-1",
+    "type": "hero",
+    "order": 2,
+    "data": {
+      "title": "Meet PersX.ai",
+      "subtitle": "Your strategy engine for experience optimization. PersX.ai isn't another execution platform—it's the intelligence layer that uncovers hidden opportunities, aligns them to your audience personas, proposes measurable tests, and maps the cleanest integration path across web, mobile and email.",
+      "buttons": [
+        {
+          "text": "Get Your Free Roadmap",
+          "href": "/start",
+          "variant": "primary"
+        },
+        {
+          "text": "Speak with an Expert",
+          "href": "/contact",
+          "variant": "secondary"
+        }
+      ],
+      "alignment": "left"
+    }
+  },
+  {
+    "id": "trust-cards-1",
+    "type": "trust_cards",
+    "order": 3,
+    "data": {
+      "heading": "Why trust PersX.ai?",
+      "cards": [
+        {
+          "title": "Expertise + AI",
+          "description": "Our founders bring 20+ years of hands‑on experience across eCommerce, healthcare, financial services, education and B2B/SaaS. We've captured the best practices and automated them with AI.",
+          "color": "blue"
+        },
+        {
+          "title": "Fast, actionable insights",
+          "description": "Go from raw data to test‑ready ideas in minutes—no more months‑long consulting engagements.",
+          "color": "purple"
+        },
+        {
+          "title": "Works with your stack",
+          "description": "Integrates seamlessly with Optimizely, Segment, Salesforce, Marketo, Microsoft Dynamics and other major martech tools.",
+          "color": "green"
+        },
+        {
+          "title": "Industry‑specific guidance",
+          "description": "Tailored personas, journeys and experiments built for your vertical's unique challenges and KPIs.",
+          "color": "pink"
+        }
+      ]
+    }
+  },
+  {
+    "id": "cta-1",
+    "type": "cta_banner",
+    "order": 4,
+    "data": {
+      "heading": "Ready to transform your optimization strategy?",
+      "description": "Get a personalized roadmap tailored to your industry and goals",
+      "button": {
+        "text": "Start Now",
+        "href": "/start"
+      },
+      "gradient": "blue-purple"
+    }
+  },
+  {
+    "id": "steps-1",
+    "type": "steps",
+    "order": 5,
+    "data": {
+      "heading": "How it works: a five‑step optimization loop",
+      "subheading": "PersX.ai guides you through a proven methodology that turns insights into growth",
+      "steps": [
+        {
+          "title": "Discovery",
+          "description": "Aggregate evidence and audit the entire journey. Quantify where visitors stall and capture "why" using voice‑of‑customer feedback. PersX.ai clusters patterns and proposes opportunities ranked by impact and effort.",
+          "color": "blue"
+        },
+        {
+          "title": "Hypothesis",
+          "description": "Craft test hypotheses such as: "For [audience], changing [thing] from [state] to [state] will increase [metric] because [insight]." Each hypothesis includes success criteria, guardrails, and sample‑size/stop‑rules to ensure valid results.",
+          "color": "purple"
+        },
+        {
+          "title": "Execution",
+          "description": "Generate copy, layout and offer variants with PersX.ai. Implement these in your CMS or app and launch targeted A/B/n or multi‑armed bandit tests. All changes are logged with unique IDs to enable clean analysis.",
+          "color": "green"
+        },
+        {
+          "title": "Review",
+          "description": "Look beyond the primary metric. Evaluate average order value (AOV), downstream retention and fairness across segments to avoid harmful regressions. Capture learnings in a living playbook that evolves with each experiment.",
+          "color": "pink"
+        },
+        {
+          "title": "Scale",
+          "description": "Turn wins into reusable patterns, components or templates. Roll them out to adjacent journeys and channels (email, ads, in‑app), monitor for drift, and keep iterating.",
+          "color": "indigo"
+        }
+      ],
+      "structuredData": true
+    }
+  },
+  {
+    "id": "callout-2",
+    "type": "callout",
+    "order": 6,
+    "data": {
+      "title": "Built for modern marketing leaders",
+      "content": "<p class=\"mb-4\">PersX.ai helps growth marketers, product teams and executives who want clarity and actionability. If you need to accelerate personalization, improve conversion rates or optimize onboarding without adding more tools to your stack, PersX.ai gives you the strategic insights to get there—fast.</p><div class=\"flex flex-col sm:flex-row gap-4\"><a href=\"/contact\" class=\"inline-block px-8 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors text-center\">Schedule a Consultation</a><a href=\"/start\" class=\"inline-block px-8 py-3 border-2 border-blue-600 text-blue-600 dark:text-blue-400 rounded-lg font-semibold hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors text-center\">See Your Custom Roadmap</a></div>",
+      "variant": "info",
+      "color": "blue"
+    }
+  },
+  {
+    "id": "cta-2",
+    "type": "cta_banner",
+    "order": 7,
+    "data": {
+      "heading": "Let's optimize your growth together",
+      "description": "Our experience optimization experts are ready to help you discover hidden opportunities and build a winning experimentation strategy",
+      "button": {
+        "text": "Connect with an Expert",
+        "href": "/contact"
+      },
+      "gradient": "purple-pink"
+    }
+  }
+]

@@ -10,6 +10,7 @@ import DeleteContentButton from "./DeleteContentButton";
 import CollapsibleSection from "@/app/components/CollapsibleSection";
 import TagSelector from "@/app/components/TagSelector";
 import { BreadcrumbItem } from "@/types/knowledge-base";
+import BlockEditor from "@/app/components/blocks/BlockEditor";
 
 const contentTypes = [
   { value: "blog", label: "Blog Post" },
@@ -19,6 +20,7 @@ const contentTypes = [
   { value: "test_result", label: "Test Result" },
   { value: "best_practice", label: "Best Practice" },
   { value: "tool_guide", label: "Tool Guide" },
+  { value: "static_page", label: "Static Page" },
 ];
 
 const industries = [
@@ -77,9 +79,22 @@ export default function ContentEditor({
     const tags = data?.tags || [];
 
     // Generate canonical URL based on content type and slug
-    const canonicalUrl = slug
-      ? `https://persx.ai/${contentType === 'news' ? 'news' : contentType === 'blog' ? 'blog' : 'content'}/${slug}`
-      : "";
+    // Avoid duplicate segments like /blog/blog or /news/news
+    let canonicalUrl = "";
+    if (slug) {
+      if (contentType === 'static_page') {
+        canonicalUrl = `https://www.persx.ai/${slug}`;
+      } else if ((contentType === 'blog' && slug === 'blog') || (contentType === 'news' && slug === 'news')) {
+        // For index pages, just use the slug without duplication
+        canonicalUrl = `https://www.persx.ai/${slug}`;
+      } else if (contentType === 'blog') {
+        canonicalUrl = `https://www.persx.ai/blog/${slug}`;
+      } else if (contentType === 'news') {
+        canonicalUrl = `https://www.persx.ai/news/${slug}`;
+      } else {
+        canonicalUrl = `https://www.persx.ai/content/${slug}`;
+      }
+    }
 
     // Extract focus keyword from title (first meaningful word or phrase)
     const focusKeyword = tags.length > 0 ? tags[0] : title.split(' ').slice(0, 3).join(' ');
@@ -94,13 +109,30 @@ export default function ContentEditor({
                            'content';
 
     const breadcrumbItems: BreadcrumbItem[] = [
-      { position: 1, name: "Home", item: "https://persx.ai" },
-      { position: 2, name: contentTypeLabel, item: `https://persx.ai/${contentTypePath}` },
+      { position: 1, name: "Home", item: "https://www.persx.ai" },
     ];
 
-    if (slug && title) {
+    // Only add content type breadcrumb if this is not the index page itself
+    const isIndexPage = (contentType === 'blog' && slug === 'blog') || (contentType === 'news' && slug === 'news');
+
+    if (!isIndexPage) {
       breadcrumbItems.push({
-        position: 3,
+        position: 2,
+        name: contentTypeLabel,
+        item: `https://www.persx.ai/${contentTypePath}`
+      });
+    }
+
+    if (slug && title && !isIndexPage) {
+      breadcrumbItems.push({
+        position: breadcrumbItems.length + 1,
+        name: title,
+        item: canonicalUrl,
+      });
+    } else if (slug && title && isIndexPage) {
+      // For index pages, they are their own level 2 breadcrumb
+      breadcrumbItems.push({
+        position: 2,
         name: title,
         item: canonicalUrl,
       });
@@ -114,7 +146,7 @@ export default function ContentEditor({
       article_schema: data?.article_schema || {
         headline: title,
         author: { type: "Organization" as const, name: "PersX.ai" },
-        publisher: { type: "Organization" as const, name: "PersX.ai", url: "https://persx.ai" },
+        publisher: { type: "Organization" as const, name: "PersX.ai", url: "https://www.persx.ai" },
         datePublished: data?.published_at || data?.created_at || new Date().toISOString(),
         dateModified: data?.updated_at || new Date().toISOString(),
         articleSection: contentType,
@@ -140,6 +172,13 @@ export default function ContentEditor({
     status: initialData?.status || "draft",
     industry: initialData?.industry || "General",
     tags: initialData?.tags || [],
+    // Page Management fields (for static_page content type)
+    page_type: initialData?.page_type || "content",
+    navigation_group: initialData?.navigation_group || null,
+    navigation_order: initialData?.navigation_order || 0,
+    show_in_navigation: initialData?.show_in_navigation || false,
+    parent_page_id: initialData?.parent_page_id || null,
+    page_template: initialData?.page_template || "default",
     // External content fields
     source_type: initialData?.source_type || "internal",
     source_name: initialData?.source_name || "",
@@ -165,6 +204,8 @@ export default function ContentEditor({
     article_schema: defaults.article_schema,
     // Breadcrumb Schema with smart defaults
     breadcrumb_schema: defaults.breadcrumb_schema,
+    // Content Blocks (for block-based pages)
+    content_blocks: initialData?.content_blocks || null,
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -502,6 +543,25 @@ export default function ContentEditor({
               Use the toolbar above to format your content with headings, bold, italic, lists, links, and images.
             </p>
           </div>
+
+          {/* Content Blocks Section */}
+          {formData.content_type === "static_page" && (
+            <div className="mt-6">
+              <CollapsibleSection
+                title="Content Blocks"
+                description="Visual page builder with drag-and-drop blocks"
+                icon="🧩"
+                defaultOpen={true}
+              >
+                <div className="mt-4">
+                  <BlockEditor
+                    blocks={formData.content_blocks || []}
+                    onChange={(blocks) => setFormData({ ...formData, content_blocks: blocks })}
+                  />
+                </div>
+              </CollapsibleSection>
+            </div>
+          )}
         </div>
       </div>
 
@@ -837,6 +897,140 @@ export default function ContentEditor({
           </div>
         </div>
       </CollapsibleSection>
+
+      {/* Page Settings Section (only for static_page content type) */}
+      {formData.content_type === "static_page" && (
+        <CollapsibleSection
+          title="Page Settings"
+          description="Configure page type, navigation, and layout template"
+          icon="📄"
+          defaultOpen={true}
+        >
+          <div className="space-y-4 mt-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="page_type" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Page Type *
+                </label>
+                <select
+                  id="page_type"
+                  value={formData.page_type}
+                  onChange={(e) => setFormData({ ...formData, page_type: e.target.value })}
+                  required
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="content">Content (Blog/News)</option>
+                  <option value="company">Company (About/How It Works)</option>
+                  <option value="utility">Utility (Contact/Privacy)</option>
+                </select>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  Categorize the page type for organization
+                </p>
+              </div>
+
+              <div>
+                <label htmlFor="page_template" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Page Template *
+                </label>
+                <select
+                  id="page_template"
+                  value={formData.page_template}
+                  onChange={(e) => setFormData({ ...formData, page_template: e.target.value })}
+                  required
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="default">Default</option>
+                  <option value="full_width">Full Width</option>
+                  <option value="sidebar">Sidebar</option>
+                  <option value="landing">Landing Page</option>
+                </select>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  Select the layout template for this page
+                </p>
+              </div>
+            </div>
+
+            {/* Navigation Settings */}
+            <div className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg space-y-4">
+              <h3 className="text-base font-semibold text-gray-900 dark:text-white">
+                Navigation Settings
+              </h3>
+
+              <div>
+                <label className="flex items-center">
+                  <input
+                    type="checkbox"
+                    checked={formData.show_in_navigation}
+                    onChange={(e) => setFormData({
+                      ...formData,
+                      show_in_navigation: e.target.checked,
+                      // Clear navigation_group if hiding from navigation
+                      navigation_group: e.target.checked ? formData.navigation_group : null
+                    })}
+                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                  />
+                  <span className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                    Show in Navigation Menu
+                  </span>
+                </label>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 ml-6">
+                  Display this page in the main navigation menu
+                </p>
+              </div>
+
+              {formData.show_in_navigation && (
+                <>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label htmlFor="navigation_group" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Navigation Group *
+                      </label>
+                      <select
+                        id="navigation_group"
+                        value={formData.navigation_group || ""}
+                        onChange={(e) => setFormData({ ...formData, navigation_group: e.target.value || null })}
+                        required={formData.show_in_navigation}
+                        className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      >
+                        <option value="">Select a group...</option>
+                        <option value="insights">Insights (Blog, News)</option>
+                        <option value="company">Company (About, How It Works)</option>
+                        <option value="resources">Resources</option>
+                      </select>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                        Which dropdown menu should contain this page?
+                      </p>
+                    </div>
+
+                    <div>
+                      <label htmlFor="navigation_order" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Navigation Order
+                      </label>
+                      <input
+                        id="navigation_order"
+                        type="number"
+                        min="0"
+                        value={formData.navigation_order}
+                        onChange={(e) => setFormData({ ...formData, navigation_order: parseInt(e.target.value) || 0 })}
+                        className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                        Lower numbers appear first (0 = first)
+                      </p>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+
+            <div className="p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+              <p className="text-sm text-blue-900 dark:text-blue-200">
+                <strong>💡 Navigation Structure:</strong> Pages in the "Insights" group will appear under the Insights dropdown (alongside Blog and News). Pages in the "Company" group will appear under the Company dropdown (alongside About and How It Works).
+              </p>
+            </div>
+          </div>
+        </CollapsibleSection>
+      )}
 
       {/* Social Media Preview Section */}
       <CollapsibleSection

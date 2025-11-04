@@ -1,0 +1,194 @@
+[
+  {
+    "id": "hero-1",
+    "type": "hero",
+    "order": 1,
+    "data": {
+      "title": "AI Strategist for Personalization & Experimentation",
+      "subtitle": "Discover your ideal personas, journeys, and build an actionable roadmap in minutes.",
+      "buttons": [
+        {
+          "text": "Get Started",
+          "href": "/start",
+          "variant": "primary"
+        },
+        {
+          "text": "Learn More",
+          "href": "/about",
+          "variant": "secondary"
+        }
+      ],
+      "alignment": "center",
+      "personalization": {
+        "enabled": true,
+        "industryKey": "userIndustry"
+      }
+    }
+  },
+  {
+    "id": "features-1",
+    "type": "feature_grid",
+    "order": 2,
+    "data": {
+      "heading": "Why Choose PersX.ai?",
+      "features": [
+        {
+          "icon": "💡",
+          "title": "Instant Insight from Experts",
+          "description": "Get rapid access to growth strategies distilled by subject‑matter specialists, without wading through endless data."
+        },
+        {
+          "icon": "⚡",
+          "title": "Actionable Ideas in Minutes",
+          "description": "PersX.ai turns your raw behavior signals into ready‑to‑test experiments so you can act immediately."
+        },
+        {
+          "icon": "🎯",
+          "title": "Effortless Opportunity Discovery",
+          "description": "With automated persona modeling and journey design, uncover new revenue opportunities and friction points faster than ever."
+        }
+      ],
+      "personalization": {
+        "enabled": true,
+        "industryVariants": {
+          "eCommerce": [
+            {
+              "icon": "💡",
+              "title": "Instant Insight from Experts",
+              "description": "Get rapid access to eCommerce growth strategies—cart recovery, AOV boosters, and product recommendation tactics—distilled by subject‑matter specialists, without wading through endless data."
+            },
+            {
+              "icon": "⚡",
+              "title": "Actionable Ideas in Minutes",
+              "description": "PersX.ai turns your shopping behavior signals into ready‑to‑test experiments targeting cart abandoners, repeat buyers, and high-value segments so you can act immediately."
+            },
+            {
+              "icon": "🎯",
+              "title": "Effortless Opportunity Discovery",
+              "description": "With automated persona modeling and journey design, uncover new revenue opportunities—cross-sell moments, checkout friction points, and browse-to-buy gaps—faster than ever."
+            }
+          ],
+          "Healthcare": [
+            {
+              "icon": "💡",
+              "title": "Instant Insight from Experts",
+              "description": "Get rapid access to patient engagement strategies—appointment booking flows, telehealth adoption, and trust-building tactics—distilled by healthcare marketing specialists."
+            },
+            {
+              "icon": "⚡",
+              "title": "Actionable Ideas in Minutes",
+              "description": "PersX.ai turns your patient journey signals into ready‑to‑test experiments targeting appointment seekers, service researchers, and follow-up completers so you can act immediately."
+            },
+            {
+              "icon": "🎯",
+              "title": "Effortless Opportunity Discovery",
+              "description": "With automated persona modeling and journey design, uncover new conversion opportunities—form abandonment points, service discovery gaps, and consultation barriers—faster than ever."
+            }
+          ],
+          "Financial Services": [
+            {
+              "icon": "💡",
+              "title": "Instant Insight from Experts",
+              "description": "Get rapid access to financial services growth strategies—lead qualification paths, account sign-up optimization, and trust-building tactics—distilled by FinTech specialists."
+            },
+            {
+              "icon": "⚡",
+              "title": "Actionable Ideas in Minutes",
+              "description": "PersX.ai turns your prospect behavior signals into ready‑to‑test experiments targeting qualified leads, comparison shoppers, and high-intent visitors so you can act immediately."
+            },
+            {
+              "icon": "🎯",
+              "title": "Effortless Opportunity Discovery",
+              "description": "With automated persona modeling and journey design, uncover new conversion opportunities—application drop-off points, education gaps, and credibility barriers—faster than ever."
+            }
+          ],
+          "Education": [
+            {
+              "icon": "💡",
+              "title": "Instant Insight from Experts",
+              "description": "Get rapid access to enrollment strategies—application completion flows, campus visit optimization, and program discovery tactics—distilled by higher education marketing specialists."
+            },
+            {
+              "icon": "⚡",
+              "title": "Actionable Ideas in Minutes",
+              "description": "PersX.ai turns your prospective student signals into ready‑to‑test experiments targeting program researchers, application starters, and campus visit prospects so you can act immediately."
+            },
+            {
+              "icon": "🎯",
+              "title": "Effortless Opportunity Discovery",
+              "description": "With automated persona modeling and journey design, uncover new enrollment opportunities—application friction points, financial aid questions, and decision-stage barriers—faster than ever."
+            }
+          ],
+          "B2B/SaaS": [
+            {
+              "icon": "💡",
+              "title": "Instant Insight from Experts",
+              "description": "Get rapid access to SaaS growth strategies—trial conversion paths, demo request optimization, and product adoption tactics—distilled by B2B marketing specialists."
+            },
+            {
+              "icon": "⚡",
+              "title": "Actionable Ideas in Minutes",
+              "description": "PersX.ai turns your buyer behavior signals into ready‑to‑test experiments targeting MQLs, trial users, and demo prospects so you can act immediately."
+            },
+            {
+              "icon": "🎯",
+              "title": "Effortless Opportunity Discovery",
+              "description": "With automated persona modeling and journey design, uncover new pipeline opportunities—signup friction, feature discovery gaps, and time-to-value barriers—faster than ever."
+            }
+          ]
+        }
+      }
+    }
+  },
+  {
+    "id": "martech-1",
+    "type": "martech_integrations",
+    "order": 3,
+    "data": {
+      "heading": "Works with Any Marketing Technology",
+      "subheading": "Maximize the ROI from your marketing technology and uncover hidden insights",
+      "integrations": [
+        {
+          "name": "Optimizely",
+          "color": "blue-600",
+          "fontSize": "text-3xl"
+        },
+        {
+          "name": "Segment",
+          "color": "green-600",
+          "fontSize": "text-3xl"
+        },
+        {
+          "name": "Salesforce",
+          "color": "blue-500",
+          "fontSize": "text-3xl"
+        },
+        {
+          "name": "Marketo",
+          "color": "purple-600",
+          "fontSize": "text-3xl"
+        },
+        {
+          "name": "Microsoft Dynamics",
+          "color": "gray-700",
+          "fontSize": "text-2xl"
+        }
+      ],
+      "columns": 5
+    }
+  },
+  {
+    "id": "cta-1",
+    "type": "cta_banner",
+    "order": 4,
+    "data": {
+      "heading": "Ready to Transform Your Business?",
+      "description": "Join thousands of companies already using PersX.ai to power their personalization initiatives",
+      "button": {
+        "text": "Get Your Free Roadmap",
+        "href": "/start"
+      },
+      "gradient": "blue-purple"
+    }
+  }
+]

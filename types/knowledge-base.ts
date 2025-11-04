@@ -1,5 +1,7 @@
 // Knowledge Base Types - matches Supabase schema
 
+import type { ContentBlock } from './content-blocks';
+
 export type ContentType =
   | 'blog'
   | 'case_study'
@@ -7,9 +9,16 @@ export type ContentType =
   | 'test_result'
   | 'best_practice'
   | 'tool_guide'
-  | 'news';
+  | 'news'
+  | 'static_page';
 
 export type ContentStatus = 'draft' | 'published' | 'archived';
+
+export type PageType = 'content' | 'company' | 'utility';
+
+export type NavigationGroup = 'insights' | 'company' | 'resources';
+
+export type PageTemplate = 'default' | 'full_width' | 'sidebar' | 'landing';
 
 export type IndustryType =
   | 'eCommerce'
@@ -35,6 +44,17 @@ export interface KnowledgeBaseContent {
   content: string; // Markdown content
   content_type: ContentType;
   status: ContentStatus;
+
+  // Page Management (for static_page content type)
+  page_type: PageType;
+  navigation_group: NavigationGroup | null;
+  navigation_order: number;
+  show_in_navigation: boolean;
+  parent_page_id: string | null;
+  page_template: PageTemplate;
+
+  // Content Blocks (for block-based static pages)
+  content_blocks: ContentBlock[] | null;
 
   // Categorization
   industry: IndustryType;

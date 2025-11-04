@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next'
 import { createClient } from '@/lib/supabase-server'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://persx.ai'
+  const baseUrl = 'https://www.persx.ai'
 
   // Static pages
   const staticPages: MetadataRoute.Sitemap = [

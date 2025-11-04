@@ -1,20 +1,24 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { DM_Sans } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import ConditionalFooter from "@/components/ConditionalFooter";
 import ConditionalAnalytics from "@/components/ConditionalAnalytics";
 import RootErrorBoundary from "@/components/RootErrorBoundary";
 import AdminUtilityBar from "@/components/AdminUtilityBar";
+import { ThemeProvider } from "@/components/ThemeProvider";
 import { getAdminSessionState, shouldShowUtilityBar } from "@/lib/admin-session";
 import { headers } from "next/headers";
+import { createClient } from "@/lib/supabase-server";
 
 // Optimize font loading with Next.js font optimization
-const inter = Inter({
+const dmSans = DM_Sans({
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  style: ["normal", "italic"],
   display: "swap",
   preload: true,
-  variable: "--font-inter",
+  variable: "--font-dm-sans",
 });
 
 export const metadata: Metadata = {
@@ -37,7 +41,7 @@ export const metadata: Metadata = {
     "CRO strategy",
     "marketing automation"
   ],
-  authors: [{ name: "PersX.ai", url: "https://persx.ai" }],
+  authors: [{ name: "PersX.ai", url: "https://www.persx.ai" }],
   creator: "PersX.ai",
   publisher: "PersX.ai",
   robots: {
@@ -52,12 +56,12 @@ export const metadata: Metadata = {
     },
   },
   alternates: {
-    canonical: "https://persx.ai",
+    canonical: "https://www.persx.ai",
   },
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://persx.ai",
+    url: "https://www.persx.ai",
     siteName: "PersX.ai",
     title: "PersX.ai - AI Strategist for Personalization & Experimentation",
     description: "Discover your ideal personas, journeys, and build an actionable roadmap in minutes.",
@@ -103,31 +107,52 @@ export default async function RootLayout({
   const showUtilityBar = !isGoPage && await shouldShowUtilityBar();
   const adminState = showUtilityBar ? await getAdminSessionState() : null;
 
+  // Check if current page is editable
+  let currentPage = null;
+  if (showUtilityBar && pathname) {
+    const slug = pathname.substring(1) || "home"; // Remove leading slash
+    const supabase = createClient();
+    const { data } = await supabase
+      .from("knowledge_base_content")
+      .select("id, slug")
+      .eq("slug", slug)
+      .eq("status", "published")
+      .single();
+
+    if (data) {
+      currentPage = data;
+    }
+  }
+
   // Only add padding if the bar will actually render (has an industry)
   const showAdminBar = showUtilityBar && adminState && adminState.industry;
 
   return (
-    <html lang="en" className={inter.variable}>
+    <html lang="en" className={`${dmSans.variable} dark`}>
       <body className="min-h-screen flex flex-col font-sans">
-        {/* Admin Utility Bar - only visible in admin sessions and not on /go pages */}
-        {showUtilityBar && adminState && (
-          <AdminUtilityBar
-            industry={adminState.industry}
-            tool={adminState.tool}
-            goal={adminState.goal}
-          />
-        )}
+        <ThemeProvider>
+          {/* Admin Utility Bar - only visible in admin sessions and not on /go pages */}
+          {showUtilityBar && adminState && (
+            <AdminUtilityBar
+              industry={adminState.industry}
+              tool={adminState.tool}
+              goal={adminState.goal}
+              currentPageId={currentPage?.id}
+              currentPageSlug={currentPage?.slug}
+            />
+          )}
 
-        {/* Main content with top padding when utility bar is visible */}
-        <div className={showAdminBar ? "pt-12" : ""}>
-          <RootErrorBoundary>
-            <Header />
-            <main className="flex-1">{children}</main>
-            <ConditionalFooter />
-          </RootErrorBoundary>
-        </div>
+          {/* Main content with top padding when utility bar is visible */}
+          <div className={showAdminBar ? "pt-12" : ""}>
+            <RootErrorBoundary>
+              <Header />
+              <main className="flex-1">{children}</main>
+              <ConditionalFooter />
+            </RootErrorBoundary>
+          </div>
 
-        <ConditionalAnalytics />
+          <ConditionalAnalytics />
+        </ThemeProvider>
       </body>
     </html>
   );

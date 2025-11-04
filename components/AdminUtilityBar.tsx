@@ -15,9 +15,11 @@ interface AdminUtilityBarProps {
   industry?: string;
   tool?: string;
   goal?: string;
+  currentPageId?: string;
+  currentPageSlug?: string;
 }
 
-export default function AdminUtilityBar({ industry, tool, goal }: AdminUtilityBarProps) {
+export default function AdminUtilityBar({ industry, tool, goal, currentPageId, currentPageSlug }: AdminUtilityBarProps) {
   const [message, setMessage] = useState<string>("");
   const [isPending, startTransition] = useTransition();
 
@@ -62,14 +64,23 @@ export default function AdminUtilityBar({ industry, tool, goal }: AdminUtilityBa
     <div className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-12">
-          {/* Left side: Admin link */}
+          {/* Left side: Admin or Edit Page link */}
           <div className="flex items-center gap-4">
-            <Link
-              href="/go/cm"
-              className="text-sm px-3 py-1 rounded-md bg-white/10 hover:bg-white/20 transition-colors focus:outline-none focus:ring-2 focus:ring-white/50"
-            >
-              Admin
-            </Link>
+            {currentPageId && currentPageSlug ? (
+              <Link
+                href={`/go/cm/content/${currentPageId}`}
+                className="text-sm px-3 py-1 rounded-md bg-white/10 hover:bg-white/20 transition-colors focus:outline-none focus:ring-2 focus:ring-white/50"
+              >
+                ✏️ Edit Page
+              </Link>
+            ) : (
+              <Link
+                href="/go/cm"
+                className="text-sm px-3 py-1 rounded-md bg-white/10 hover:bg-white/20 transition-colors focus:outline-none focus:ring-2 focus:ring-white/50"
+              >
+                Admin
+              </Link>
+            )}
           </div>
 
           {/* Center: Personalization state */}

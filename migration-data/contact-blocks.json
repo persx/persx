@@ -1,0 +1,92 @@
+[
+  {
+    "id": "contact-form-1",
+    "type": "contact_form",
+    "order": 1,
+    "data": {
+      "heading": "Contact Us",
+      "subheading": "Ready to transform your personalization strategy?",
+      "reasons": [
+        "Uncover high‑impact opportunities: PersX.ai analyzes your behavior data to surface friction points and growth opportunities you may not have considered",
+        "Persona‑driven personalization: It infers audience segments based on actions, not demographics, ensuring more relevant experiences and higher engagement",
+        "Actionable experiment roadmaps: The platform delivers 6–12 week test plans with clear hypotheses, so your team knows exactly what to try next",
+        "Cross‑channel journey design: It creates coordinated journeys across web, mobile, and email, boosting conversion rates and customer lifetime value",
+        "Measurable results: It defines KPIs and measurement windows up front, helping you track impact and iterate fast"
+      ],
+      "personalization": {
+        "enabled": true,
+        "industryVariants": {
+          "eCommerce": {
+            "headline": "Ready to boost your conversion rates and drive more revenue?",
+            "reasons": [
+              "Reduce cart abandonment and increase AOV with data-driven personalization strategies",
+              "Target shoppers based on buying behavior, not just demographics, for higher engagement",
+              "Get 6–12 week test plans designed to boost purchase conversion and revenue per visitor",
+              "Create seamless shopping experiences across web, mobile, and email to maximize lifetime value",
+              "Track impact on revenue metrics and conversion rates with clear KPIs from day one"
+            ]
+          },
+          "Healthcare": {
+            "headline": "Ready to increase patient engagement and appointment bookings?",
+            "reasons": [
+              "Increase appointment bookings and reduce form abandonment with targeted interventions",
+              "Engage patients based on their healthcare journey and needs, not generic demographics",
+              "Get test plans to improve consultation requests, phone conversions, and patient engagement",
+              "Guide patients from initial research to booking appointments across all touchpoints",
+              "Track appointment rates, form completions, and patient satisfaction metrics"
+            ]
+          },
+          "Financial Services": {
+            "headline": "Ready to generate more qualified leads and improve retention?",
+            "reasons": [
+              "Improve lead quality and reduce customer churn with behavior-based personalization",
+              "Target prospects based on financial goals and buying signals, not just firmographics",
+              "Get plans to increase qualified leads, account sign-ups, and member retention",
+              "Build trust and credibility with coordinated messaging across all customer channels",
+              "Track lead conversion rates, sign-up velocity, and customer lifetime value"
+            ]
+          },
+          "Education": {
+            "headline": "Ready to increase enrollments and application completions?",
+            "reasons": [
+              "Increase application completions and campus visit registrations with personalized journeys",
+              "Engage prospective students based on program interests and enrollment stage",
+              "Get test plans to boost information requests, financial aid submissions, and applications",
+              "Guide students from discovery to enrollment with seamless cross-channel experiences",
+              "Track application rates, visit bookings, and enrollment conversions"
+            ]
+          },
+          "B2B/SaaS": {
+            "headline": "Ready to accelerate your pipeline and boost demo conversions?",
+            "reasons": [
+              "Generate more qualified MQLs and improve demo-to-customer conversion rates",
+              "Target prospects based on company size, role, and buying signals for better engagement",
+              "Get plans to increase trial sign-ups, demo requests, and product adoption",
+              "Create coordinated journeys that nurture leads from awareness to purchase",
+              "Track MQL generation, demo requests, trial conversions, and customer lifetime value"
+            ]
+          }
+        }
+      },
+      "formConfig": {
+        "nameField": true,
+        "emailField": true,
+        "messageField": true,
+        "submitText": "Send Message",
+        "successMessage": "Thank you! Your message has been sent successfully.",
+        "errorMessage": "There was an error sending your message. Please try again."
+      }
+    }
+  },
+  {
+    "id": "callout-1",
+    "type": "callout",
+    "order": 2,
+    "data": {
+      "title": "Need Immediate Assistance?",
+      "content": "<p>For urgent inquiries or technical support, please reach out to our support team at support@persx.ai</p>",
+      "variant": "info",
+      "color": "blue"
+    }
+  }
+]

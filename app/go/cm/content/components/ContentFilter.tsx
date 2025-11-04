@@ -11,6 +11,7 @@ const contentTypes = [
   { value: "test_result", label: "Test Results" },
   { value: "best_practice", label: "Best Practices" },
   { value: "tool_guide", label: "Tool Guides" },
+  { value: "static_page", label: "Static Pages" },
 ];
 
 const statuses = [

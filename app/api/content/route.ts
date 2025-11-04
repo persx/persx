@@ -47,6 +47,13 @@ export async function POST(request: NextRequest) {
         status: data.status || "draft",
         industry: data.industry || "General",
         tags: data.tags || [],
+        // Page Management fields (for static_page content type)
+        page_type: data.page_type || "content",
+        navigation_group: data.navigation_group || null,
+        navigation_order: data.navigation_order || 0,
+        show_in_navigation: data.show_in_navigation || false,
+        parent_page_id: data.parent_page_id || null,
+        page_template: data.page_template || "default",
         // SEO fields
         meta_title: data.meta_title || null,
         meta_description: data.meta_description || null,
@@ -75,6 +82,8 @@ export async function POST(request: NextRequest) {
         external_sources: data.external_sources || [],
         persx_perspective: data.persx_perspective || null,
         overall_summary: data.overall_summary || null,
+        // Content blocks for block-based pages
+        content_blocks: data.content_blocks || null,
       })
       .select()
       .single();

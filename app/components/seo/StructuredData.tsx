@@ -26,7 +26,7 @@ interface OrganizationData {
  * Article Structured Data (for blog posts, case studies, guides, etc.)
  */
 export function ArticleStructuredData({ article }: { article: ArticleData }) {
-  const baseUrl = 'https://persx.ai';
+  const baseUrl = 'https://www.persx.ai';
   const contentTypeToPath: Record<string, string> = {
     'blog': 'blog',
     'case_study': 'case-studies',
@@ -88,7 +88,7 @@ export function BreadcrumbStructuredData({
 }: {
   items: Array<{ name: string; url: string }>;
 }) {
-  const baseUrl = 'https://persx.ai';
+  const baseUrl = 'https://www.persx.ai';
 
   const structuredData = {
     '@context': 'https://schema.org',
@@ -139,14 +139,14 @@ export function WebsiteStructuredData() {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     name: 'PersX.ai',
-    url: 'https://persx.ai',
+    url: 'https://www.persx.ai',
     description:
       'AI-powered personalization and experimentation strategy platform',
     potentialAction: {
       '@type': 'SearchAction',
       target: {
         '@type': 'EntryPoint',
-        urlTemplate: 'https://persx.ai/search?q={search_term_string}',
+        urlTemplate: 'https://www.persx.ai/search?q={search_term_string}',
       },
       'query-input': 'required name=search_term_string',
     },
