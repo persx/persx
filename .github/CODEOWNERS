@@ -1,0 +1,18 @@
+```
+# Core application code requires review
+/app/**           @persx
+/components/**    @persx
+/lib/**           @persx
+
+# Auth and billing are critical
+/auth/**          @persx
+/billing/**       @persx
+
+# Database and migrations
+/supabase/**      @persx
+```
+
+### Commit:
+- Click "Commit changes..."
+- Commit message: `Add CODEOWNERS for bot PRs`
+- Click "Commit changes"
